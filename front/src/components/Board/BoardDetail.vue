@@ -10,7 +10,7 @@ import {
   MDBBtn,
   MDBBadge, MDBAccordion, MDBAccordionItem, MDBTextarea
 } from "mdb-vue-ui-kit";
-import CommentItem from "@/components/BoardItem/CommentItem.vue";
+import CommentItem from "@/components/Board/BoardItem/CommentItem.vue";
 import {useLoginUserStore} from "@/stores/loginUser";
 import {storeToRefs} from "pinia";
 
@@ -93,7 +93,7 @@ const writeComment = () => {
       </MDBCardText>
       <hr class="hr">
       <div class="d-flex justify-content-around">
-        <MDBTextarea counter :max-length="200" rows="1" label="Comment" size="lg"
+        <MDBTextarea counter :max-length="200" rows="1" label="Comment"
                      v-model="commentContent" class="p-3"/>
         <MDBBtn color="info" @click="writeComment">답변 쓰기</MDBBtn>
       </div>

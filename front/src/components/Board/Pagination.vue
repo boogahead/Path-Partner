@@ -3,7 +3,7 @@ import {MDBPageItem, MDBPageNav, MDBPagination} from "mdb-vue-ui-kit";
 </script>
 
 <template>
-  <nav aria-label="Page navigation example">
+  <nav>
     <MDBPagination class="justify-content-center">
       <MDBPageNav prev icon></MDBPageNav>
       <MDBPageItem href="#">1</MDBPageItem>

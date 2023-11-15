@@ -1,7 +1,7 @@
 <script setup>
 import {MDBTable, MDBBtn, MDBBadge} from "mdb-vue-ui-kit";
 import Pagination from "@/components/Board/Pagination.vue";
-import QnABoardItem from "@/components/BoardItem/QnABoardItem.vue";
+import QnABoardItem from "@/components/Board/BoardItem/QnABoardItem.vue";
 import {onMounted, ref} from "vue";
 import {getArticleList, registArticle} from "@/api/BoardAPI";
 import router from "@/router/index";

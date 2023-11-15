@@ -17,7 +17,20 @@ const router = createRouter({
     {
       path: '/plan',
       name: 'plan',
-      component: MainPageView
+      component: () => import('@/views/PlanView.vue'),
+      redirect: {name:'plan_list'},
+      children: [
+        {
+          path : 'list',
+          name : 'plan_list',
+          component: () => import('@/components/Plan/PlanList.vue')
+        },
+        {
+          path : 'detail/:plan_article_id',
+          name : 'plan_detail',
+          component: () => import('@/components/Plan/PlanDetail.vue')
+        },
+      ]
     },
     {
       path: '/board',
@@ -55,12 +68,12 @@ const router = createRouter({
     {
       path: '/group',
       name: 'group',
-      component: MainPageView
+      component: () => import('@/views/GroupView.vue')
     },
     {
       path: '/friend',
       name: 'friend',
-      component: MainPageView
+      component: () => import('@/views/FriendView.vue')
     },
   ]
 })
