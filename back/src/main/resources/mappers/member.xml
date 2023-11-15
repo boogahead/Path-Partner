@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!-- 관통용  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.enjoytrip.member.repository.MemberDao">
+  <resultMap type="MemberDto" id="member">
+    <result column="uid" property="uid"/>
+    <result column="user_id" property="userId"/>
+    <result column="user_name" property="userName"/>
+    <result column="user_pass" property="userPass"/>
+    <result column="join_date" property="joinDate"/>
+    <result column="roles" property="roles"/>
+  </resultMap>
+
+  <insert id="insertMember" parameterType="MemberDto">
+    insert into member (user_id, user_name, user_pass, roles)
+    values (#{userId}, #{userName}, #{userPass}, #{roles})
+  </insert>
+
+  <select id="selectMemberById" parameterType="String" resultMap="member">
+    select uid, user_id, user_name, user_pass, join_date, roles
+    from member
+    where user_id = #{userId}
+  </select>
+
+  <update id="updateMember" parameterType="MemberDto">
+    update member
+    set user_pass=#{userPass},
+        user_name=#{userName},
+        roles=#{roles}
+    where uid = #{uid}
+  </update>
+
+  <delete id="deleteMember" parameterType="int">
+    delete
+    from member
+    where uid = #{uid}
+  </delete>
+
+  <select id="selectMemberByIdAndName" parameterType="MemberDto" resultMap="member">
+    select uid, user_id, user_name, user_pass, join_date, roles
+    from member
+    where user_id = #{userId}
+      and user_name = #{userName}
+  </select>
+
+  <update id="updateMemberPassword" parameterType="MemberDto">
+    update member
+    set user_pass = #{userPass}
+    where uid = #{uid}
+  </update>
+</mapper>

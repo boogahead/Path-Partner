@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.enjoytrip.area.repository.AreaDao">
+	<resultMap id="SidoResultMap"
+		type="SidoDto">
+		<id column="sido_code" property="sidoCode" />
+		<result column="sido_name" property="sidoName" />
+	</resultMap>
+
+	<!-- Result map for GugunDto -->
+	<resultMap id="GugunResultMap"
+		type="GugunDto">
+		<id column="gugun_code" property="gugunCode" />
+		<result column="gugun_name" property="gugunName" />
+		<result column="sido_code" property="sidoCode" />
+	</resultMap>
+	<!-- SQL to get all Sido -->
+	<select id="getSidoCode" resultMap="SidoResultMap">
+		SELECT sido_code, sido_name 
+		FROM sido
+	</select>
+
+	<!-- SQL to get all Gugun -->
+	<select id="getGunguCode" resultMap="GugunResultMap">
+		SELECT gugun_code, gugun_name, sido_code 
+		FROM gugun
+	</select>
+</mapper>
