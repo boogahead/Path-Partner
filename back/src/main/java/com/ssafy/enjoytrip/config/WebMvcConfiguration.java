@@ -28,7 +28,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	
 	private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
-	private final List<String> patterns = Arrays.asList("/board/*", "/admin", "/user/list","/comment/*");
+	private final List<String> patterns = Arrays.asList("/board/*", "/admin", "/user/list","/comment/*","/notice_article/*");
 
 	@Autowired
 	private DataSource dataSource;
