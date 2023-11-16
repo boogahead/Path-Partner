@@ -6,13 +6,8 @@ import {
   MDBCard, MDBCardBody
 } from 'mdb-vue-ui-kit';
 import {ref} from "vue";
-import router from "@/router/index";
 
-const tab = ref("qna");
-
-const changeBoard = (id) => {
-  router.push({name: id});
-}
+const tab = ref("notice");
 </script>
 
 <template>
@@ -26,11 +21,7 @@ const changeBoard = (id) => {
           <MDBTabs v-model="tab">
             <!-- Tabs navs -->
             <MDBTabNav justify tabsClasses="mb-3">
-              <MDBTabItem tag="button" tab-id="qna" :to="{name:'qna'}" @click="changeBoard('qna')">
-                <i class="fas fa-question-circle fa-fw me-2"></i>QnA
-              </MDBTabItem>
-              <MDBTabItem tag="button" tab-id="notice" :to="{name:'notice'}"
-                          @click="changeBoard('notice')">
+              <MDBTabItem tag="button" tab-id="notice">
                 <i class="fas fa-check fa-fw me-2"></i>공지사항
               </MDBTabItem>
             </MDBTabNav>

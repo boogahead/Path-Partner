@@ -18,7 +18,7 @@ const searchInput = ref("");
       <tr>
         <th>이름</th>
         <th>상태</th>
-        <th>추방</th>
+        <th>관리</th>
       </tr>
       </thead>
       <tbody>

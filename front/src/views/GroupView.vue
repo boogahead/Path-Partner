@@ -1,8 +1,8 @@
 <script setup>
 import {
   MDBAccordion,
-  MDBAccordionItem,
-  MDBCard, MDBCardBody,
+  MDBAccordionItem, MDBBtn,
+  MDBCard, MDBCardBody, MDBIcon,
   MDBTabItem,
   MDBTabNav,
   MDBTabs
@@ -21,9 +21,14 @@ const activeItem = ref('collapseOne');
     <div class="container">
       <MDBCard>
         <MDBCardBody>
-          <MDBAccordion v-model="activeItem" borderless>
+          <MDBAccordion v-model="activeItem" class="mb-3">
             <GroupListItem/>
           </MDBAccordion>
+          <div class="text-center mt-3">
+            <MDBBtn color="secondary" floating>
+              <MDBIcon icon="plus" size="2x"/>
+            </MDBBtn>
+          </div>
         </MDBCardBody>
       </MDBCard>
     </div>

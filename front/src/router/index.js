@@ -33,35 +33,30 @@ const router = createRouter({
       ]
     },
     {
-      path: '/board',
-      name: 'board',
-      component: () => import('@/views/BoardView.vue'),
-      redirect: {name:'qna'},
+      path: '/notice',
+      name: 'notice',
+      component: () => import('@/views/NoticeBoardView.vue'),
+      redirect: {name: "notice_list"},
       children: [
         {
-          path : 'notice',
-          name : 'notice',
-          component: () => import('@/components/Board/NoticeBoard.vue')
+          path : 'list',
+          name : 'notice_list',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoard.vue')
         },
         {
-          path : 'qna',
-          name : 'qna',
-          component: () => import('@/components/Board/QnABoard.vue')
-        },
-        {
-          path : 'detail/:articleno',
-          name : 'detail',
-          component: () => import('@/components/Board/BoardDetail.vue')
+          path : 'detail/:noticeArticleId',
+          name : 'notice_detail',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoardDetail.vue')
         },
         {
           path : 'write',
-          name : 'article-write',
-          component: () => import('@/components/Board/BoardWriteForm.vue')
+          name : 'notice_article_write',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoardWriteForm.vue')
         },
         {
-          path : 'modify/:articleno',
-          name : 'article-modify',
-          component: () => import('@/components/Board/BoardModifyForm.vue')
+          path : 'modify/:noticeArticleId',
+          name : 'notice_article_modify',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoardModifyForm.vue')
         },
       ]
     },
@@ -69,6 +64,11 @@ const router = createRouter({
       path: '/group',
       name: 'group',
       component: () => import('@/views/GroupView.vue')
+    },
+    {
+      path: '/review',
+      name: 'review',
+      component: () => import('@/views/ReviewBoardView.vue')
     },
     {
       path: '/friend',

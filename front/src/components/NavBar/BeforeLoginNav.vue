@@ -23,6 +23,7 @@ const signInId = ref("")
 const signInPassword = ref("")
 const signInCheckPassword = ref("")
 const signInEmail = ref("")
+const signInNickName = ref("")
 
 const loginAttempt = () => {
   const loginInfo = {
@@ -89,6 +90,7 @@ const checkPassword = () => {
         <div class="container">
           <div class="col justify-content-around mb-3">
             <MDBInput label="id" v-model="signInId" counter :maxlength="16"></MDBInput>
+            <MDBInput label="nickname" v-model="signInNickName" counter :maxlength="8" class="mt-4"></MDBInput>
             <MDBInput label="email" type="email" v-model="signInEmail" class="mt-4"></MDBInput>
             <MDBInput label="password" type="password" v-model="signInPassword" class="mt-4"></MDBInput>
             <MDBInput label="password check" type="password" v-model="signInCheckPassword" class="mt-4" @change="checkPassword">
