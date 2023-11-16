@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication(scanBasePackages = "com.ssafy.enjoytrip", exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = "com.ssafy.enjoytrip")
 public class EnjoyTripSpringApplication {
 
   public static void main(String[] args) {
