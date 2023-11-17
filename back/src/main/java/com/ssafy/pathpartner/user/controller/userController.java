@@ -1,6 +1,10 @@
 package com.ssafy.pathpartner.user.controller;
 
+<<<<<<< HEAD:back/src/main/java/com/ssafy/pathpartner/user/controller/userController.java
 import com.ssafy.pathpartner.user.dto.userDto;
+=======
+import com.ssafy.pathpartner.user.dto.UserDto;
+>>>>>>> bbc6bd2b08c1c68c1c97f5c25ad2cf6d819ac5a5:back/src/main/java/com/ssafy/PathPartner/user/controller/userController.java
 import com.ssafy.pathpartner.user.service.userService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,15 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @Slf4j
@@ -28,12 +24,12 @@ import springfox.documentation.annotations.ApiIgnore;
 @CrossOrigin("*")
 @RequestMapping("/user")
 @Api(tags = {"사용자 컨트롤러 API"})
-public class userController {
+public class UserController {
 
   private userService userService;
 
   @Autowired
-  public userController(userService userService) {
+  public UserController(userService userService) {
     this.userService = userService;
   }
 
@@ -42,11 +38,11 @@ public class userController {
       @ApiResponse(code = 203, message = "조회 결과 없음"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @GetMapping
-  public ResponseEntity<userDto> getMember(String userId) {
+  public ResponseEntity<UserDto> getMember(String userId) {
     log.debug("getMember call");
 
     try {
-      userDto result = userService.searchMemberById(userId);
+      UserDto result = userService.searchUserById(userId);
       if (result != null) {
         return ResponseEntity.ok()
             .body(result);
@@ -63,11 +59,11 @@ public class userController {
   @ApiResponses({@ApiResponse(code = 200, message = "회원 등록 시도 성공"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @PostMapping
-  public ResponseEntity<Boolean> registMember(@RequestBody userDto userDto) {
+  public ResponseEntity<Boolean> registMember(@RequestBody UserDto userDto) {
     log.debug("registMember call");
 
     try {
-      int result = userService.registMember(userDto);
+      int result = userService.registUser(userDto);
       if (result > 0) {
         return ResponseEntity.ok().body(true);
       } else {
@@ -88,12 +84,12 @@ public class userController {
   public ResponseEntity<Boolean> deleteMember(@ApiIgnore HttpSession session) {
     log.debug("deleteMember call");
 
-    userDto loginUser = (userDto) session.getAttribute("loginMember");
-    if (loginUser == null) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    } else {
+    UserDto loginUser = (UserDto) session.getAttribute("loginMember");
+    //if (loginUser == null) {
+      //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    /*} else*/ {
       try {
-        int result = userService.deleteMember(loginUser.getUid());
+        int result = userService.deleteUser(loginUser.getUuid());
         if (result > 0) {
           session.invalidate();
           return ResponseEntity.ok().body(true);
@@ -112,18 +108,19 @@ public class userController {
       @ApiResponse(code = 401, message = "권한 없음"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @PutMapping
-  public ResponseEntity<Boolean> updateMember(@RequestBody userDto userDto,
+  public ResponseEntity<Boolean> updateMember(@RequestParam String password,
+        @RequestParam String Nickname,
       @ApiIgnore HttpSession session) {
     log.debug("updateMember call");
 
-    userDto loginMember = (userDto) session.getAttribute("loginMember");
+    /*UserDto loginMember = (UserDto) session.getAttribute("loginMember");
 
     if (loginMember == null) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+    }*/
 
     try {
-      int result = userService.modifyMember(userDto, loginMember);
+      int result = userService.modifyUser(password,Nickname);
       if (result > 0) {
         return ResponseEntity.ok().body(true);
       } else {
@@ -144,7 +141,7 @@ public class userController {
     log.debug("login call");
 
     try {
-      userDto loginMember = userService.login(userId, userPass);
+      UserDto loginMember = userService.login(userId, userPass);
       if (loginMember != null) {
         session.setAttribute("loginMember", loginMember);
         return ResponseEntity.ok().body(true);
@@ -170,7 +167,7 @@ public class userController {
   @ApiResponses({@ApiResponse(code = 200, message = "변경 시도 성공"),
       @ApiResponse(code = 500, message = "서버에러")})
   @PatchMapping("/password")
-  public ResponseEntity<Boolean> modifyPassword(@RequestBody userDto userDto) {
+  public ResponseEntity<Boolean> modifyPassword(@RequestBody UserDto userDto) {
     log.debug("modifyPassword call");
 
     try {
