@@ -1,7 +1,7 @@
-package com.ssafy.PathPartner.attraction.controller;
+package com.ssafy.pathpartner.attraction.controller;
 
-import com.ssafy.PathPartner.attraction.dto.AttractionInfoDto;
-import com.ssafy.PathPartner.attraction.service.AttractionService;
+import com.ssafy.pathpartner.attraction.dto.AttractionInfoDto;
+import com.ssafy.pathpartner.attraction.service.AttractionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

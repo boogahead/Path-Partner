@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.board.controller;
+package com.ssafy.pathpartner.board.controller;
 
 
 import java.nio.charset.Charset;
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.PathPartner.board.dto.BoardDto;
-import com.ssafy.PathPartner.board.dto.BoardListDto;
-import com.ssafy.PathPartner.board.service.BoardService;
+import com.ssafy.pathpartner.board.dto.BoardDto;
+import com.ssafy.pathpartner.board.dto.BoardListDto;
+import com.ssafy.pathpartner.board.service.BoardService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

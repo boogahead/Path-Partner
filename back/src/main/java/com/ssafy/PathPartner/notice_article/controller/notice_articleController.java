@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.notice_article.controller;
+package com.ssafy.pathpartner.notice_article.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +26,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import com.ssafy.PathPartner.notice_article.dto.notice_articleDto;
-import com.ssafy.PathPartner.notice_article.service.notice_articleService;
+import com.ssafy.pathpartner.notice_article.dto.notice_articleDto;
+import com.ssafy.pathpartner.notice_article.service.notice_articleService;
 //http://localhost/vue/swagger-ui.html
 @CrossOrigin(origins = { "*" }, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.POST} , maxAge = 6000)
 @RestController

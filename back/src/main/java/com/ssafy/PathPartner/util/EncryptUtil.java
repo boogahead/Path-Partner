@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.util;
+package com.ssafy.pathpartner.util;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;

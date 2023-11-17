@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.config;
+package com.ssafy.pathpartner.config;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableAspectJAutoProxy
-@MapperScan(basePackages = {"com.ssafy.PathPartner.**.repository"})
+@MapperScan(basePackages = {"com.ssafy.pathpartner.**.repository"})
 public class WebMvcConfiguration implements WebMvcConfigurer {
 	
 	private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);

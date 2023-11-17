@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.area.dto;
+package com.ssafy.pathpartner.area.dto;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;

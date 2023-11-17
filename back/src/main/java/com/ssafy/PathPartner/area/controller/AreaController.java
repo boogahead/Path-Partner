@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.area.controller;
+package com.ssafy.pathpartner.area.controller;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.PathPartner.area.dto.GugunDto;
-import com.ssafy.PathPartner.area.dto.SidoDto;
-import com.ssafy.PathPartner.area.service.AreaService;
+import com.ssafy.pathpartner.area.dto.GugunDto;
+import com.ssafy.pathpartner.area.dto.SidoDto;
+import com.ssafy.pathpartner.area.service.AreaService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

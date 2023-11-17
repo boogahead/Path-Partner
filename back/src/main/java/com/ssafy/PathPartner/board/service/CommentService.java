@@ -1,7 +1,7 @@
-package com.ssafy.PathPartner.board.service;
+package com.ssafy.pathpartner.board.service;
 import java.util.List;
 import java.util.Map;
-import com.ssafy.PathPartner.board.dto.CommentDto;
+import com.ssafy.pathpartner.board.dto.CommentDto;
 
 public interface CommentService {
     void writeComment(CommentDto commentDto) throws Exception;

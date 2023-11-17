@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.board.dto;
+package com.ssafy.pathpartner.board.dto;
 
 import java.util.List;
 

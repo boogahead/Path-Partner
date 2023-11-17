@@ -1,9 +1,9 @@
-package com.ssafy.PathPartner.board.service;
+package com.ssafy.pathpartner.board.service;
 
 import java.util.Map;
 
-import com.ssafy.PathPartner.board.dto.BoardDto;
-import com.ssafy.PathPartner.board.dto.BoardListDto;
+import com.ssafy.pathpartner.board.dto.BoardDto;
+import com.ssafy.pathpartner.board.dto.BoardListDto;
 
 public interface BoardService {
 

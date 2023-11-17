@@ -1,6 +1,6 @@
-package com.ssafy.PathPartner.attraction.repository;
+package com.ssafy.pathpartner.attraction.repository;
 
-import com.ssafy.PathPartner.attraction.dto.AttractionInfoDto;
+import com.ssafy.pathpartner.attraction.dto.AttractionInfoDto;
 import java.sql.SQLException;
 import java.util.List;
 

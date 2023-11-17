@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.board.service;
+package com.ssafy.pathpartner.board.service;
 
 
 import java.util.HashMap;
@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.PathPartner.board.dto.BoardDto;
-import com.ssafy.PathPartner.board.dto.BoardListDto;
-import com.ssafy.PathPartner.board.dto.FileInfoDto;
-import com.ssafy.PathPartner.board.repository.BoardDao;
+import com.ssafy.pathpartner.board.dto.BoardDto;
+import com.ssafy.pathpartner.board.dto.BoardListDto;
+import com.ssafy.pathpartner.board.dto.FileInfoDto;
+import com.ssafy.pathpartner.board.repository.BoardDao;
 
 @Service
 public class BoardServiceImpl implements BoardService {

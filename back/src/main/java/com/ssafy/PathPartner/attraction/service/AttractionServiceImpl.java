@@ -1,7 +1,7 @@
-package com.ssafy.PathPartner.attraction.service;
+package com.ssafy.pathpartner.attraction.service;
 
-import com.ssafy.PathPartner.attraction.dto.AttractionInfoDto;
-import com.ssafy.PathPartner.attraction.repository.AttractionDao;
+import com.ssafy.pathpartner.attraction.dto.AttractionInfoDto;
+import com.ssafy.pathpartner.attraction.repository.AttractionDao;
 import java.sql.SQLException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

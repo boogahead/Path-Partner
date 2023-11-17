@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.notice_article.dto;
+package com.ssafy.pathpartner.notice_article.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 

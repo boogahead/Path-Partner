@@ -1,6 +1,6 @@
-package com.ssafy.PathPartner.notice_article.service;
+package com.ssafy.pathpartner.notice_article.service;
 import java.util.Map;
-import com.ssafy.PathPartner.notice_article.dto.notice_articleDto;
+import com.ssafy.pathpartner.notice_article.dto.notice_articleDto;
 
 
 public interface notice_articleService {

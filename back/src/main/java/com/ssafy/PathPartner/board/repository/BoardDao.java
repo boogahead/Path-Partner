@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.board.repository;
+package com.ssafy.pathpartner.board.repository;
 
 
 import java.sql.SQLException;
@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.ssafy.PathPartner.board.dto.BoardDto;
-import com.ssafy.PathPartner.board.dto.FileInfoDto;
+import com.ssafy.pathpartner.board.dto.BoardDto;
+import com.ssafy.pathpartner.board.dto.FileInfoDto;
 
 @Mapper
 public interface BoardDao {

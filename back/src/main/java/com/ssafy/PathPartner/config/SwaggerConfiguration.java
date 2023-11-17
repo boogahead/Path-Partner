@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.config;
+package com.ssafy.pathpartner.config;
 
 import java.util.HashSet;
 import java.util.Set;

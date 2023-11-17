@@ -1,13 +1,13 @@
-package com.ssafy.PathPartner.area.service;
+package com.ssafy.pathpartner.area.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.PathPartner.area.dto.GugunDto;
-import com.ssafy.PathPartner.area.dto.SidoDto;
-import com.ssafy.PathPartner.area.repository.AreaDao;
+import com.ssafy.pathpartner.area.dto.GugunDto;
+import com.ssafy.pathpartner.area.dto.SidoDto;
+import com.ssafy.pathpartner.area.repository.AreaDao;
 
 @Service
 public class AreaServiceImpl implements AreaService {

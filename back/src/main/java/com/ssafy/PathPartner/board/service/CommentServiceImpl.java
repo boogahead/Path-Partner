@@ -1,12 +1,12 @@
-package com.ssafy.PathPartner.board.service;
+package com.ssafy.pathpartner.board.service;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.PathPartner.board.dto.CommentDto;
-import com.ssafy.PathPartner.board.repository.CommentDao;
+import com.ssafy.pathpartner.board.dto.CommentDto;
+import com.ssafy.pathpartner.board.repository.CommentDao;
 
 @Service
 public class CommentServiceImpl implements CommentService {

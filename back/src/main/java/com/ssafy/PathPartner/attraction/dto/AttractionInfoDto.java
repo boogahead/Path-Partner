@@ -1,4 +1,4 @@
-package com.ssafy.PathPartner.attraction.dto;
+package com.ssafy.pathpartner.attraction.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

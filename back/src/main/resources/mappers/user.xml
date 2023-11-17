@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?> <!-- 관통용  -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.PathPartner.user.repository.userDao">
-  <resultMap type="userDto" id="user">
+<mapper namespace="com.ssafy.pathpartner.user.repository.userDao">
+
+  <!--resultMap type="userDto" id="user">
     <result column="uuid" property="uid"/>
     <result column="id" property="userId"/>
     <result column="nickname" property="userName"/>
@@ -11,43 +12,42 @@
     <result column="user_type" property="userType"/>
     <result column="profile_img" property="profileImg"/>
     <result column="email" property="email"/>
-  </resultMap>
+  </resultMap-->
 
   <insert id="createUser" parameterType="userDto">
     insert into user (uuid,id, nickname, password, user_type,join_date,email)
-    values (UUID(),#{userId}, #{userName}, #{userPass}, #{userType},now(),#{email})
+    values (UUID(),#{id}, #{nickname}, #{password}, #{userType},now(),#{email})
   </insert>
 
-  <select id="selectMemberById" parameterType="String" resultMap="user">
+  <select id="selectUserById" parameterType="String" resultType="userDto">
     select uuid, id, nickname, password, join_date, user_type,email
     from user
-    where id = #{userId}
+    where id = #{id}
   </select>
 
-  <update id="updateMember" parameterType="userDto">
+  <update id="updateUser" parameterType="userDto">
     update user
-    set password=#{userPass},
-        nickname=#{userName},
-        user_roles=#{userType}
-    where uuid = #{uid}
+    set password=#{password},
+        nickname=#{nickname}
+    where uuid = #{uuid}
   </update>
 
-  <delete id="deleteMember" parameterType="int">
+  <delete id="deleteUser" parameterType="int">
     delete
     from user
-    where uuid = #{uid}
+    where uuid = #{uuid}
   </delete>
 
-  <select id="selectMemberByIdAndName" parameterType="userDto" resultMap="user">
+  <select id="selectUserByIdAndName" parameterType="userDto" resultType="userDto">
     select uuid, id, nickname, password, join_date, user_type,email
     from user
-    where id = #{userId}
-      and nickname = #{userName}
+    where id = #{id}
+      and nickname = #{nickname}
   </select>
 
-  <update id="updateMemberPassword" parameterType="userDto">
+  <update id="updateUserPassword" parameterType="userDto">
     update user
-    set password = #{userPass}
-    where uuid = #{uid}
+    set password = #{password}
+    where uuid = #{uuid}
   </update>
 </mapper>

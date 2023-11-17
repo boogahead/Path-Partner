@@ -1,11 +1,11 @@
-package com.ssafy.PathPartner.board.repository;
+package com.ssafy.pathpartner.board.repository;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.ssafy.PathPartner.board.dto.CommentDto;
+import com.ssafy.pathpartner.board.dto.CommentDto;
 @Mapper
 public interface CommentDao {
     void writeComment(CommentDto commentDto) throws SQLException;
