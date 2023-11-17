@@ -1,21 +1,24 @@
 package com.ssafy.pathpartner.user.controller;
 
-<<<<<<< HEAD:back/src/main/java/com/ssafy/pathpartner/user/controller/userController.java
-import com.ssafy.pathpartner.user.dto.userDto;
-=======
+import com.ssafy.pathpartner.user.dto.SignUpDto;
+import com.ssafy.pathpartner.user.dto.UpdateUserDto;
 import com.ssafy.pathpartner.user.dto.UserDto;
->>>>>>> bbc6bd2b08c1c68c1c97f5c25ad2cf6d819ac5a5:back/src/main/java/com/ssafy/PathPartner/user/controller/userController.java
-import com.ssafy.pathpartner.user.service.userService;
+import com.ssafy.pathpartner.user.dto.UserInfoDto;
+import com.ssafy.pathpartner.user.exception.AlreadyExistsUserException;
+import com.ssafy.pathpartner.user.exception.UserNotFoundException;
+import com.ssafy.pathpartner.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.net.URI;
 import java.sql.SQLException;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -26,106 +29,109 @@ import springfox.documentation.annotations.ApiIgnore;
 @Api(tags = {"사용자 컨트롤러 API"})
 public class UserController {
 
-  private userService userService;
+  private UserService userService;
 
   @Autowired
-  public UserController(userService userService) {
+  public UserController(UserService userService) {
     this.userService = userService;
   }
 
-  @ApiOperation(value = "회원조회", notes = "회원을 조회합니다.")
+  @ApiOperation(value = "회원 정보 가져오기", notes = "uuid를 통해 회원 정보를 가져옵니다.")
   @ApiResponses({@ApiResponse(code = 200, message = "회원 조회 완료"),
       @ApiResponse(code = 203, message = "조회 결과 없음"),
       @ApiResponse(code = 500, message = "서버 에러")})
-  @GetMapping
-  public ResponseEntity<UserDto> getMember(String userId) {
-    log.debug("getMember call");
+  @GetMapping("/{uuid}")
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<UserInfoDto> getUserInfo(@PathVariable String uuid) {
+    log.debug("getUserInfo call");
+
+    // 400 잘못된 요청
+    if (uuid == null || uuid.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
 
     try {
-      UserDto result = userService.searchUserById(userId);
-      if (result != null) {
-        return ResponseEntity.ok()
-            .body(result);
-      } else {
-        return ResponseEntity.noContent().build();
-      }
+      return ResponseEntity.ok().body(userService.searchUserByUuid(uuid));
+    } catch (UserNotFoundException e) {
+      log.debug(e.toString());
+      return ResponseEntity.notFound().build();
     } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
     }
   }
 
-  @ApiOperation(value = "회원 등록", notes = "회원을 등록합니다.")
-  @ApiResponses({@ApiResponse(code = 200, message = "회원 등록 시도 성공"),
+  @ApiOperation(value = "회원가입", notes = "id, email, password, nickname으로 회원가입합니다.")
+  @ApiResponses({@ApiResponse(code = 201, message = "회원 가입 성공"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @PostMapping
-  public ResponseEntity<Boolean> registMember(@RequestBody UserDto userDto) {
-    log.debug("registMember call");
+  public ResponseEntity<Boolean> registerUser(@RequestBody SignUpDto signUpDto) {
+    log.debug("registerUser call");
 
     try {
-      int result = userService.registUser(userDto);
-      if (result > 0) {
-        return ResponseEntity.ok().body(true);
+      boolean result = userService.createUser(signUpDto);
+      if (result) {
+        return ResponseEntity.created(URI.create("/")).build();
       } else {
-        return ResponseEntity.ok().body(false);
+        return ResponseEntity.ok().build();
       }
-    } catch (SQLException e) {
+    } catch (Exception e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
     }
-
   }
 
   @ApiOperation(value = "회원 삭제", notes = "회원을 삭제합니다")
   @ApiResponses({@ApiResponse(code = 200, message = "회원 삭제 시도 성공"),
       @ApiResponse(code = 401, message = "권한 없음"),
       @ApiResponse(code = 500, message = "서버 에러")})
-  @DeleteMapping
-  public ResponseEntity<Boolean> deleteMember(@ApiIgnore HttpSession session) {
-    log.debug("deleteMember call");
+  @DeleteMapping("/{uuid}")
+  @PreAuthorize("hasRole('ADMIM') || #userDto.uuid == #uuid")
+  public ResponseEntity<Boolean> deleteUser(@AuthenticationPrincipal UserDto userDto,
+      @PathVariable("uuid") String uuid) {
+    log.debug("deleteUser call");
 
-    UserDto loginUser = (UserDto) session.getAttribute("loginMember");
-    //if (loginUser == null) {
-      //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    /*} else*/ {
-      try {
-        int result = userService.deleteUser(loginUser.getUuid());
-        if (result > 0) {
-          session.invalidate();
-          return ResponseEntity.ok().body(true);
-        } else {
-          return ResponseEntity.ok().body(false);
-        }
-      } catch (SQLException e) {
-        log.debug(e.toString());
-        return ResponseEntity.internalServerError().build();
-      }
+    try {
+      boolean result = userService.deleteUser(uuid);
+      return ResponseEntity.ok().body(result);
+    } catch (Exception e) {
+      log.debug(e.toString());
+      return ResponseEntity.internalServerError().build();
     }
   }
 
-  @ApiOperation(value = "회원정보수정", notes = "회원정보를 수정합니다.")
+  @ApiOperation(value = "회원 탈퇴", notes = "서비스에서 탈퇴합니다")
+  @ApiResponses({@ApiResponse(code = 200, message = "회원 삭제 시도 성공"),
+      @ApiResponse(code = 401, message = "권한 없음"),
+      @ApiResponse(code = 500, message = "서버 에러")})
+  @DeleteMapping
+  @PreAuthorize("hasAnyRole('ADMIM','USER')")
+  public ResponseEntity<Boolean> withdrawal(@AuthenticationPrincipal UserDto userDto) {
+    log.debug("withdrawal call");
+
+    try {
+      boolean result = userService.deleteUser(userDto.getUuid());
+      return ResponseEntity.ok().body(result);
+    } catch (Exception e) {
+      log.debug(e.toString());
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  @ApiOperation(value = "개인정보수정", notes = "회원정보를 수정합니다.")
   @ApiResponses({@ApiResponse(code = 200, message = "수정 시도 성공"),
       @ApiResponse(code = 401, message = "권한 없음"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @PutMapping
-  public ResponseEntity<Boolean> updateMember(@RequestParam String password,
-        @RequestParam String Nickname,
-      @ApiIgnore HttpSession session) {
-    log.debug("updateMember call");
+  @PreAuthorize("hasAnyRole('ADMIN','USER')")
+  public ResponseEntity<Boolean> modifyUser(@AuthenticationPrincipal UserDto userDto,
+      @RequestBody UpdateUserDto updateUserDto) {
+    log.debug("modifyUser call");
 
-    /*UserDto loginMember = (UserDto) session.getAttribute("loginMember");
-
-    if (loginMember == null) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }*/
-
+    updateUserDto.setUuid(userDto.getUuid());
     try {
-      int result = userService.modifyUser(password,Nickname);
-      if (result > 0) {
-        return ResponseEntity.ok().body(true);
-      } else {
-        return ResponseEntity.ok().body(false);
-      }
+      boolean result = userService.updateUser(updateUserDto);
+      return ResponseEntity.ok().body(result);
     } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
@@ -136,7 +142,7 @@ public class UserController {
   @ApiResponses({@ApiResponse(code = 200, message = "로그인 시도 성공"),
       @ApiResponse(code = 500, message = "서버에러")})
   @PostMapping("/login")
-  public ResponseEntity<Boolean> login(String userId,String userPass,
+  public ResponseEntity<Boolean> login(String userId, String userPass,
       @ApiIgnore HttpSession session) {
     log.debug("login call");
 

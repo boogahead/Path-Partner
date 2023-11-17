@@ -10,7 +10,7 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.ssafy</groupId>
-  <artifactId>EnjoyTrip_Spring</artifactId>
+  <artifactId>PathPartner_back</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>EnjoyTrip_Spring</name>
   <description>EnjoyTrip_Spring</description>

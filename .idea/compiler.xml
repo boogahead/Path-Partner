@@ -7,7 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="EnjoyTrip_Spring" />
+        <module name="PathPartner_back" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -18,7 +18,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="EnjoyTrip" options="-parameters" />
-      <module name="EnjoyTrip_Spring" options="-parameters" />
+      <module name="PathPartner_back" options="-parameters" />
       <module name="enjoytrip" options="-parameters" />
     </option>
   </component>

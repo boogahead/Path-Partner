@@ -6,6 +6,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.ssafy.pathpartner.auth.JwtToUserConverter;
+import com.ssafy.pathpartner.auth.KeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,20 +33,26 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SpringSecurityConfiguration {
+
+  private final JwtToUserConverter jwtToUserConverter;
+  private final KeyUtils keyUtils;
+  private final PasswordEncoder passwordEncoder;
+  private final UserDetailsManager userDetailsManager;
+
   @Autowired
-  JwtToUserConverter jwtToUserConverter;
-  @Autowired
-  KeyUtils keyUtils;
-  @Autowired
-  PasswordEncoder passwordEncoder;
-  @Autowired
-  UserDetailsManager userDetailsManager;
+  public SpringSecurityConfiguration(JwtToUserConverter jwtToUserConverter, KeyUtils keyUtils,
+      PasswordEncoder passwordEncoder, UserDetailsManager userDetailsManager) {
+    this.jwtToUserConverter = jwtToUserConverter;
+    this.keyUtils = keyUtils;
+    this.passwordEncoder = passwordEncoder;
+    this.userDetailsManager = userDetailsManager;
+  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests((authorize) -> authorize
-            .antMatchers("/api/auth/*").permitAll()
+            .antMatchers("/auth/*").permitAll()
             .anyRequest().authenticated()
         )
         .csrf().disable()
@@ -53,7 +61,8 @@ public class SpringSecurityConfiguration {
         .oauth2ResourceServer((oauth2) ->
             oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter))
         )
-        .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .sessionManagement(
+            (session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling((exceptions) -> exceptions
             .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
             .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
