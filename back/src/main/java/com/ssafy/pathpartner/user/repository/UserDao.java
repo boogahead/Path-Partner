@@ -1,9 +1,12 @@
 package com.ssafy.pathpartner.user.repository;
 
 
+import com.ssafy.pathpartner.user.dto.ResetPasswordDto;
 import com.ssafy.pathpartner.user.dto.UpdateUserDto;
 import com.ssafy.pathpartner.user.dto.UserDto;
+import com.ssafy.pathpartner.user.dto.UserInfoDto;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -19,5 +22,11 @@ public interface UserDao {
   Optional<UserDto> selectUserById(String id) throws SQLException;
 
   Optional<UserDto> selectUserByUuid(String uuid) throws SQLException;
+
+  Optional<UserDto> selectUserByEmail(String email) throws SQLException;
+
+  List<UserInfoDto> selectAllUserByNickname(String nickname) throws SQLException;
+
+  Optional<UserDto> selectUserByIdAndEmail(ResetPasswordDto resetPasswordDto) throws SQLException;
 
 }

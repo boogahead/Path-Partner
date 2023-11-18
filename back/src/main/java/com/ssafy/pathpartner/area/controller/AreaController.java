@@ -2,8 +2,7 @@ package com.ssafy.pathpartner.area.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,9 +22,9 @@ import io.swagger.annotations.ApiResponses;
 @RestController()
 @CrossOrigin("*")
 @RequestMapping("/area")
+@Slf4j
 @Api(tags = { "지역 컨트롤러 API" })
 public class AreaController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AreaController.class);
 	private AreaService areaService;
 
 	@Autowired
@@ -38,7 +37,7 @@ public class AreaController {
 			@ApiResponse(code = 500, message = "서버 에러") })
 	@GetMapping("/sido")
 	public ResponseEntity<List<SidoDto>> getSidoCode() {
-		LOGGER.debug("getSidoCode called");
+		log.debug("getSidoCode called");
 		List<SidoDto> list = areaService.getSidoCode();
 		if (list != null) {
 			return ResponseEntity.ok().body(list);
@@ -52,7 +51,7 @@ public class AreaController {
 			@ApiResponse(code = 500, message = "서버 에러") })
 	@GetMapping("/gungu")
 	public ResponseEntity<List<GugunDto>> getGunguCode() {
-		LOGGER.debug("getSidoCode called");
+		log.debug("getSidoCode called");
 		List<GugunDto> list = areaService.getGunguCode();
 		if (list != null) {
 			return ResponseEntity.ok().body(list);

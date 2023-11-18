@@ -1,14 +1,12 @@
-package com.ssafy.pathpartner.review_article.service;
-import java.util.HashMap;
+package com.ssafy.pathpartner.review.article.service;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.pathpartner.review_article.dto.ReviewArticleDto;
-import com.ssafy.pathpartner.review_article.repository.ReviewArticleDao;
+import com.ssafy.pathpartner.review.article.dto.ReviewArticleDto;
+import com.ssafy.pathpartner.review.article.repository.ReviewArticleDao;
 
 @Service
 public class ReviewArticleServiceImpl implements ReviewArticleService {

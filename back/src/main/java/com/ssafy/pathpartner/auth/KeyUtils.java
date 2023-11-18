@@ -67,8 +67,6 @@ public class KeyUtils {
 
         File publicKeyFile = new File(publicKeyPath);
         File privateKeyFile = new File(privateKeyPath);
-        log.debug(publicKeyFile.toString());
-        log.debug(privateKeyFile.toString());
 
         if (publicKeyFile.exists() && privateKeyFile.exists()) {
             log.info("loading keys from file: {}, {}", publicKeyPath, privateKeyPath);
@@ -106,13 +104,11 @@ public class KeyUtils {
             try (FileOutputStream fos = new FileOutputStream(publicKeyPath)) {
                 X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyPair.getPublic().getEncoded());
                 fos.write(keySpec.getEncoded());
-                log.debug("키생성 완료");
             }
 
             try (FileOutputStream fos = new FileOutputStream(privateKeyPath)) {
                 PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyPair.getPrivate().getEncoded());
                 fos.write(keySpec.getEncoded());
-                log.debug("키생성 완료");
             }
         } catch (NoSuchAlgorithmException | IOException e) {
             throw new RuntimeException(e);

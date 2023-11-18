@@ -33,11 +33,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SpringSecurityConfiguration {
-
-  private final JwtToUserConverter jwtToUserConverter;
-  private final KeyUtils keyUtils;
-  private final PasswordEncoder passwordEncoder;
-  private final UserDetailsService userDetailsService;
+  JwtToUserConverter jwtToUserConverter;
+  KeyUtils keyUtils;
+  PasswordEncoder passwordEncoder;
+  UserDetailsService userDetailsService;
 
   @Autowired
   public SpringSecurityConfiguration(JwtToUserConverter jwtToUserConverter, KeyUtils keyUtils,
@@ -52,7 +51,8 @@ public class SpringSecurityConfiguration {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests((authorize) -> authorize
-            .antMatchers("/auth/*").permitAll()
+            .antMatchers("/auth/**").permitAll()
+            .antMatchers("/v2/**","/swagger-ui/**", "/swagger-resources/**").permitAll()
             .anyRequest().authenticated()
         )
         .csrf().disable()

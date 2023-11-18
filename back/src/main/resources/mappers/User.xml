@@ -27,15 +27,33 @@
     where uuid = #{uuid}
   </delete>
 
-  <select id="selectUserById" parameterType="String" resultType="userDto">
+  <select id="selectUserById" parameterType="String" resultType="UserDto">
     select uuid, id, nickname, password, join_date, user_type, email
     from user
     where id = #{id}
   </select>
 
-  <select id="selectUserByUuid" parameterType="String" resultType="userDto">
+  <select id="selectUserByUuid" parameterType="String" resultType="UserDto">
     select uuid, id, nickname, password, join_date, user_type, email
     from user
     where uuid = #{uuid}
+  </select>
+
+  <select id="selectUserByIdAndEmail" parameterType="ResetPasswordDto" resultType="UserDto">
+    select uuid, id, nickname, password, join_date, user_type, email
+    from user
+    where id = #{id} and email = #{email}
+  </select>
+
+  <select id="selectUserByEmail" parameterType="String" resultType="UserDto">
+    select uuid, id, nickname, password, join_date, user_type, email
+    from user
+    where email = #{email}
+  </select>
+
+  <select id="selectAllUserByNickname" parameterType="String" resultType="UserInfoDto">
+    select uuid, id, nickname, join_date, user_type, email
+    from user
+    where nickname like '%${nickname}%'
   </select>
 </mapper>

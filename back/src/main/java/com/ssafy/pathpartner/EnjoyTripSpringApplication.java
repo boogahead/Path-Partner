@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
-@SpringBootApplication(scanBasePackages = "com.ssafy.pathpartner")
+@SpringBootApplication
 public class EnjoyTripSpringApplication {
 
   public static void main(String[] args) {

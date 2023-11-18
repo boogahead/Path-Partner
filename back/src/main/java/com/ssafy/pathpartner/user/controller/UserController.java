@@ -1,5 +1,6 @@
 package com.ssafy.pathpartner.user.controller;
 
+import com.ssafy.pathpartner.user.dto.ResetPasswordDto;
 import com.ssafy.pathpartner.user.dto.SignUpDto;
 import com.ssafy.pathpartner.user.dto.UpdateUserDto;
 import com.ssafy.pathpartner.user.dto.UserDto;
@@ -13,12 +14,17 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Slf4j
 @RestController()
@@ -65,7 +71,7 @@ public class UserController {
       @ApiResponse(code = 500, message = "서버 에러")})
   @DeleteMapping("/{uuid}")
   @PreAuthorize("hasRole('ADMIM') || #userDto.uuid == #uuid")
-  public ResponseEntity<Boolean> deleteUser(@AuthenticationPrincipal UserDto userDto,
+  public ResponseEntity<Boolean> deleteUser(@ApiIgnore @AuthenticationPrincipal UserDto userDto,
       @PathVariable("uuid") String uuid) {
     log.debug("deleteUser call");
 
@@ -84,8 +90,9 @@ public class UserController {
       @ApiResponse(code = 500, message = "서버 에러")})
   @DeleteMapping
   @PreAuthorize("hasAnyRole('ADMIM','USER')")
-  public ResponseEntity<Boolean> withdrawal(@AuthenticationPrincipal UserDto userDto) {
+  public ResponseEntity<Boolean> withdrawal(@ApiIgnore @AuthenticationPrincipal UserDto userDto) {
     log.debug("withdrawal call");
+    log.debug(userDto.toString());
 
     try {
       boolean result = userService.deleteUser(userDto.getUuid());
@@ -102,20 +109,44 @@ public class UserController {
       @ApiResponse(code = 500, message = "서버 에러")})
   @PutMapping
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
-  public ResponseEntity<Boolean> modifyUser(@AuthenticationPrincipal UserDto userDto,
+  public ResponseEntity<Boolean> modifyUser(@ApiIgnore @AuthenticationPrincipal UserDto userDto,
       @RequestBody UpdateUserDto updateUserDto) {
     log.debug("modifyUser call");
 
     updateUserDto.setUuid(userDto.getUuid());
     try {
+
       boolean result = userService.updateUser(updateUserDto);
       return ResponseEntity.ok().body(result);
     } catch (InvalidInputException e) {
       log.debug(e.toString());
       return ResponseEntity.badRequest().build();
-    }catch (SQLException e) {
+    } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
     }
   }
+
+  @ApiOperation(value = "사용자 검색", notes = "닉네임으로 사용자들을 검색합니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "검색 성공"),
+      @ApiResponse(code = 204, message = "검색 결과 없음"),
+      @ApiResponse(code = 401, message = "권한 없음"),
+      @ApiResponse(code = 500, message = "서버 에러")})
+  @GetMapping("/find/{nickName}")
+  @PreAuthorize("hasAnyRole('ADMIN','USER')")
+  public ResponseEntity<List<UserInfoDto>> findAllUserByNickname(@PathVariable String nickName) {
+    log.debug("findAllUserByNickname call");
+
+    try {
+      List<UserInfoDto> result = userService.searchAllUserByNickname(nickName);
+      return ResponseEntity.ok().body(result);
+    } catch (InvalidInputException e) {
+      log.debug(e.toString());
+      return ResponseEntity.badRequest().build();
+    } catch (SQLException e) {
+      log.debug(e.toString());
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
 }

@@ -1,9 +1,7 @@
-package com.ssafy.pathpartner.review_article.service;
+package com.ssafy.pathpartner.review.article.service;
 
-import com.ssafy.pathpartner.review_article.dto.ReviewArticleDto;
-import java.sql.SQLException;
+import com.ssafy.pathpartner.review.article.dto.ReviewArticleDto;
 import java.util.List;
-import java.util.Map;
 
 public interface ReviewArticleService {
     void writeArticle(ReviewArticleDto reviewarticledto) throws Exception;

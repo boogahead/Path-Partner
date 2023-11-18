@@ -40,7 +40,7 @@ public class UserDto implements UserDetails {
   private String joinDate;
 
   @ApiModelProperty(value = "역할")
-  private int userType = 1;
+  private Integer userType;
 
   @ApiModelProperty(value = "이메일")
   private String email;
@@ -52,6 +52,7 @@ public class UserDto implements UserDetails {
         .nickname(signUpDto.getNickname())
         .password(signUpDto.getPassword())
         .email(signUpDto.getEmail())
+        .userType(1)
         .build();
   }
 
