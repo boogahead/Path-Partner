@@ -25,5 +25,6 @@
 	<select id="getGunguCode" resultMap="GugunResultMap">
 		SELECT gugun_code, gugun_name, sido_code 
 		FROM gugun
+		WHERE sido_code = #{sidoCode}
 	</select>
 </mapper>

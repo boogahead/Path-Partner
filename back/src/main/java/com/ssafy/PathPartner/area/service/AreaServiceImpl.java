@@ -25,7 +25,7 @@ public class AreaServiceImpl implements AreaService {
 	}
 
 	@Override
-	public List<GugunDto> getGunguCode() {
+	public List<GugunDto> getGunguCode(int sidoCode) {
 		List<GugunDto> list = areaDao.getGunguCode();
 		return list;
 	}

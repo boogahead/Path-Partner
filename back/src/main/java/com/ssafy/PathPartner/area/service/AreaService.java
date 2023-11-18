@@ -7,5 +7,5 @@ import java.util.List;
 public interface AreaService {
   List<SidoDto> getSidoCode();
 
-  List<GugunDto> getGunguCode();
+  List<GugunDto> getGunguCode(int sidoCode);
 }
