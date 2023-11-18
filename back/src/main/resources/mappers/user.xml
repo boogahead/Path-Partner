@@ -50,4 +50,6 @@
     set password = #{password}
     where uuid = #{uuid}
   </update>
+
+
 </mapper>

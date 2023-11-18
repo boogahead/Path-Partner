@@ -1,7 +1,6 @@
 package com.ssafy.pathpartner.board.repository;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,6 +10,6 @@ public interface CommentDao {
     void writeComment(CommentDto commentDto) throws SQLException;
     void deleteComment(int commentNo) throws SQLException;
     List<CommentDto> listComment(int boardNo) throws SQLException;
-    int getTotalCommentCount(Map<String, Object> param) throws SQLException;
+    int getTotalCommentCount(String param) throws SQLException;
 
 }

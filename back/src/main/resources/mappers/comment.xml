@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.pathpartner.board.repository.CommentDao">
-
-    <resultMap type="commentDto" id="comment">
-        <result column="comment_id" property="commentNo"/>
-        <result column="article_no" property="articleNo"/>
-        <result column="user_id" property="userId"/>
-        <result column="user_name" property="userName"/>
-        <result column="content" property="content"/>
-        <result column="register_time" property="registerTime"/>
-    </resultMap>
-
-    <insert id="writeComment" parameterType="commentDto">
-        insert into comment (article_no, user_id, user_name, content, register_time)
-        values (#{articleNo}, #{userId}, #{userName}, #{content}, now())
-        <selectKey resultType="int" keyProperty="commentNo" order="AFTER">
-            select last_insert_id()
-        </selectKey>
-    </insert>
-
-    <select id="listComment" parameterType="int" resultMap="comment">
-        select comment_id, article_no, user_id, user_name, content, register_time
-        from comment
-        where article_no = #{articleNo}
-        order by register_time desc
+<mapper namespace="com.ssafy.pathpartner.review_article.repository.CommentDao">
+    <select id="listComment" parameterType="String" resultType="">
+        select c.content, c.creation_date, u.nickname, c.uuid
+        from comment c
+        join user u where c.uuid=u.uuid
+        where c.review_article_id = #{reviewArticleId}
     </select>
 
-    <delete id="deleteComment" parameterType="int">
+    <select id="getComment" parameterType="String" resultType="commentDto">
+        select comment_id, content, creation_date, uuid, review_article_id
+        from comment
+        where comment_id = #{commentId}
+    </select>
+
+    <insert id="writeComment" parameterType="commentDto">
+        insert into comment(comment_id, content, creation_date, uuid, review_article_id)
+        values(UUID(),#{content},now(),#{uuid},#{reviewArticleId})
+    </insert>
+
+    <insert id="editComment" parameterType="commentDto">
+        update comment
+        set content = #{content}
+        where comment_id = #{commentId}
+    </insert>
+
+    <delete id="deleteComment" parameterType="String">
         delete from comment
-        where comment_id = #{commentNo}
+        where comment_id = #{commentId}
     </delete>
 
-
+    <select id="getTotalCommentCount" resultType="int">
+        select count(*) from comment
+    </select>
 </mapper>
