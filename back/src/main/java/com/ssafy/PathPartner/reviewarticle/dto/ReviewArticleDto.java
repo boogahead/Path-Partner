@@ -1,5 +1,4 @@
-package com.ssafy.pathpartner.review_article.dto;
-import java.util.List;
+package com.ssafy.pathpartner.reviewarticle.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

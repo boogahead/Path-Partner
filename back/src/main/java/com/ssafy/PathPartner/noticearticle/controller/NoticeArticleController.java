@@ -1,4 +1,4 @@
-package com.ssafy.pathpartner.notice_article.controller;
+package com.ssafy.pathpartner.noticearticle.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,24 +26,24 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import com.ssafy.pathpartner.notice_article.dto.notice_articleDto;
-import com.ssafy.pathpartner.notice_article.service.notice_articleService;
+import com.ssafy.pathpartner.noticearticle.dto.notice_articleDto;
+import com.ssafy.pathpartner.noticearticle.service.NoticeArticleService;
 //http://localhost/vue/swagger-ui.html
 @CrossOrigin(origins = { "*" }, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.POST} , maxAge = 6000)
 @RestController
 @RequestMapping("/notice")
 @Api("공지게시판 컨트롤러  API V1")
-public class notice_articleController {
+public class NoticeArticleController {
 
-    private static final Logger logger = LoggerFactory.getLogger(notice_articleController.class);
+    private static final Logger logger = LoggerFactory.getLogger(NoticeArticleController.class);
 //	private static final String SUCCESS = "success";
 //	private static final String FAIL = "fail";
 
-    private notice_articleService notice_articleService;
+    private NoticeArticleService NoticeArticleService;
 
-    public notice_articleController(notice_articleService notice_articleService) {
+    public NoticeArticleController(NoticeArticleService NoticeArticleService) {
         super();
-        this.notice_articleService = notice_articleService;
+        this.NoticeArticleService = NoticeArticleService;
     }
 
     @ApiOperation(value = "공지 게시판 글목록", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
@@ -57,7 +57,7 @@ public class notice_articleController {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            result = notice_articleService.getnotice_articleList();
+            result = NoticeArticleService.getnotice_articleList();
             result.put("status", true);
         } catch (Exception e) {
             logger.error("공지글 목록 조회 실패", e);
@@ -74,7 +74,7 @@ public class notice_articleController {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         try {
-            result.put("notice_article", notice_articleService.getnotice_article(noticearticle_id));
+            result.put("notice_article", NoticeArticleService.getnotice_article(noticearticle_id));
             result.put("status", true);
         } catch (Exception e) {
             logger.error("공지글 조회 실패", e);
@@ -93,7 +93,7 @@ public class notice_articleController {
         if (notice_articleDto.getTitle() == null || notice_articleDto.getContent() == null)
             return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
         try {
-            notice_articleService.createnotice_article(notice_articleDto);
+            NoticeArticleService.createnotice_article(notice_articleDto);
         } catch (Exception e) {
             logger.error("공지글 작성 실패", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -109,7 +109,7 @@ public class notice_articleController {
         if (notice_articleDto.getTitle() == null || notice_articleDto.getContent() == null)
             return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
         try {
-            notice_articleService.editnotice_article(notice_articleDto);
+            NoticeArticleService.editnotice_article(notice_articleDto);
         } catch (Exception e) {
             logger.error("공지글 수정 실패", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -123,7 +123,7 @@ public class notice_articleController {
             @PathVariable @ApiParam(value = "공지글 번호", required = true) String noticearticle_id) {
         logger.debug("deleteArticle - 호출");
         try {
-            notice_articleService.deletenotice_article(noticearticle_id);
+            NoticeArticleService.deletenotice_article(noticearticle_id);
         } catch (Exception e) {
             logger.error("공지글 삭제 실패", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

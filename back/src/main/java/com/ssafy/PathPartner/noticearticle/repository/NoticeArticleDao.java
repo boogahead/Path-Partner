@@ -1,11 +1,11 @@
-package com.ssafy.pathpartner.notice_article.repository;
+package com.ssafy.pathpartner.noticearticle.repository;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import com.ssafy.pathpartner.notice_article.dto.notice_articleDto;
+import com.ssafy.pathpartner.noticearticle.dto.notice_articleDto;
 @Mapper
-public interface notice_articleDao {
+public interface NoticeArticleDao {
     List<notice_articleDto> getnotice_articleList() throws SQLException;
     notice_articleDto getnotice_article(String noticearticle_id) throws SQLException;
     void createnotice_article(notice_articleDto notice_articleDto) throws SQLException;

@@ -1,15 +1,8 @@
-package com.ssafy.pathpartner.review_article.dto;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.sql.Blob;
+package com.ssafy.pathpartner.reviewarticle.dto;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.StreamUtils;
 
 @Builder
 @AllArgsConstructor

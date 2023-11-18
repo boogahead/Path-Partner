@@ -1,13 +1,13 @@
-package com.ssafy.pathpartner.review_article.service;
+package com.ssafy.pathpartner.reviewarticle.service;
 import java.util.List;
-import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ssafy.pathpartner.review_article.dto.CommentDto;
-import com.ssafy.pathpartner.review_article.repository.CommentDao;
+import com.ssafy.pathpartner.reviewarticle.dto.CommentDto;
+import com.ssafy.pathpartner.reviewarticle.repository.CommentDao;
 @Service
-public class CommentServiceImpl {
+public class CommentServiceImpl implements CommentService{
     private CommentDao commentMapper;
     @Autowired
     public CommentServiceImpl(CommentDao commentMapper) {

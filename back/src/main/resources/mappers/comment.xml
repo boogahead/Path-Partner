@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.pathpartner.review_article.repository.CommentDao">
+<mapper namespace="com.ssafy.pathpartner.reviewarticle.repository.CommentDao">
     <select id="listComment" parameterType="String" resultType="">
         select c.content, c.creation_date, u.nickname, c.uuid
         from comment c

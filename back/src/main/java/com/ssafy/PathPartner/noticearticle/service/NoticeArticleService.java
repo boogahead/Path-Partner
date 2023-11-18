@@ -1,9 +1,9 @@
-package com.ssafy.pathpartner.notice_article.service;
+package com.ssafy.pathpartner.noticearticle.service;
 import java.util.Map;
-import com.ssafy.pathpartner.notice_article.dto.notice_articleDto;
+import com.ssafy.pathpartner.noticearticle.dto.notice_articleDto;
 
 
-public interface notice_articleService {
+public interface NoticeArticleService {
     void createnotice_article(notice_articleDto notice_articleDto) throws Exception;
     void editnotice_article(notice_articleDto notice_articleDto) throws Exception;
     void deletenotice_article(String noticearticle_id) throws Exception;

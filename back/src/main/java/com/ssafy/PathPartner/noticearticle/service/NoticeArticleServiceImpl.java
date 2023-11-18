@@ -1,4 +1,4 @@
-package com.ssafy.pathpartner.notice_article.service;
+package com.ssafy.pathpartner.noticearticle.service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.pathpartner.notice_article.dto.notice_articleDto;
-import com.ssafy.pathpartner.notice_article.repository.notice_articleDao;
+import com.ssafy.pathpartner.noticearticle.dto.notice_articleDto;
+import com.ssafy.pathpartner.noticearticle.repository.NoticeArticleDao;
 @Service
-public class notice_articleServiceImpl implements notice_articleService{
-    private notice_articleDao notice_articleMapper;
+public class NoticeArticleServiceImpl implements NoticeArticleService {
+    private NoticeArticleDao notice_articleMapper;
     @Autowired
-    public notice_articleServiceImpl(notice_articleDao notice_articleMapper) {
+    public NoticeArticleServiceImpl(NoticeArticleDao notice_articleMapper) {
         super();
         this.notice_articleMapper = notice_articleMapper;
     }

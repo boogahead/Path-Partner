@@ -1,9 +1,8 @@
-package com.ssafy.pathpartner.review_article.service;
+package com.ssafy.pathpartner.reviewarticle.service;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-import com.ssafy.pathpartner.review_article.dto.CommentDto;
+
+import com.ssafy.pathpartner.reviewarticle.dto.CommentDto;
 public interface CommentService {
     void writeComment(CommentDto commentDto) throws Exception;
     void deleteComment(String commentNo) throws Exception;

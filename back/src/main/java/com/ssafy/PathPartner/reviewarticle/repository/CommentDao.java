@@ -1,8 +1,8 @@
-package com.ssafy.pathpartner.review_article.repository;
+package com.ssafy.pathpartner.reviewarticle.repository;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-import com.ssafy.pathpartner.review_article.dto.CommentDto;
+
+import com.ssafy.pathpartner.reviewarticle.dto.CommentDto;
 import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface CommentDao {
