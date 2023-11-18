@@ -27,8 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class KeyUtils {
-    @Autowired
-    Environment environment;
+    private final Environment environment;
 
     @Value("${access-token.private}")
     private String accessTokenPrivateKeyPath;
@@ -44,6 +43,10 @@ public class KeyUtils {
 
     private KeyPair _accessTokenKeyPair;
     private KeyPair _refreshTokenKeyPair;
+
+    public KeyUtils(Environment environment) {
+        this.environment = environment;
+    }
 
     private KeyPair getAccessTokenKeyPair() {
         if (Objects.isNull(_accessTokenKeyPair)) {
@@ -64,6 +67,8 @@ public class KeyUtils {
 
         File publicKeyFile = new File(publicKeyPath);
         File privateKeyFile = new File(privateKeyPath);
+        log.debug(publicKeyFile.toString());
+        log.debug(privateKeyFile.toString());
 
         if (publicKeyFile.exists() && privateKeyFile.exists()) {
             log.info("loading keys from file: {}, {}", publicKeyPath, privateKeyPath);
@@ -101,11 +106,13 @@ public class KeyUtils {
             try (FileOutputStream fos = new FileOutputStream(publicKeyPath)) {
                 X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyPair.getPublic().getEncoded());
                 fos.write(keySpec.getEncoded());
+                log.debug("키생성 완료");
             }
 
             try (FileOutputStream fos = new FileOutputStream(privateKeyPath)) {
                 PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyPair.getPrivate().getEncoded());
                 fos.write(keySpec.getEncoded());
+                log.debug("키생성 완료");
             }
         } catch (NoSuchAlgorithmException | IOException e) {
             throw new RuntimeException(e);

@@ -25,8 +25,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
 	private final List<String> patterns = Arrays.asList("/board/*", "/admin", "/user/*","/area/*","attraction/*","/comment/*","/notice_article/*");
 
-	@Autowired
-	private DataSource dataSource;
+//	@Autowired
+//	private DataSource dataSource;
 
 //	private final String uploadFilePath;
 
@@ -46,10 +46,10 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 				.maxAge(1800); // 1800초 동안 preflight 결과를 캐시에 저장
 	}
 
-	@Bean
-	public DataSourceTransactionManager transactionManager() {
-		return new DataSourceTransactionManager(dataSource);
-	}
+//	@Bean
+//	public DataSourceTransactionManager transactionManager() {
+//		return new DataSourceTransactionManager(dataSource);
+//	}
 //	@Override
 //	public void addInterceptors(InterceptorRegistry registry) {
 //		registry.addInterceptor(confirmInterceptor).addPathPatterns(patterns);

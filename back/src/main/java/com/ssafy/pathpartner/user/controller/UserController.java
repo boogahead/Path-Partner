@@ -4,7 +4,7 @@ import com.ssafy.pathpartner.user.dto.SignUpDto;
 import com.ssafy.pathpartner.user.dto.UpdateUserDto;
 import com.ssafy.pathpartner.user.dto.UserDto;
 import com.ssafy.pathpartner.user.dto.UserInfoDto;
-import com.ssafy.pathpartner.user.exception.AlreadyExistsUserException;
+import com.ssafy.pathpartner.user.exception.InvalidInputException;
 import com.ssafy.pathpartner.user.exception.UserNotFoundException;
 import com.ssafy.pathpartner.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -13,14 +13,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.sql.SQLException;
-import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 @Slf4j
 @RestController()
@@ -29,7 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @Api(tags = {"사용자 컨트롤러 API"})
 public class UserController {
 
-  private UserService userService;
+  private final UserService userService;
 
   @Autowired
   public UserController(UserService userService) {
@@ -56,26 +54,6 @@ public class UserController {
       log.debug(e.toString());
       return ResponseEntity.notFound().build();
     } catch (SQLException e) {
-      log.debug(e.toString());
-      return ResponseEntity.internalServerError().build();
-    }
-  }
-
-  @ApiOperation(value = "회원가입", notes = "id, email, password, nickname으로 회원가입합니다.")
-  @ApiResponses({@ApiResponse(code = 201, message = "회원 가입 성공"),
-      @ApiResponse(code = 500, message = "서버 에러")})
-  @PostMapping
-  public ResponseEntity<Boolean> registerUser(@RequestBody SignUpDto signUpDto) {
-    log.debug("registerUser call");
-
-    try {
-      boolean result = userService.createUser(signUpDto);
-      if (result) {
-        return ResponseEntity.created(URI.create("/")).build();
-      } else {
-        return ResponseEntity.ok().build();
-      }
-    } catch (Exception e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
     }
@@ -132,58 +110,10 @@ public class UserController {
     try {
       boolean result = userService.updateUser(updateUserDto);
       return ResponseEntity.ok().body(result);
-    } catch (SQLException e) {
+    } catch (InvalidInputException e) {
       log.debug(e.toString());
-      return ResponseEntity.internalServerError().build();
-    }
-  }
-
-  @ApiOperation(value = "로그인", notes = "로그인합니다")
-  @ApiResponses({@ApiResponse(code = 200, message = "로그인 시도 성공"),
-      @ApiResponse(code = 500, message = "서버에러")})
-  @PostMapping("/login")
-  public ResponseEntity<Boolean> login(String userId, String userPass,
-      @ApiIgnore HttpSession session) {
-    log.debug("login call");
-
-    try {
-      UserDto loginMember = userService.login(userId, userPass);
-      if (loginMember != null) {
-        session.setAttribute("loginMember", loginMember);
-        return ResponseEntity.ok().body(true);
-      } else {
-        return ResponseEntity.ok().body(false);
-      }
-    } catch (SQLException e) {
-      log.debug(e.toString());
-      return ResponseEntity.internalServerError().build();
-    }
-  }
-
-  @ApiOperation(value = "로그 아웃", notes = "로그아웃 합니다.")
-  @ApiResponses({@ApiResponse(code = 200, message = "로그아웃 완료")})
-  @GetMapping("/logout")
-  public ResponseEntity<Boolean> logout(@ApiIgnore HttpSession session) {
-    log.debug("logout call");
-    session.invalidate();
-    return ResponseEntity.ok().body(true);
-  }
-
-  @ApiOperation(value = "비밀번호 변경", notes = "아이디와 이름을 받아서 비밀번호를 변경합니다.")
-  @ApiResponses({@ApiResponse(code = 200, message = "변경 시도 성공"),
-      @ApiResponse(code = 500, message = "서버에러")})
-  @PatchMapping("/password")
-  public ResponseEntity<Boolean> modifyPassword(@RequestBody UserDto userDto) {
-    log.debug("modifyPassword call");
-
-    try {
-      int result = userService.updatePassword(userDto);
-      if (result > 0) {
-        return ResponseEntity.ok().body(true);
-      } else {
-        return ResponseEntity.ok().body(false);
-      }
-    } catch (SQLException e) {
+      return ResponseEntity.badRequest().build();
+    }catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
     }

@@ -18,6 +18,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -26,7 +27,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -37,15 +37,15 @@ public class SpringSecurityConfiguration {
   private final JwtToUserConverter jwtToUserConverter;
   private final KeyUtils keyUtils;
   private final PasswordEncoder passwordEncoder;
-  private final UserDetailsManager userDetailsManager;
+  private final UserDetailsService userDetailsService;
 
   @Autowired
   public SpringSecurityConfiguration(JwtToUserConverter jwtToUserConverter, KeyUtils keyUtils,
-      PasswordEncoder passwordEncoder, UserDetailsManager userDetailsManager) {
+      PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
     this.jwtToUserConverter = jwtToUserConverter;
     this.keyUtils = keyUtils;
     this.passwordEncoder = passwordEncoder;
-    this.userDetailsManager = userDetailsManager;
+    this.userDetailsService = userDetailsService;
   }
 
   @Bean
@@ -116,7 +116,7 @@ public class SpringSecurityConfiguration {
   DaoAuthenticationProvider daoAuthenticationProvider() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
     provider.setPasswordEncoder(passwordEncoder);
-    provider.setUserDetailsService(userDetailsManager);
+    provider.setUserDetailsService(userDetailsService);
     return provider;
   }
 }

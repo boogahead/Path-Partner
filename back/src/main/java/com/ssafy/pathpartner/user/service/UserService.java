@@ -12,11 +12,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface UserService extends UserDetailsService {
 
   boolean createUser(SignUpDto signUpDto) throws SQLException;
+
   boolean deleteUser(String uuid) throws SQLException;
 
   boolean updateUser(UpdateUserDto updateUserDto) throws SQLException;
 
-
   UserInfoDto searchUserByUuid(String uuid) throws SQLException, UserNotFoundException;
+
+  UserInfoDto searchUserById(String id) throws SQLException, UserNotFoundException;
 
 }

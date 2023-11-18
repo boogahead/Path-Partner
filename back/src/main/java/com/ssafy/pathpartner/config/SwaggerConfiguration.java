@@ -17,11 +17,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfiguration {
 
-//	Swagger-UI 2.x 확인
-//	http://localhost:8080/{your-app-root}/swagger-ui.html
-//	Swagger-UI 3.x 확인
-//	http://localhost:8080/{your-app-root}/swagger-ui/index.html
-	//http://localhost/swagger-ui/index.html <-이거써라이거써라이거써라
+	//http://localhost/swagger-ui/index.html
 
 	private String version = "V1";
 	private String title = "SSAFY EnjoyTrip API " + version;
