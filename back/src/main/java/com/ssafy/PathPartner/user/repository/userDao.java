@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface userDao {
+public interface UserDao {
 
   int createUser(UserDto userDto) throws SQLException;
 

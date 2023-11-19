@@ -1,7 +1,7 @@
 package com.ssafy.pathpartner.user.controller;
 
 import com.ssafy.pathpartner.user.dto.UserDto;
-import com.ssafy.pathpartner.user.service.userService;
+import com.ssafy.pathpartner.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -22,10 +21,10 @@ import springfox.documentation.annotations.ApiIgnore;
 @Api(tags = {"사용자 컨트롤러 API"})
 public class UserController {
 
-  private userService userService;
+  private UserService userService;
 
   @Autowired
-  public UserController(userService userService) {
+  public UserController(UserService userService) {
     this.userService = userService;
   }
 

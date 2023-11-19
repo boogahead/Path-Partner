@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.pathpartner.reviewarticle.repository.CommentDao">
-    <select id="listComment" parameterType="String" resultType="">
+    <select id="listComment" parameterType="String" resultType="commentDto">
         select c.content, c.creation_date, u.nickname, c.uuid
         from comment c
         join user u where c.uuid=u.uuid

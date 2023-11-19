@@ -9,7 +9,6 @@ public interface ReviewArticleService {
     List<ReviewArticleDto> listArticle() throws Exception;
     //	PageNavigation makePageNavigation(Map<String, String> map) throws Exception;
     ReviewArticleDto getArticle(String articleNo) throws Exception;
-    void updateHit(int articleNo) throws Exception;
 
     void modifyArticle(ReviewArticleDto reviewarticledto) throws Exception;
     //

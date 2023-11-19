@@ -31,32 +31,13 @@ public class ReviewArticleServiceImpl implements ReviewArticleService {
 
         @Override
         public List<ReviewArticleDto> listArticle() throws Exception {
-
             List<ReviewArticleDto> list = reviewArticleMapper.listArticle();
-
-            /*if ("user_id".equals(key))
-                param.put("key", key == null ? "" : "user_id");
-            int totalArticleCount = reviewArticleMapper.getTotalArticleCount(param);
-            int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;*/
-
-            /*ReviewArticleDto reviewArticleDto = new ReviewArticleDto();
-            reviewArticleDto.setReviewArticleDtos(list);
-            reviewArticleDto.setTotalArticleCount(totalArticleCount);
-            reviewArticleDto.setCurrentPage(currentPage);
-            reviewArticleDto.setTotalPageCount(totalPageCount);
-            reviewArticleDto.setStart(start);
-            reviewArticleDto.setListSize(sizePerPage);*/
             return list;
         }
 
         @Override
         public ReviewArticleDto getArticle(String articleNo) throws Exception {
             return reviewArticleMapper.getArticle(articleNo);
-        }
-
-        @Override
-        public void updateHit(int articleNo) throws Exception {
-            reviewArticleMapper.updateHit(articleNo);
         }
 
         @Override

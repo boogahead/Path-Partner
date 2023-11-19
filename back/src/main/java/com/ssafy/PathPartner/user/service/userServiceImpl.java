@@ -2,7 +2,7 @@ package com.ssafy.pathpartner.user.service;
 
 
 import com.ssafy.pathpartner.user.dto.UserDto;
-import com.ssafy.pathpartner.user.repository.userDao;
+import com.ssafy.pathpartner.user.repository.UserDao;
 import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class userServiceImpl implements userService {
+public class UserServiceImpl implements UserService {
 
-  private final userDao userDao;
+  private final UserDao userDao;
 
   @Autowired
-  public userServiceImpl(userDao userDao) {
+  public UserServiceImpl(UserDao userDao) {
     this.userDao = userDao;
   }
 

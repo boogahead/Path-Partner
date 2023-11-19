@@ -3,7 +3,7 @@ package com.ssafy.pathpartner.user.service;
 import com.ssafy.pathpartner.user.dto.UserDto;
 import java.sql.SQLException;
 
-public interface userService {
+public interface UserService {
 
 	int registUser(UserDto userDto) throws SQLException;
 
