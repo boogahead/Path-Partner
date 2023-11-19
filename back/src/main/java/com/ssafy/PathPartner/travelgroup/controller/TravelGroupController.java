@@ -47,7 +47,7 @@ public class TravelGroupController {
       @ApiResponses({@ApiResponse(code = 200, message = "그룹 삭제 시도 성공"),
         @ApiResponse(code = 500, message = "서버 에러")})
       @DeleteMapping("/{groupId}")
-      public ResponseEntity<Boolean> deleteGroup(String groupId) {
+      public ResponseEntity<Boolean> deleteGroup(@RequestParam String groupId) {
      log.debug("deleteGroup call");
 
      try {
@@ -63,7 +63,7 @@ public class TravelGroupController {
       @ApiResponses({@ApiResponse(code = 200, message = "그룹 탈퇴 시도 성공"),
         @ApiResponse(code = 500, message = "서버 에러")})
       @DeleteMapping("/leave/{groupId}")
-      public ResponseEntity<Boolean> leaveGroup(String groupId) {
+      public ResponseEntity<Boolean> leaveGroup(@RequestParam String groupId) {
           log.debug("leaveGroup call");
 
           try {
@@ -79,7 +79,7 @@ public class TravelGroupController {
       @ApiResponses({@ApiResponse(code = 200, message = "그룹장인지 확인 시도 성공"),
         @ApiResponse(code = 500, message = "서버 에러")})
       @GetMapping("/master/{groupId}")
-      public ResponseEntity<Boolean> checkGroupMaster(String groupId) {
+      public ResponseEntity<Boolean> checkGroupMaster(@RequestParam String groupId) {
           log.debug("checkGroupMaster call");
 
           try {

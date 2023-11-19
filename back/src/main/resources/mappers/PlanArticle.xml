@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!-- 관통용  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.pathpartner.planarticle.repository.PlanArticleDao">
+    <select id="writePlan" parameterType="PlanArticleDto">
+        INSERT INTO plan_article (plan_article_id,plan,group_id,creation_date,uuid)
+        VALUES (UUID(),#{plan},#{groupId},now(),#{uuid})
+    </select>
+    <select id="updatePlan" parameterType="PlanArticleDto">
+        UPDATE plan_article
+        SET plan = #{plan}
+        WHERE plan_article_id = #{planArticleId}
+    </select>
+    <select id="deletePlan" parameterType="map">
+        DELETE FROM plan_article
+        WHERE plan_article_id = #{planArticleId} AND group_id=#{groupId}
+    </select>
+    <select id="checkWriter" parameterType="String" resultMap="String">
+        SELECT uuid
+        FROM plan_article
+        WHERE plan_article_id=#{planArticleId}
+    </select>
+    <select id="getPlanList" parameterType="String" resultMap="PlanArticleDto">
+        SELECT plan,creation_date,uuid
+        FROM plan_article
+        WHERE group_id = #{groupId}
+    </select>
+    <select id="memberCheck" parameterType="map" resultMap="int">
+        SELECT COUNT(*)
+        FROM travel_group
+        WHERE group_id = #{groupId} AND uuid = #{uuid}
+    </select>
+    <select id="fetchRole" parameterType="map" resultMap="int">
+        SELECT group_master
+        FROM travel_group
+        WHERE group_id = #{groupId} AND uuid = #{uuid}
+    </select>
+    <select id="getGroupId" parameterType="String" resultMap="String">
+        SELECT group_id
+        FROM plan_article
+        WHERE plan_article_id = #{planArticleId}
+    </select>
+</mapper>
