@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!-- 관통용  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.pathpartner.friend.repository.FriendDao">
+  <insert id="insertFriend" parameterType="FriendDto">
+    insert into friend (friend_from, friend_to, accepted)
+    values (#{friendFrom}, #{friendTo}, true),
+           (#{friendTo}, #{friendFrom}, false)
+  </insert>
+
+  <update id="updateFriend" parameterType="FriendDto">
+    update friend
+    set accepted = #{accepted}
+    where friend_to = #{friendTo}
+      and friend_from = #{friendFrom}
+  </update>
+
+  <delete id="deleteFriend" parameterType="FriendDto">
+    delete
+    from friend
+    where (friend_from = #{friendFrom}
+      and friend_to = #{friendTo}) or (friend_from = #{friendTo}
+      and friend_to = #{friendFrom})
+  </delete>
+
+  <select id="selectFriendFrom" resultType="FriendDto">
+    select friend_from, friend_to, accepted
+    from friend
+    where friend_from = #{uuid}
+      and accepted = true
+  </select>
+
+  <select id="selectFriendTo" resultType="FriendDto">
+    select friend_from, friend_to, accepted
+    from friend
+    where friend_to = #{uuid}
+      and accepted = true
+  </select>
+
+  <select id="selectAllFriend" parameterType="String" resultType="FriendInfoDto">
+    select u.uuid, u.id, u.nickname, u.email
+    from (select f.friend_to
+          from (select friend_from, friend_to, accepted
+                from friend
+                where friend_from = #{uuid}
+                  and accepted = true) as f
+                 join (select friend_from, friend_to, accepted
+                       from friend
+                       where friend_to = #{uuid}
+                         and accepted = true) as t
+                      on f.friend_to = t.friend_from) as r
+           join user as u
+                on r.friend_to = u.uuid;
+  </select>
+
+  <select id="selectAllFriendRequest" parameterType="String" resultType="FriendInfoDto">
+    select u.uuid, u.id, u.nickname, u.email
+    from (select f.friend_to
+          from (select friend_from, friend_to, accepted
+                from friend
+                where friend_from = #{uuid}
+                  and accepted = true) as f
+                 join (select friend_from, friend_to, accepted
+                       from friend
+                       where friend_to = #{uuid}
+                         and accepted = false) as t
+                      on f.friend_to = t.friend_from) as r
+           join user as u
+                on r.friend_to = u.uuid;
+  </select>
+
+  <select id="selectAllFriendRequestReceived" parameterType="String" resultType="FriendInfoDto">
+    select u.uuid, u.id, u.nickname, u.email
+    from (select f.friend_to
+          from (select friend_from, friend_to, accepted
+                from friend
+                where friend_from = #{uuid}
+                  and accepted = false) as f
+                 join (select friend_from, friend_to, accepted
+                       from friend
+                       where friend_to = #{uuid}
+                         and accepted = true) as t
+                      on f.friend_to = t.friend_from) as r
+           join user as u
+                on r.friend_to = u.uuid;
+  </select>
+
+</mapper>

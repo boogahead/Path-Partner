@@ -17,50 +17,63 @@ const router = createRouter({
     {
       path: '/plan',
       name: 'plan',
-      component: MainPageView
-    },
-    {
-      path: '/board',
-      name: 'board',
-      component: () => import('@/views/BoardView.vue'),
-      redirect: {name:'qna'},
+      component: () => import('@/views/PlanView.vue'),
+      redirect: {name:'plan_list'},
       children: [
         {
-          path : 'notice',
-          name : 'notice',
-          component: () => import('@/components/Board/NoticeBoard.vue')
+          path : 'list',
+          name : 'plan_list',
+          component: () => import('@/components/Plan/PlanList.vue')
         },
         {
-          path : 'qna',
-          name : 'qna',
-          component: () => import('@/components/Board/QnABoard.vue')
+          path : 'detail/:plan_article_id',
+          name : 'plan_detail',
+          component: () => import('@/components/Plan/PlanDetail.vue')
+        },
+      ]
+    },
+    {
+      path: '/notice',
+      name: 'notice',
+      component: () => import('@/views/NoticeBoardView.vue'),
+      redirect: {name: "notice_list"},
+      children: [
+        {
+          path : 'list',
+          name : 'notice_list',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoard.vue')
         },
         {
-          path : 'detail/:articleno',
-          name : 'detail',
-          component: () => import('@/components/Board/BoardDetail.vue')
+          path : 'detail/:noticeArticleId',
+          name : 'notice_detail',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoardDetail.vue')
         },
         {
           path : 'write',
-          name : 'article-write',
-          component: () => import('@/components/Board/BoardWriteForm.vue')
+          name : 'notice_article_write',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoardWriteForm.vue')
         },
         {
-          path : 'modify/:articleno',
-          name : 'article-modify',
-          component: () => import('@/components/Board/BoardModifyForm.vue')
+          path : 'modify/:noticeArticleId',
+          name : 'notice_article_modify',
+          component: () => import('@/components/Board/NoticeBoard/NoticeBoardModifyForm.vue')
         },
       ]
     },
     {
       path: '/group',
       name: 'group',
-      component: MainPageView
+      component: () => import('@/views/GroupView.vue')
+    },
+    {
+      path: '/review',
+      name: 'review',
+      component: () => import('@/views/ReviewBoardView.vue')
     },
     {
       path: '/friend',
       name: 'friend',
-      component: MainPageView
+      component: () => import('@/views/FriendView.vue')
     },
   ]
 })

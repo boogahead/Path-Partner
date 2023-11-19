@@ -7,18 +7,18 @@
     values(UUID(),#{title},#{content},now(),#{writerUuid},#{planArticleId})
     </insert>
 
-    <select id="listArticle" resultMap="article">
+    <select id="listArticle" resultType="ReviewArticleDto">
         select review_article_id,title,content,creation_date,writer_uuid,plan_article_id
         from review_article
     </select>
 
-    <select id="getArticle" parameterType="String" resultMap="article">
+    <select id="getArticle" parameterType="String" resultType="ReviewArticleDto">
         select review_article_id,title,content,creation_date,writer_uuid,plan_article_id
         from review_article
         where review_article_id = #{reviewArticleId}
     </select>
 
-    <update id="modifyArticle" parameterType="reviewArticleDto">
+    <update id="modifyArticle" parameterType="ReviewArticleDto">
         update review_article
         set title = #{title}, content = #{content}
         where review_article_id = #{reviewArticleId}
