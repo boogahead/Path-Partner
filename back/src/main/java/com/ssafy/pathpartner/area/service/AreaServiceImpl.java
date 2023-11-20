@@ -11,23 +11,22 @@ import com.ssafy.pathpartner.area.repository.AreaDao;
 
 @Service
 public class AreaServiceImpl implements AreaService {
-	private final AreaDao areaDao;
 
-	@Autowired
-	public AreaServiceImpl(AreaDao areaDao) {
-		this.areaDao = areaDao;
-	}
+  private final AreaDao areaDao;
 
-	@Override
-	public List<SidoDto> getSidoCode() {
-		List<SidoDto> list = areaDao.getSidoCode();
-		return list;
-	}
+  @Autowired
+  public AreaServiceImpl(AreaDao areaDao) {
+    this.areaDao = areaDao;
+  }
 
-	@Override
-	public List<GugunDto> getGunguCode() {
-		List<GugunDto> list = areaDao.getGunguCode();
-		return list;
-	}
+  @Override
+  public List<SidoDto> getSidoCode() {
+    return areaDao.selectAllSidoCode();
+  }
+
+  @Override
+  public List<GugunDto> getGunguCode(int sidoCode) {
+    return areaDao.selectGugunCode(sidoCode);
+  }
 
 }

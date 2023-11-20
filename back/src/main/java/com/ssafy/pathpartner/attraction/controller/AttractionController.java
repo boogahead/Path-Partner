@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,19 +30,30 @@ public class AttractionController {
     this.attractionService = attractionService;
   }
 
-  @ApiOperation(value = "관광지 조회", notes = "관광지를 조회합니다.")
-  @ApiResponses({@ApiResponse(code = 200, message = "관광지 조회 완료"),
+  @ApiOperation(value = "여행지 조회", notes = "여행지를 조회합니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "여행지 조회 완료"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @GetMapping
-  public ResponseEntity<List<AttractionInfoDto>> getAttractionInfoList(String sidoCode, String sigunguCode, String[] contentType) {
+  public ResponseEntity<List<AttractionInfoDto>> getAttractionInfoList(String sidoCode,
+      String sigunguCode, String[] contentType) {
+
     try {
-      List<AttractionInfoDto> result = attractionService.getAttractionList(sidoCode, sigunguCode,
-          contentType);
-      if (result != null) {
-        return ResponseEntity.ok().body(result);
-      } else {
-        return ResponseEntity.noContent().build();
-      }
+      return ResponseEntity.ok()
+          .body(attractionService.searchAllAttractionInfo(sidoCode, sigunguCode,
+              contentType));
+    } catch (SQLException e) {
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  @ApiOperation(value = "여행지 상세 조회", notes = "여행지를 상세정보를 가져옵니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "여행지 조회 완료"),
+      @ApiResponse(code = 500, message = "서버 에러")})
+  @GetMapping("/{contentId}")
+  public ResponseEntity<AttractionInfoDto> getAttractionInfo(@PathVariable String contentId) {
+
+    try {
+      return ResponseEntity.ok().body(attractionService.searchAttractionInfo(contentId));
     } catch (SQLException e) {
       return ResponseEntity.internalServerError().build();
     }

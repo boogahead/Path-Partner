@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.pathpartner.reviewarticle.repository.LikeDao">
+
+  <insert id="like" parameterType="LikeDto">
+    insert into article_like(uuid, review_article_id)
+    values (#{uuid}, #{reviewArticleId})
+  </insert>
+
+  <delete id="unlike" parameterType="LikeDto">
+    delete
+    from article_like
+    where uuid = #{uuid}
+      and review_article_id = #{reviewArticleId}
+  </delete>
+
+  <select id="countLike" parameterType="String" resultType="int">
+    select count(*)
+    from article_like
+    where review_article_id = #{reviewArticleId}
+  </select>
+
+  <select id="selectAllLikeUser" parameterType="String" resultType="String">
+    select uuid
+    from article_like
+    where review_article_id = #{reviewArticleId}
+  </select>
+
+  <select id="selectAllMyLikeReviewArticle" parameterType="String" resultType="ReviewArticleDto">
+    select r.review_article_id, r.title, r.content, r.writer_uuid, r.plan_article_id
+    from article_like as l
+           join review_article as r
+    where l.uuid = #{uuid}
+  </select>
+
+
+</mapper>

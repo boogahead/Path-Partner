@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!-- 관통용  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.pathpartner.planarticle.repository.PlanArticleDao">
+  <insert id="insertPlanArticle" parameterType="PlanArticleDto">
+    INSERT INTO plan_article (plan_article_id, plan, group_id, creation_date, uuid)
+    VALUES (UUID(), #{plan}, #{groupId}, now(), #{uuid})
+  </insert>
+
+  <delete id="deletePlanArticle" parameterType="map">
+    DELETE
+    FROM plan_article
+    WHERE plan_article_id = #{planArticleId}
+      AND group_id = #{groupId}
+  </delete>
+
+  <update id="updatePlanArticle" parameterType="PlanArticleDto">
+    UPDATE plan_article
+    <set>
+      <if test="plan != null">
+        plan = #{plan}
+      </if>
+      <if test="title != null">
+        title = #{title}
+      </if>
+      <if test="imgSrc != null">
+        img_src = #{imgSrc}
+      </if>
+    </set>
+    WHERE plan_article_id = #{planArticleId}
+  </update>
+
+  <select id="selectPlanArticle" resultType="PlanArticleDto">
+    SELECT plan_article_id, plan, group_id, creation_date, uuid, img_src, plan_title
+    from plan_article
+    where plan_article_id
+    in
+    <foreach collection="list" item="groupId" separator="," open="(" close=")">
+      #{groupId}
+    </foreach>
+  </select>
+
+  <select id="selectAllPlanArticle" parameterType="String" resultType="PlanArticleDto">
+    SELECT plan_article_id, plan, group_id, creation_date, uuid, img_src, plan_title
+    FROM plan_article
+    WHERE group_id = #{groupId}
+  </select>
+
+  <select id="selectWriter" parameterType="String" resultType="String">
+    SELECT uuid
+    FROM plan_article
+    WHERE plan_article_id = #{planArticleId}
+  </select>
+
+  <select id="selectGroupId" parameterType="String" resultType="String">
+    SELECT group_id
+    FROM plan_article
+    WHERE plan_article_id = #{planArticleId}
+  </select>
+
+
+</mapper>

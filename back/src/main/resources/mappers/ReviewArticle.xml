@@ -1,50 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" ?> <!-- 관통용  -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.pathpartner.review.article.repository.ReviewArticleDao">
-    <insert id="writeArticle" parameterType="reviewArticleDto">
-    insert into review_article(review_article_id,title,content,creation_date,writer_uuid,plan_article_id)
-    values(UUID(),#{title},#{content},now(),#{writerUuid},#{planArticleId})
-    </insert>
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.pathpartner.reviewarticle.repository.ReviewArticleDao">
+  <insert id="insertReviewArticle" parameterType="ReviewArticleDto">
+    insert into review_article(review_article_id, title, content, creation_date, writer_uuid,
+                               plan_article_id)
+    values (UUID(), #{title}, #{content}, now(), #{writerUuid}, #{planArticleId})
+  </insert>
 
-    <select id="listArticle" resultType="reviewArticleDto">
-        select review_article_id,title,content,creation_date,writer_uuid,plan_article_id
-        from review_article
-    </select>
+  <select id="selectAllReviewArticle" resultType="ReviewArticleDto">
+    select review_article_id, title, content, creation_date, writer_uuid, plan_article_id
+    from review_article
+  </select>
 
-    <select id="getArticle" parameterType="String" resultType="reviewArticleDto">
-        select review_article_id,title,content,creation_date,writer_uuid,plan_article_id
-        from review_article
-        where review_article_id = #{reviewArticleId}
-    </select>
+  <select id="selectReviewArticle" parameterType="String" resultType="ReviewArticleDto">
+    select review_article_id, title, content, creation_date, writer_uuid, plan_article_id
+    from review_article
+    where review_article_id = #{reviewArticleId}
+  </select>
 
-    <update id="modifyArticle" parameterType="reviewArticleDto">
-        update review_article
-        set title = #{title}, content = #{content}
-        where review_article_id = #{reviewArticleId}
-    </update>
+  <update id="updateReviewArticle" parameterType="ReviewArticleDto">
+    update review_article
+    set title   = #{title},
+        content = #{content}
+    where review_article_id = #{reviewArticleId}
+  </update>
 
-    <delete id="deleteArticle" parameterType="String">
-        delete from review_article
-        where review_article_id = #{reviewArticleId}
-    </delete>
+  <delete id="deleteReviewArticle" parameterType="String">
+    delete
+    from review_article
+    where review_article_id = #{reviewArticleId}
+  </delete>
 
-    <select id="getArticleCount" resultType="int">
-        select count(*) from review_article
-    </select>
+<!--  <select id="getArticleCountByUuid" resultType="int">-->
+<!--    select count(*)-->
+<!--    from review_article-->
+<!--    where writer_uuid = #{writerUuid}-->
+<!--  </select>-->
 
-    <select id="getArticleCountByUuid" resultType="int">
-        select count(*) from review_article
-        where writer_uuid = #{writerUuid}
-    </select>
+<!--  <select id="getArticleCountByPlanArticleId" resultType="int">-->
+<!--    select count(*)-->
+<!--    from review_article-->
+<!--    where plan_article_id = #{planArticleId}-->
+<!--  </select>-->
 
-    <select id="getArticleCountByPlanArticleId" resultType="int">
-        select count(*) from review_article
-        where plan_article_id = #{planArticleId}
-    </select>
-
-    <select id="getArticleCountByPlanArticleIdAndUuid" resultType="int">
-        select count(*) from review_article
-        where plan_article_id = #{planArticleId} and writer_uuid = #{writerUuid}
-    </select>
+<!--  <select id="getArticleCountByPlanArticleIdAndUuid" resultType="int">-->
+<!--    select count(*)-->
+<!--    from review_article-->
+<!--    where plan_article_id = #{planArticleId}-->
+<!--      and writer_uuid = #{writerUuid}-->
+<!--  </select>-->
 </mapper>
