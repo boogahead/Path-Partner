@@ -11,15 +11,15 @@ const sigunguSelected = ref("0");
 const sigunguOptions = ref([]);
 
 // 시도코드 가져오기
-onMounted(async () => {
-  await getSidoCode((response) => {
+onMounted(() => {
+  getSidoCode((response) => {
     sidoOptions.value = response.data;
   })
 })
 
 // 시도코드 선택시 시군구 코드 변경
-watch(sidoSelected, async () => {
-  await getSiGunGuCode(sidoSelected.value, (response) => {
+watch(sidoSelected, () => {
+  getSiGunGuCode(sidoSelected.value, (response) => {
     sigunguOptions.value = response.data;
   })
 })

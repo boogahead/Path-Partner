@@ -103,7 +103,7 @@ public class AuthController {
   @ApiOperation(value = "로그 아웃", notes = "로그아웃 합니다.")
   @ApiResponses({@ApiResponse(code = 200, message = "로그아웃 완료")})
   @GetMapping("/logout")
-  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @PreAuthorize("hasRole('USER')")
   public ResponseEntity<Boolean> logout(@AuthenticationPrincipal UserDto userDto) {
     log.debug("logout call");
     return ResponseEntity.ok().body(true);

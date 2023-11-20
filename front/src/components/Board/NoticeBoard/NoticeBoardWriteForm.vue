@@ -1,5 +1,5 @@
 <script setup>
-import InputForm from "@/components/Board/InputForm.vue";
+import InputForm from "@/components/Board/NoticeBoard/InputForm.vue";
 
 </script>
 

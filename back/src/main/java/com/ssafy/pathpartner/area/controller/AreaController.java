@@ -2,6 +2,7 @@ package com.ssafy.pathpartner.area.controller;
 
 import io.swagger.annotations.ApiParam;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController()
-@CrossOrigin("*")
 @RequestMapping("/area")
+@CrossOrigin(origins = "*")
 @Slf4j
 @Api(tags = {"지역 컨트롤러 API"})
 public class AreaController {
@@ -47,6 +48,7 @@ public class AreaController {
     try {
       return ResponseEntity.ok().body(areaService.getSidoCode());
     } catch (SQLException e) {
+      log.debug(Arrays.toString(e.getStackTrace()));
       return ResponseEntity.internalServerError().build();
     }
   }
@@ -63,6 +65,7 @@ public class AreaController {
     try {
       return ResponseEntity.ok().body(areaService.getGunguCode(sidoCode));
     } catch (SQLException e) {
+      log.debug(Arrays.toString(e.getStackTrace()));
       return ResponseEntity.internalServerError().build();
     }
   }

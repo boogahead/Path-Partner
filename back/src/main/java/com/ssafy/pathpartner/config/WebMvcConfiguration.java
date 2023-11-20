@@ -20,13 +20,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableAspectJAutoProxy
 @MapperScan(basePackages = {"com.ssafy.pathpartner.**.repository"})
 public class WebMvcConfiguration implements WebMvcConfigurer {
-	
-	private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
-	private final List<String> patterns = Arrays.asList("/board/*", "/admin", "/user/*","/area/*","attraction/*","/comment/*","/notice_article/*");
+  private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
-	@Autowired
-	private DataSource dataSource;
+  private final List<String> patterns = Arrays.asList("/board/*", "/admin", "/user/*", "/area/*",
+      "attraction/*", "/comment/*", "/notice_article/*");
+
+  @Autowired
+  private DataSource dataSource;
 
 //	private final String uploadFilePath;
 
@@ -34,22 +35,25 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 //		this.uploadFilePath = uploadFilePath;
 //	}
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("*")
-//			.allowedOrigins("http://localhost:8080", "http://localhost:8081")
-				.allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
-						HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
-						HttpMethod.PATCH.name())
-//				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
-//				.allowedMethods("*")
-				.maxAge(1800); // 1800초 동안 preflight 결과를 캐시에 저장
-	}
+//  @Override
+//  public void addCorsMappings(CorsRegistry registry) {
+//    registry.addMapping("/**")
+//        .allowedOrigins("*")
+////			.allowedOrigins("http://localhost")
+//        .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
+//            HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
+//            HttpMethod.PATCH.name(), HttpMethod.OPTIONS.name())
+////				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
+////				.allowedMethods("*")
+//        .allowCredentials(true)
+//        .allowedHeaders("Authorization")
+//        .maxAge(1800); // 1800초 동안 preflight 결과를 캐시에 저장\
+//  }
 
-	@Bean
-	public DataSourceTransactionManager transactionManager() {
-		return new DataSourceTransactionManager(dataSource);
-	}
+  @Bean
+  public DataSourceTransactionManager transactionManager() {
+    return new DataSourceTransactionManager(dataSource);
+  }
 //	@Override
 //	public void addInterceptors(InterceptorRegistry registry) {
 //		registry.addInterceptor(confirmInterceptor).addPathPatterns(patterns);
@@ -66,6 +70,5 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 //		registry.addViewController("/").setViewName("index2");
 //	}
 
-	
-	
+
 }

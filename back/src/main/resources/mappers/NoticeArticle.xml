@@ -23,8 +23,12 @@
     <update id="updateNoticeArticle" parameterType="NoticeArticleDto">
         update notice_article
         <set>
-            title = #{title},
-            content = #{content}
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="content != null">
+                content = #{content}
+            </if>
         </set>
         where notice_article_id = #{noticeArticleId}
     </update>

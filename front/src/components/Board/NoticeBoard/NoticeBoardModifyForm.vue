@@ -1,6 +1,6 @@
 <script setup>
 
-import InputForm from "@/components/Board/InputForm.vue";
+import InputForm from "@/components/Board/NoticeBoard/InputForm.vue";
 import {useRoute} from "vue-router";
 import {onMounted, ref} from "vue";
 import {getArticle} from "@/api/BoardAPI";

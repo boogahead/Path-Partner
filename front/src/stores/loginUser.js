@@ -2,13 +2,14 @@ import {defineStore} from "pinia";
 import {ref} from "vue";
 
 export const useLoginUserStore = defineStore('loginUser', () => {
-  const id = ref("test");
-  const name = ref("test");
-  const isLogin = ref(true);
-
+  const loginUserInfo = ref({});
+  const isLogin = ref(false);
+  const accessToken = ref("");
+  const refreshToken = ref("");
   return {
-    id,
-    name,
+    loginUserInfo,
+    accessToken,
+    refreshToken,
     isLogin
   }
-})
+}, {persist: {storage: sessionStorage}})

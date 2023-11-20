@@ -28,6 +28,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -52,11 +55,12 @@ public class SpringSecurityConfiguration {
     http
         .authorizeHttpRequests((authorize) -> authorize
             .antMatchers("/auth/**").permitAll()
+//            .antMatchers("/area/**").permitAll()
             .antMatchers("/v2/**","/swagger-ui/**", "/swagger-resources/**").permitAll()
             .anyRequest().authenticated()
         )
         .csrf().disable()
-        .cors().disable()
+        .cors().and()
         .httpBasic().disable()
         .oauth2ResourceServer((oauth2) ->
             oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter))
@@ -68,6 +72,20 @@ public class SpringSecurityConfiguration {
             .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
         );
     return http.build();
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+
+    configuration.addAllowedOriginPattern("*");
+    configuration.addAllowedHeader("*");
+    configuration.addAllowedMethod("*");
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 
   @Bean
