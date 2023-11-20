@@ -2,19 +2,23 @@ package com.ssafy.pathpartner.reviewarticle.service;
 
 import com.ssafy.pathpartner.reviewarticle.dto.ReviewArticleDto;
 
+import com.ssafy.pathpartner.reviewarticle.exception.ReviewArticleNotFoundException;
+import com.ssafy.pathpartner.reviewarticle.exception.UnauthrizedReviewArticleRequestException;
+import com.ssafy.pathpartner.user.dto.UserDto;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ReviewArticleService {
 
-  void writeArticle(ReviewArticleDto reviewarticledto) throws Exception;
+  boolean createReviewArticle(ReviewArticleDto reviewarticledto) throws SQLException;
 
-  List<ReviewArticleDto> listArticle() throws Exception;
+  List<ReviewArticleDto> searchAllReviewArticle() throws SQLException;
 
-  //	PageNavigation makePageNavigation(Map<String, String> map) throws Exception;
-  ReviewArticleDto getArticle(String articleNo) throws Exception;
+  ReviewArticleDto searchReviewArticle(String reviewArticleId)
+      throws SQLException, ReviewArticleNotFoundException;
 
-  void modifyArticle(ReviewArticleDto reviewarticledto) throws Exception;
+  boolean updateReviewArticle(ReviewArticleDto reviewArticledto) throws SQLException;
 
-  //
-  void deleteArticle(String articleNo) throws Exception;
+  boolean deleteReviewArticle(String reviewArticleId, UserDto userDto)
+      throws SQLException, ReviewArticleNotFoundException, UnauthrizedReviewArticleRequestException;
 }

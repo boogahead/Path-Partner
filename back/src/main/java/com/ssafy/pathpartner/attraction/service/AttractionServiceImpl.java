@@ -1,6 +1,7 @@
 package com.ssafy.pathpartner.attraction.service;
 
 import com.ssafy.pathpartner.attraction.dto.AttractionInfoDto;
+import com.ssafy.pathpartner.attraction.exception.AttractionInfoNotFoundException;
 import com.ssafy.pathpartner.attraction.repository.AttractionDao;
 import java.sql.SQLException;
 import java.util.List;
@@ -18,19 +19,15 @@ public class AttractionServiceImpl implements AttractionService {
   }
 
   @Override
-  public List<AttractionInfoDto> getAttraction(AttractionInfoDto attractionInfoDto)
-      throws SQLException {
-    return attractionDao.selectAttraction(attractionInfoDto);
+  public AttractionInfoDto searchAttractionInfo(String contentId)
+      throws SQLException, AttractionInfoNotFoundException {
+    return attractionDao.selectAttraction(contentId);
   }
 
   @Override
-  public List<AttractionInfoDto> getAttractionList(String sidoCode, String sigunguCode,
+  public List<AttractionInfoDto> searchAllAttractionInfo(String sidoCode, String sigunguCode,
       String[] contentType) throws SQLException {
     return attractionDao.selectAllAttraction(sidoCode, sigunguCode, contentType);
   }
 
-  @Override
-  public List<AttractionInfoDto> searchByTitle(String title, int sidoCode) throws SQLException {
-    return attractionDao.selectByTitle(title, sidoCode);
-  }
 }

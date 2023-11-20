@@ -2,15 +2,20 @@ package com.ssafy.pathpartner.travelgroup.service;
 
 import com.ssafy.pathpartner.travelgroup.dto.GroupInviteDto;
 import com.ssafy.pathpartner.travelgroup.dto.TravelGroupDto;
+import com.ssafy.pathpartner.travelgroup.exception.TravelGroupNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 
 public interface GroupInviteService {
-    void createGroupInvite(String groupId, String inviteTo) throws SQLException;
-    void deleteGroupInvite(String groupId) throws SQLException;
-    void acceptGroupInvite(String groupId) throws SQLException;
-    List<String> checkGroupInvite() throws SQLException;
-    List<String> getPendingInviteList(String group_id) throws SQLException;
 
-    void cancelGroupInvite(String groupId, String inviteTo) throws SQLException;
+  boolean createGroupInvite(GroupInviteDto groupInviteDto) throws SQLException;
+
+  boolean deleteGroupInvite(GroupInviteDto groupInviteDto) throws SQLException;
+
+  boolean acceptGroupInvite(GroupInviteDto groupInviteDto) throws SQLException, TravelGroupNotFoundException;
+
+  List<GroupInviteDto> searchGroupInvite(String uuid) throws SQLException;
+
+  List<GroupInviteDto> searchAllPendingInvite(String group_id) throws SQLException;
+
 }

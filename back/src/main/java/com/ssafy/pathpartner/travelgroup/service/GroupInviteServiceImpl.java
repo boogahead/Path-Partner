@@ -1,4 +1,6 @@
 package com.ssafy.pathpartner.travelgroup.service;
+
+import com.ssafy.pathpartner.travelgroup.exception.TravelGroupNotFoundException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -11,62 +13,51 @@ import com.ssafy.pathpartner.travelgroup.dto.TravelGroupDto;
 import com.ssafy.pathpartner.travelgroup.repository.TravelGroupDao;
 import com.ssafy.pathpartner.travelgroup.dto.GroupInviteDto;
 import com.ssafy.pathpartner.travelgroup.repository.GroupInviteDao;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @Slf4j
-public class GroupInviteServiceImpl implements GroupInviteService{
-    private final GroupInviteDao groupInviteDao;
-    private final TravelGroupDao travelGroupDao;
-    @Autowired
-    public GroupInviteServiceImpl(GroupInviteDao groupInviteDao, TravelGroupDao travelGroupDao) {
-        this.groupInviteDao = groupInviteDao;
-        this.travelGroupDao = travelGroupDao;
-    }
+public class GroupInviteServiceImpl implements GroupInviteService {
 
-    @Override
-    public void createGroupInvite(String groupId, String inviteTo) throws SQLException {
-        GroupInviteDto tmp=new GroupInviteDto();
-        tmp.setGroupId(groupId);
-        tmp.setInviteTo(inviteTo);
-        groupInviteDao.createGroupInvite(tmp);
-    }
+  private final GroupInviteDao groupInviteDao;
+  private final TravelGroupDao travelGroupDao;
 
-    @Override
-    public void deleteGroupInvite(String groupId) throws SQLException {
-        String inviteTo=("testtesttest");//테스트용 임시 uuid
-        GroupInviteDto tmp=new GroupInviteDto();
-        tmp.setGroupId(groupId);
-        tmp.setInviteTo(inviteTo);
-        groupInviteDao.deleteGroupInvite(tmp);
-    }
+  @Autowired
+  public GroupInviteServiceImpl(GroupInviteDao groupInviteDao, TravelGroupDao travelGroupDao) {
+    this.groupInviteDao = groupInviteDao;
+    this.travelGroupDao = travelGroupDao;
+  }
 
-    @Override
-    public void acceptGroupInvite(String groupId) throws SQLException {
-        String inviteTo=("testtesttest");//테스트용 임시 uuid
-        deleteGroupInvite(groupId);
-        TravelGroupDto tmp=travelGroupDao.getTravelGroupInfo(groupId);
-        tmp.setUuid(inviteTo);
-        tmp.setGroupMaster(false);//group invite table 에서 삭제하고
-        groupInviteDao.acceptGroupInvite(tmp);//travel group table에 추가
-    }
+  @Override
+  public boolean createGroupInvite(GroupInviteDto groupInviteDto) throws SQLException {
+    return groupInviteDao.createGroupInvite(groupInviteDto) > 0;
+  }
 
-    @Override
-    public List<String> checkGroupInvite() throws SQLException {
-        String inviteTo=("testtesttest");//테스트용 임시 uuid
-        return groupInviteDao.checkGroupInvite(inviteTo);
-    }
+  @Override
+  public boolean deleteGroupInvite(GroupInviteDto groupInviteDto) throws SQLException {
+    return groupInviteDao.deleteGroupInvite(groupInviteDto) > 0;
+  }
 
-    @Override
-    public List<String> getPendingInviteList(String groupId) throws SQLException {
-        return groupInviteDao.getPendingInviteList(groupId);
-    }
+  @Override
+  @Transactional
+  public boolean acceptGroupInvite(GroupInviteDto groupInviteDto) throws SQLException, TravelGroupNotFoundException {
+    deleteGroupInvite(groupInviteDto);
+    TravelGroupDto travelGroupDto = travelGroupDao.selectGroup(groupInviteDto.getGroupId())
+        .orElseThrow(() -> new TravelGroupNotFoundException("해당 그룹을 찾을 수 없습니다."));
 
-    @Override
-    public void cancelGroupInvite(String groupId, String inviteTo) throws SQLException {
-        Map<String,Object> tmp=new HashMap<>();
-        tmp.put("groupId",groupId);
-        tmp.put("inviteTo",inviteTo);
-        groupInviteDao.cancelGroupInvite(tmp);
-    }
+    travelGroupDto.setGroupMaster(false);
+    travelGroupDto.setUuid(groupInviteDto.getInviteTo());
+    return travelGroupDao.createTravelGroupMember(travelGroupDto) > 0;
+  }
 
+  @Override
+  public List<GroupInviteDto> searchGroupInvite(String uuid) throws SQLException {
+    return groupInviteDao.selectGroupInvite(uuid);
+  }
+
+  @Override
+  public List<GroupInviteDto> searchAllPendingInvite(String groupId) throws SQLException {
+    return groupInviteDao.selectAllPendingInvite(groupId);
+  }
 
 }

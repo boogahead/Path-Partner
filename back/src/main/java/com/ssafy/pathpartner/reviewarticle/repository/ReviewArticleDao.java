@@ -2,30 +2,26 @@ package com.ssafy.pathpartner.reviewarticle.repository;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
+import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import com.ssafy.pathpartner.reviewarticle.dto.ReviewArticleDto;
 
 @Mapper
 public interface ReviewArticleDao {
 
-  void writeArticle(ReviewArticleDto reviewArticledto) throws SQLException;
+  int insertReviewArticle(ReviewArticleDto reviewArticledto) throws SQLException;
 
-  void registerFile(ReviewArticleDto reviewArticledto) throws Exception;
+  List<ReviewArticleDto> selectAllReviewArticle() throws SQLException;
 
-  List<ReviewArticleDto> listArticle() throws SQLException;
+  Optional<ReviewArticleDto> selectReviewArticle(String reviewArticleId) throws SQLException;
 
-  int getTotalArticleCount(Map<String, Object> param) throws SQLException;
+  int updateReviewArticle(ReviewArticleDto reviewArticledto) throws SQLException;
 
-  ReviewArticleDto getArticle(String articleNo) throws SQLException;
+  int deleteReviewArticle(String reviewArticleId) throws SQLException;
 
-  void updateHit(int articleNo) throws SQLException;
+//  void registerFile(ReviewArticleDto reviewArticledto) throws Exception;
 
-  void modifyArticle(ReviewArticleDto reviewArticledto) throws SQLException;
-
-  void deleteFile(String articleNo) throws Exception;
-
-  void deleteArticle(String articleNo) throws SQLException;
+//  void deleteFile(String articleNo) throws Exception;
 
 }

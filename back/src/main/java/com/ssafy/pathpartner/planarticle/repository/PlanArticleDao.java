@@ -1,22 +1,22 @@
 package com.ssafy.pathpartner.planarticle.repository;
+import com.ssafy.pathpartner.planarticle.exception.PlanArticleNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import com.ssafy.pathpartner.planarticle.dto.PlanArticleDto;
 public interface PlanArticleDao {
-    void writePlan(PlanArticleDto planArticleDto) throws SQLException;
-    void deletePlan(Map<String,Object> params) throws SQLException;
+    int insertPlanArticle(PlanArticleDto planArticleDto) throws SQLException;
+    int deletePlanArticle(String planArticleId) throws SQLException;
 
-    List<PlanArticleDto> getPlanList(String groupId) throws SQLException;
+    int updatePlanArticle(PlanArticleDto planArticleDto) throws SQLException;
 
-    void updatePlan(PlanArticleDto planArticleDto) throws SQLException;
+    List<PlanArticleDto> selectAllPlanArticle(List<String> groupId) throws SQLException;
 
-    String checkWriter(String planArticleId) throws SQLException;
+    Optional<PlanArticleDto> selectPlanArticle(String planArticleId) throws SQLException;
 
-    int memberCheck(Map<String,Object> params) throws SQLException;
+    Optional<String> selectWriter(String planArticleId) throws SQLException, PlanArticleNotFoundException;
 
-    int fetchRole(Map<String,Object> params) throws SQLException;
-
-    String getGroupId(String planArticleId) throws SQLException;
+    Optional<String> selectGroupId(String planArticleId) throws SQLException;
 }

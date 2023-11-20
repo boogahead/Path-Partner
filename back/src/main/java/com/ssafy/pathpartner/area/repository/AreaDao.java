@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AreaDao {
 
-  List<SidoDto> getSidoCode();
+  List<SidoDto> selectAllSidoCode();
 
-  List<GugunDto> getGunguCode();
+  List<GugunDto> selectGugunCode(int sidoCode);
 }

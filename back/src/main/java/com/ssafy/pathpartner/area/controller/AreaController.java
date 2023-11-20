@@ -1,6 +1,7 @@
 package com.ssafy.pathpartner.area.controller;
 
 import io.swagger.annotations.ApiParam;
+import java.sql.SQLException;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,44 +26,45 @@ import io.swagger.annotations.ApiResponses;
 @CrossOrigin("*")
 @RequestMapping("/area")
 @Slf4j
-@Api(tags = { "지역 컨트롤러 API" })
+@Api(tags = {"지역 컨트롤러 API"})
 public class AreaController {
-	private AreaService areaService;
 
-	@Autowired
-	public AreaController(AreaService areaService) {
-		this.areaService = areaService;
-	}
+  private final AreaService areaService;
 
-	@ApiOperation(value = "시도 조회", notes = "시도를 조회합니다.")
-	@ApiResponses({ @ApiResponse(code = 200, message = "회원 조회 완료"), @ApiResponse(code = 203, message = "조회 결과 없음"),
-			@ApiResponse(code = 500, message = "서버 에러") })
-	@GetMapping("/sido")
-	public ResponseEntity<List<SidoDto>> getSidoCode() {
-		log.debug("getSidoCode called");
-		List<SidoDto> list = areaService.getSidoCode();
-		if (list != null) {
-			return ResponseEntity.ok().body(list);
-		} else {
-			return ResponseEntity.noContent().build();
-		}
-	}
-	
-	@ApiOperation(value = "군구 조회", notes = "군구를 조회합니다.")
-	@ApiResponses({ @ApiResponse(code = 200, message = "회원 조회 완료"), @ApiResponse(code = 203, message = "조회 결과 없음"),
-			@ApiResponse(code = 500, message = "서버 에러") })
-	@GetMapping("/gungu/{sidoCode}")
-	public ResponseEntity<List<GugunDto>> getGunguCode(
-			@PathVariable("sidoCode")
-			@ApiParam(value = "시도 코드", required = true) int sidoCode)
-	{
-		log.debug("getSidoCode called");
-		List<GugunDto> list = areaService.getGunguCode(sidoCode);
-		if (list != null) {
-			return ResponseEntity.ok().body(list);
-		} else {
-			return ResponseEntity.noContent().build();
-		}
-	}
-	
+  @Autowired
+  public AreaController(AreaService areaService) {
+    this.areaService = areaService;
+  }
+
+  @ApiOperation(value = "시도 코드 가져오기", notes = "시도 코드를 가져옵니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "시도 코드 조회 완료"),
+      @ApiResponse(code = 500, message = "서버 에러")})
+  @GetMapping("/sido")
+  public ResponseEntity<List<SidoDto>> getSidoCode() {
+
+    log.debug("getSidoCode call");
+
+    try {
+      return ResponseEntity.ok().body(areaService.getSidoCode());
+    } catch (SQLException e) {
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  @ApiOperation(value = "구군 코드 가져오기", notes = "구군 코드를 가져옵니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "구군 코드 조회 완료"),
+      @ApiResponse(code = 500, message = "서버 에러")})
+  @GetMapping("/gugun/{sidoCode}")
+  public ResponseEntity<List<GugunDto>> getGunguCode(
+      @PathVariable("sidoCode") int sidoCode) {
+
+    log.debug("getSidoCode call");
+
+    try {
+      return ResponseEntity.ok().body(areaService.getGunguCode(sidoCode));
+    } catch (SQLException e) {
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
 }

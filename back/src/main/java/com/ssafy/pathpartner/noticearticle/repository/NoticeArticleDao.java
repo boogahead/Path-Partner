@@ -1,14 +1,16 @@
 package com.ssafy.pathpartner.noticearticle.repository;
+import com.ssafy.pathpartner.noticearticle.dto.NoticeArticleDto;
+import com.ssafy.pathpartner.noticearticle.exception.NoticeArticleNotFound;
 import java.sql.SQLException;
 import java.util.List;
 
+import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
-import com.ssafy.pathpartner.noticearticle.dto.notice_articleDto;
 @Mapper
 public interface NoticeArticleDao {
-    List<notice_articleDto> getnotice_articleList() throws SQLException;
-    notice_articleDto getnotice_article(String noticearticle_id) throws SQLException;
-    void createnotice_article(notice_articleDto notice_articleDto) throws SQLException;
-    void editnotice_article(notice_articleDto notice_articleDto) throws SQLException;
-    void deletenotice_article(String noticearticle_id) throws SQLException;
+    List<NoticeArticleDto> selectAllNoticeArticle() throws SQLException;
+    Optional<NoticeArticleDto> selectNoticeArticle(String noticeArticleId) throws SQLException, NoticeArticleNotFound;
+    int insertNoticeArticle(NoticeArticleDto noticeArticleDto) throws SQLException;
+    int updateNoticeArticle(NoticeArticleDto noticeArticleDto) throws SQLException;
+    int deleteNoticeArticle(String noticeArticleId ) throws SQLException;
 }

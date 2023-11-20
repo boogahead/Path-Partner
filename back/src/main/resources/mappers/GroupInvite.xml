@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?> <!-- 관통용  -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.pathpartner.travelgroup.repository.GroupInviteDao">
-    <insert id="createGroupInvite" parameterType="GroupInviteDto">
-        INSERT INTO group_invite (group_id, invite_to)
-        VALUES (#{groupId}, #{inviteTo})
-    </insert>
-    <delete id="deleteGroupInvite" parameterType="GroupInviteDto">
-        delete from group_invite where group_id = #{groupId} and invite_to = #{inviteTo}
-    </delete>
-    <select id="checkGroupInvite" parameterType="map" resultMap="String">
-        select group_id
-        from group_invite
-        where invite_to = #{inviteTo}
-    </select>
-    <select id="getPendingInviteList" parameterType="String" resultMap="String">
-        select invite_to
-        from group_invite
-        where group_id = #{groupId}
-    </select>
-    <select id="acceptGroupInvite" parameterType="TravelGroupDto">
-        INSERT into travel_group(group_id,group_name,creation_date,uuid,group_master)
-        values (#{groupId},#{groupName},#{creationDate},#{uuid},#{groupMaster})
-    </select>
-    <delete id="cancelGroupInvite" parameterType="GroupInviteDto">
-        delete from group_invite where group_id = #{groupId} and invite_to = #{inviteTo}
-    </delete>
+
+  <insert id="createGroupInvite" parameterType="GroupInviteDto">
+    INSERT INTO group_invite (group_id, invite_to)
+    VALUES (#{groupId}, #{inviteTo})
+  </insert>
+
+  <delete id="deleteGroupInvite" parameterType="GroupInviteDto">
+    delete
+    from group_invite
+    where group_id = #{groupId}
+      and invite_to = #{inviteTo}
+  </delete>
+
+  <select id="selectGroupInvite" parameterType="String" resultType="GroupInviteDto">
+    select group_id
+    from group_invite
+    where invite_to = #{uuid}
+  </select>
+
+  <select id="selectAllPendingInvite" parameterType="String" resultType="GroupInviteDto">
+    select invite_to
+    from group_invite
+    where group_id = #{groupId}
+  </select>
 </mapper>

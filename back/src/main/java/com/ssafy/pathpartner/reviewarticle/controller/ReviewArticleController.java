@@ -1,10 +1,17 @@
 package com.ssafy.pathpartner.reviewarticle.controller;
 
+import com.ssafy.pathpartner.reviewarticle.exception.ReviewArticleNotFoundException;
+import com.ssafy.pathpartner.reviewarticle.exception.UnauthrizedReviewArticleRequestException;
+import com.ssafy.pathpartner.user.dto.UserDto;
+import java.sql.SQLException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,16 +27,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import com.ssafy.pathpartner.reviewarticle.dto.ReviewArticleDto;
 import com.ssafy.pathpartner.reviewarticle.service.ReviewArticleService;
+import springfox.documentation.annotations.ApiIgnore;
 
+@Slf4j
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
     RequestMethod.POST}, maxAge = 6000)
 @RestController
-@RequestMapping("/reviewarticle")
-@Api("후기게시판 컨트롤러  API V1")
+@RequestMapping("/review")
+@Api(tags = {"후기게시판 컨트롤러  API V1"})
+@PreAuthorize("hasRole('USER')")
 public class ReviewArticleController {
 
-  private static final Logger logger = LoggerFactory.getLogger(ReviewArticleController.class);
-  private ReviewArticleService reviewArticleService;
+  private final ReviewArticleService reviewArticleService;
 
   public ReviewArticleController(ReviewArticleService reviewArticleService) {
     super();
@@ -38,79 +47,82 @@ public class ReviewArticleController {
 
   @ApiOperation(value = "후기게시판 글작성", notes = "새로운 후기글 정보를 입력한다.")
   @PostMapping
-  public ResponseEntity<?> writeArticle(
-      @RequestBody @ApiParam(value = "후기글 정보.", required = true) ReviewArticleDto reviewArticleDto) {
-    logger.info("writeArticle reviewArticleDto - {}", reviewArticleDto);
+  public ResponseEntity<Boolean> writeArticle(
+      @ApiIgnore @AuthenticationPrincipal UserDto userDto,
+      @RequestBody ReviewArticleDto reviewArticleDto) {
+    log.debug("writeArticle call");
+
+    reviewArticleDto.setWriterUuid(userDto.getUuid());
     try {
-      reviewArticleService.writeArticle(reviewArticleDto);
-      return new ResponseEntity<String>("success", HttpStatus.OK);
-    } catch (Exception e) {
-      logger.error("후기게시판 글작성 실패", e);
-      return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+      return ResponseEntity.ok().body(reviewArticleService.createReviewArticle(reviewArticleDto));
+    } catch (SQLException e) {
+      log.error(e.toString());
+      return ResponseEntity.badRequest().build();
     }
   }
 
   @ApiOperation(value = "후기게시판 글수정", notes = "후기글 정보를 수정한다.")
   @PutMapping
-  public ResponseEntity<?> updateArticle(
-      @RequestBody @ApiParam(value = "후기글 정보.", required = true) ReviewArticleDto reviewArticleDto) {
-    logger.info("updateArticle reviewArticleDto - {}", reviewArticleDto);
+  @PreAuthorize("#userDto.uuid == #reviewArticleDto.writerUuid")
+  public ResponseEntity<Boolean> updateArticle(@ApiIgnore @AuthenticationPrincipal UserDto userDto,
+      @RequestBody ReviewArticleDto reviewArticleDto) {
+    log.debug("updateArticle call");
+
     try {
-      reviewArticleService.modifyArticle(reviewArticleDto);
-      return new ResponseEntity<String>("success", HttpStatus.OK);
+      return ResponseEntity.ok().body(reviewArticleService.updateReviewArticle(reviewArticleDto));
     } catch (Exception e) {
-      logger.error("후기게시판 글수정 실패", e);
-      return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+      log.error(e.toString());
+      return ResponseEntity.internalServerError().build();
     }
   }
 
   @ApiOperation(value = "후기게시판 글삭제", notes = "후기글 정보를 삭제한다.")
-  @DeleteMapping("/{reviewArticleNo}")
-  public ResponseEntity<?> deleteArticle(
-      @PathVariable("reviewArticleNo") @ApiParam(value = "후기글 번호.", required = true) int reviewArticleNo) {
-    logger.info("deleteArticle reviewArticleNo - {}", reviewArticleNo);
+  @DeleteMapping("/{reviewArticleId}")
+  public ResponseEntity<Boolean> deleteArticle(@ApiIgnore @AuthenticationPrincipal UserDto userDto,
+      @PathVariable String reviewArticleId) {
+    log.debug("deleteArticle call");
+
     try {
-      reviewArticleService.deleteArticle(String.valueOf(reviewArticleNo));
-      return new ResponseEntity<String>("success", HttpStatus.OK);
-    } catch (Exception e) {
-      logger.error("후기게시판 글삭제 실패", e);
-      return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+      return ResponseEntity.ok()
+          .body(reviewArticleService.deleteReviewArticle(reviewArticleId, userDto));
+    } catch (ReviewArticleNotFoundException e) {
+      log.error(e.toString());
+      return ResponseEntity.badRequest().build();
+    } catch (UnauthrizedReviewArticleRequestException e) {
+      log.error(e.toString());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    } catch (SQLException e) {
+      log.error(e.toString());
+      return ResponseEntity.internalServerError().build();
     }
   }
 
   @ApiOperation(value = "후기게시판 글목록", notes = "후기글 목록을 조회한다.")
   @GetMapping
-  public ResponseEntity<?> listArticle() {
-    logger.info("listArticle - 호출");
+  public ResponseEntity<List<ReviewArticleDto>> getReviewArticleList() {
+    log.debug("getReviewArticleList call");
     try {
-      List<ReviewArticleDto> list = reviewArticleService.listArticle();
-      if (list.isEmpty()) {
-        return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
-      } else {
-        return new ResponseEntity<List<ReviewArticleDto>>(list, HttpStatus.OK);
-      }
-    } catch (Exception e) {
-      logger.error("후기게시판 글목록 조회 실패", e);
-      return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+      return ResponseEntity.ok().body(reviewArticleService.searchAllReviewArticle());
+    } catch (SQLException e) {
+      log.error(e.toString());
+      return ResponseEntity.internalServerError().build();
     }
   }
 
   @ApiOperation(value = "후기게시판 글상세", notes = "후기글 상세정보를 조회한다.")
-  @GetMapping("/{reviewArticleNo}")
-  public ResponseEntity<?> getArticle(
-      @PathVariable("reviewArticleNo") @ApiParam(value = "후기글 번호.", required = true) int reviewArticleNo) {
-    logger.info("getArticle reviewArticleNo - {}", reviewArticleNo);
+  @GetMapping("/{reviewArticleId}")
+  public ResponseEntity<ReviewArticleDto> getReviewArticle(
+      @PathVariable String reviewArticleId) {
+    log.debug("getReviewArticle ");
+
     try {
-      ReviewArticleDto reviewArticleDto = reviewArticleService.getArticle(
-          String.valueOf(reviewArticleNo));
-      if (reviewArticleDto == null) {
-        return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
-      } else {
-        return new ResponseEntity<ReviewArticleDto>(reviewArticleDto, HttpStatus.OK);
-      }
-    } catch (Exception e) {
-      logger.error("후기게시판 글상세 조회 실패", e);
-      return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+      return ResponseEntity.ok().body(reviewArticleService.searchReviewArticle(reviewArticleId));
+    } catch (ReviewArticleNotFoundException e) {
+      log.error(e.toString());
+      return ResponseEntity.badRequest().build();
+    } catch (SQLException e) {
+      log.error(e.toString());
+      return ResponseEntity.internalServerError().build();
     }
   }
 }

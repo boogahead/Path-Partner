@@ -1,13 +1,14 @@
 package com.ssafy.pathpartner.noticearticle.controller;
 
-import java.util.HashMap;
+import com.ssafy.pathpartner.noticearticle.dto.NoticeArticleDto;
+import com.ssafy.pathpartner.noticearticle.exception.NoticeArticleNotFound;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,118 +18,109 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import com.ssafy.pathpartner.noticearticle.dto.notice_articleDto;
 import com.ssafy.pathpartner.noticearticle.service.NoticeArticleService;
-//http://localhost/vue/swagger-ui.html
-@CrossOrigin(origins = { "*" }, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.POST} , maxAge = 6000)
+
+@Slf4j
+@CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
+    RequestMethod.POST}, maxAge = 6000)
 @RestController
 @RequestMapping("/notice")
-@Api("공지게시판 컨트롤러  API V1")
+@Api(tags = {"공지글 컨트롤러 API"})
+@PreAuthorize("hasRole('USER')")
 public class NoticeArticleController {
 
-    private static final Logger logger = LoggerFactory.getLogger(NoticeArticleController.class);
-//	private static final String SUCCESS = "success";
-//	private static final String FAIL = "fail";
+  private final NoticeArticleService noticeArticleService;
 
-    private NoticeArticleService NoticeArticleService;
+  @Autowired
+  public NoticeArticleController(NoticeArticleService noticeArticleService) {
+    super();
+    this.noticeArticleService = noticeArticleService;
+  }
 
-    public NoticeArticleController(NoticeArticleService NoticeArticleService) {
-        super();
-        this.NoticeArticleService = NoticeArticleService;
+  @ApiOperation(value = "공지 게시판 글목록", notes = "모든 게시글의 정보를 가져옵니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "가져오기 성공"),
+      @ApiResponse(code = 500, message = "서버에러")})
+  @GetMapping
+  public ResponseEntity<List<NoticeArticleDto>> getAllNoticeArticle() {
+    log.debug("getAllNoticeArticle call");
+
+    try {
+      return ResponseEntity.ok().body(noticeArticleService.searchAllNoticeArticle());
+    } catch (SQLException e) {
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  @ApiOperation(value = "공지 게시판 글 보기", notes = "글 번호에 게시글의 정보를 가져옵니다.")
+  @GetMapping("/{noticeArticleId}")
+  public ResponseEntity<NoticeArticleDto> getNoticeArticle(
+      @PathVariable String noticeArticleId) {
+    log.debug("getNoticeArticle call");
+
+    try {
+      return ResponseEntity.ok().body(noticeArticleService.searchNoticeArticle(noticeArticleId));
+    } catch (NoticeArticleNotFound e) {
+      return ResponseEntity.badRequest().build();
+    } catch (SQLException e) {
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  @ApiOperation(value = "공지글 작성", notes = "새로운 게시글 정보를 입력한다.")
+  @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Boolean> writeNoticeArticle(
+      @RequestBody NoticeArticleDto noticeArticleDto) {
+    log.debug("writeNoticeArticle call");
+
+    if (noticeArticleDto.getTitle() == null || noticeArticleDto.getContent() == null) {
+      return ResponseEntity.badRequest().build();
     }
 
-    @ApiOperation(value = "공지 게시판 글목록", notes = "모든 게시글의 정보를 반환한다.", response = List.class)
-    @ApiResponses({ @ApiResponse(code = 200, message = "회원목록 OK!!"), @ApiResponse(code = 404, message = "페이지없어!!"),
-            @ApiResponse(code = 500, message = "서버에러!!") })
-    @GetMapping
-    public ResponseEntity<?>list_Notice_Article(
-            @RequestParam(required = false) @ApiParam(value = "페이지 번호") String page,
-            @RequestParam(required = false) @ApiParam(value = "페이지 당 게시글 수") String size) {
-        logger.debug("listArticle - 호출");
-        Map<String, Object> result = new HashMap<>();
-        HttpStatus status = HttpStatus.OK;
-        try {
-            result = NoticeArticleService.getnotice_articleList();
-            result.put("status", true);
-        } catch (Exception e) {
-            logger.error("공지글 목록 조회 실패", e);
-            result.put("status", false);
-            status = HttpStatus.BAD_REQUEST;
-        }
-        return new ResponseEntity<>(result, status);
+    try {
+      return ResponseEntity.ok().body(noticeArticleService.createNoticeArticle(noticeArticleDto));
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().build();
     }
-    @ApiOperation(value = "공지글 글 보기", notes = "글 번호에 해당하는 게시글의 정보 반환.")
-    @GetMapping("/{noticearticle_id}")
-    public ResponseEntity<?>get_Notice_Article(
-            @PathVariable @ApiParam(value = "공지글 번호", required = true) String noticearticle_id) {
-        logger.debug("getArticle - 호출");
-        Map<String, Object> result = new HashMap<>();
-        HttpStatus status = HttpStatus.OK;
-        try {
-            result.put("notice_article", NoticeArticleService.getnotice_article(noticearticle_id));
-            result.put("status", true);
-        } catch (Exception e) {
-            logger.error("공지글 조회 실패", e);
-            result.put("status", false);
-            status = HttpStatus.BAD_REQUEST;
-        }
-        return new ResponseEntity<>(result, status);
+  }
+
+  @ApiOperation(value = "공지글 수정", notes = "공지글을 수정합니다.")
+  @PutMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Boolean> modifyNoticeArticle(
+      @RequestBody NoticeArticleDto noticeArticleDto) {
+    log.debug("modifyNoticeArticle call");
+
+    if (noticeArticleDto.getTitle() == null || noticeArticleDto.getContent() == null) {
+      return ResponseEntity.badRequest().build();
     }
 
-
-    @ApiOperation(value = "공지글 작성", notes = "새로운 게시글 정보를 입력한다.")
-    @PostMapping
-    public ResponseEntity<?> write_Notice_Article(
-            @RequestBody @ApiParam(value = "게시글 정보.", required = true) notice_articleDto notice_articleDto) {
-        logger.debug("writeArticle - 호출");
-        if (notice_articleDto.getTitle() == null || notice_articleDto.getContent() == null)
-            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
-        try {
-            NoticeArticleService.createnotice_article(notice_articleDto);
-        } catch (Exception e) {
-            logger.error("공지글 작성 실패", e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    try {
+      return ResponseEntity.ok().body(noticeArticleService.updateNoticeArticle(noticeArticleDto));
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().build();
     }
+  }
 
-    @ApiOperation(value = "공지글 수정", notes = "공지글 정보를 수정한다.")
-    @PutMapping
-    public ResponseEntity<?> update_Notice_Article(
-            @RequestBody @ApiParam(value = "공지글 정보.", required = true) notice_articleDto notice_articleDto) {
-        logger.debug("updateArticle - 호출");
-        if (notice_articleDto.getTitle() == null || notice_articleDto.getContent() == null)
-            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
-        try {
-            NoticeArticleService.editnotice_article(notice_articleDto);
-        } catch (Exception e) {
-            logger.error("공지글 수정 실패", e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+  @ApiOperation(value = "공지글 삭제", notes = "공지글을 삭제합니다.")
+  @DeleteMapping("/{noticeArticleId}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Boolean> deleteNoticeArticle(
+      @PathVariable String noticeArticleId) {
+    log.debug("deleteNoticeArticle call");
 
-    @ApiOperation(value = "공지글 삭제", notes = "공지글 번호에 해당하는 공지글을 삭제한다.")
-    @DeleteMapping("/{noticearticle_id}")
-    public ResponseEntity<?> delete_Notice_Article(
-            @PathVariable @ApiParam(value = "공지글 번호", required = true) String noticearticle_id) {
-        logger.debug("deleteArticle - 호출");
-        try {
-            NoticeArticleService.deletenotice_article(noticearticle_id);
-        } catch (Exception e) {
-            logger.error("공지글 삭제 실패", e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    try {
+      return ResponseEntity.ok().body(noticeArticleService.deleteNoticeArticle(noticeArticleId));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().build();
     }
+  }
 
 }

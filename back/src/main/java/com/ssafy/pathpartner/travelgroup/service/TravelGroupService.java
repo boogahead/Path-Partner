@@ -1,11 +1,23 @@
 package com.ssafy.pathpartner.travelgroup.service;
 
+import com.ssafy.pathpartner.travelgroup.dto.GroupMemberDto;
 import com.ssafy.pathpartner.travelgroup.dto.TravelGroupDto;
+import com.ssafy.pathpartner.travelgroup.exception.MasterCanNotLeaveGroupException;
+import com.ssafy.pathpartner.travelgroup.exception.UnauthoriedGroupRequestException;
 import java.sql.SQLException;
+import java.util.List;
+
 public interface TravelGroupService {
-    void createTravelGroup(TravelGroupDto travelGroupDto) throws SQLException;
-    void deleteTravelGroup(String travelGroupId) throws SQLException;
-    void leaveTravelGroup(String travelGroupId) throws SQLException;
-    int checkGroupMaster(String uid) throws SQLException;
-    TravelGroupDto getTravelGroupinfo(String travelGroupId) throws SQLException;
+
+  boolean createTravelGroup(TravelGroupDto travelGroupDto) throws SQLException;
+
+  boolean deleteTravelGroup(String groupId, String uuid)
+      throws SQLException, UnauthoriedGroupRequestException;
+
+  boolean leaveTravelGroup(String groupId, String uuid)
+      throws SQLException, UnauthoriedGroupRequestException, MasterCanNotLeaveGroupException;
+
+  List<GroupMemberDto> searchGroupMember(String groupId) throws SQLException;
+
+  List<TravelGroupDto> searchAllGroup(String uuid) throws SQLException;
 }

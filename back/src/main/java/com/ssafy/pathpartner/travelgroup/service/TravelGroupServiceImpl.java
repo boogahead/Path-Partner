@@ -1,6 +1,11 @@
 package com.ssafy.pathpartner.travelgroup.service;
+
+import com.ssafy.pathpartner.travelgroup.dto.GroupMemberDto;
+import com.ssafy.pathpartner.travelgroup.exception.MasterCanNotLeaveGroupException;
+import com.ssafy.pathpartner.travelgroup.exception.UnauthoriedGroupRequestException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,54 +19,55 @@ import com.ssafy.pathpartner.travelgroup.repository.TravelGroupDao;
 @Service
 @Slf4j
 public class TravelGroupServiceImpl implements TravelGroupService {
-    private final TravelGroupDao travelGroupDao;
-    @Autowired
-    public TravelGroupServiceImpl(TravelGroupDao travelGroupDao) {
-        this.travelGroupDao = travelGroupDao;
+
+  private final TravelGroupDao travelGroupDao;
+
+  @Autowired
+  public TravelGroupServiceImpl(TravelGroupDao travelGroupDao) {
+    this.travelGroupDao = travelGroupDao;
+  }
+
+  @Override
+  public boolean createTravelGroup(TravelGroupDto travelGroupDto) throws SQLException {
+    return travelGroupDao.createTravelGroup(travelGroupDto) > 0;
+  }
+
+  @Override
+  public boolean deleteTravelGroup(String groupId, String uuid)
+      throws SQLException, UnauthoriedGroupRequestException {
+
+    // 그룹 마스터 확인
+    if (!travelGroupDao.isGroupMaster(groupId, uuid)) {
+      return travelGroupDao.deleteTravelGroup(groupId) > 0;
+    } else {
+      throw new UnauthoriedGroupRequestException("해당 그룹에 삭제 권한이 없습니다.");
     }
-    @Override
-    public void createTravelGroup(TravelGroupDto travelGroupDto) throws SQLException {
-        travelGroupDao.createTravelGroup(travelGroupDto);
-    }
-    @Override
-    public void deleteTravelGroup(String travelGroupId) throws SQLException {
-        /*
-        현재 uuid가 방장이 아니면 삭제 못하도록 그냥 리턴시켜버릴거임
-        uuid는 나중에 JWT로 변경할것
-         */
-        String uuid=("testtesttest");
-        if(checkGroupMaster(uuid)==0)return;
-        travelGroupDao.deleteTravelGroup(travelGroupId);
-    }
-    @Override
-    public void leaveTravelGroup(String travelGroupId) throws SQLException {
-        /*
-        현재 uuid가 방장이면 그냥 리턴시켜버림
-        uuid는 나중에 JWT로 변경할것
-         */
-        String uuid=("testtesttest");
-        if(checkGroupMaster(uuid)==1)return;
-        Map<String,Object> params=new HashMap<>();
-        params.put("uuid",uuid);
-        params.put("groupId",travelGroupId);
-        travelGroupDao.leaveTravelGroup(params);
-    }
-    @Override
-    public int checkGroupMaster(String groupId) throws SQLException {
-        /*
-        JWT 필요
-         */
-        String uuid=("testtesttest");
-        Map<String,Object> params=new HashMap<>();
-        params.put("uuid",uuid);
-        params.put("groupId",groupId);
-        return travelGroupDao.checkGroupMaster(params);
+  }
+
+  @Override
+  public boolean leaveTravelGroup(String groupId, String uuid)
+      throws SQLException, UnauthoriedGroupRequestException, MasterCanNotLeaveGroupException {
+    // 그룹 마스터 확인
+    if (travelGroupDao.isGroupMaster(groupId, uuid)) {
+      // 남은 인원이 없으면
+      if (travelGroupDao.countGroupMember(groupId) < 2) {
+        return deleteTravelGroup(groupId, uuid);
+      } else {
+        throw new MasterCanNotLeaveGroupException("그룹장은 탈퇴할 수 없습니다.");
+      }
     }
 
-    @Override
-    public TravelGroupDto getTravelGroupinfo(String travelGroupId) throws SQLException {
-        return travelGroupDao.getTravelGroupInfo(travelGroupId);
-    }
+    return travelGroupDao.deleteTravelGroupMember(groupId, uuid) > 0;
+  }
 
+  @Override
+  public List<GroupMemberDto> searchGroupMember(String groupId) throws SQLException {
+    return travelGroupDao.selectAllGroupMember(groupId);
+  }
+
+  @Override
+  public List<TravelGroupDto> searchAllGroup(String uuid) throws SQLException {
+    return travelGroupDao.selectAllMyGroup(uuid);
+  }
 
 }
