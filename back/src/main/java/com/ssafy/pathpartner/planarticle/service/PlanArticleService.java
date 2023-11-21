@@ -1,5 +1,6 @@
 package com.ssafy.pathpartner.planarticle.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.pathpartner.planarticle.exception.PlanArticleNotFoundException;
 import com.ssafy.pathpartner.planarticle.exception.UnauthoriedPlanRequestException;
 import java.sql.SQLException;
@@ -9,13 +10,13 @@ import com.ssafy.pathpartner.planarticle.dto.PlanArticleDto;
 public interface PlanArticleService {
 
   boolean createPlanArticle(PlanArticleDto planArticleDto)
-      throws SQLException, UnauthoriedPlanRequestException;
+      throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException;
 
   boolean deletePlanArticle(String planArticleId, String uuid)
       throws SQLException, UnauthoriedPlanRequestException, PlanArticleNotFoundException;
 
   boolean updatePlanArticle(PlanArticleDto planArticleDto, String uuid)
-      throws SQLException, UnauthoriedPlanRequestException;
+      throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException;
 
   PlanArticleDto searchPlanArticle(String plansArticleId) throws SQLException, PlanArticleNotFoundException;
 
