@@ -62,4 +62,7 @@ public class AttractionInfoDto {
   @ApiModelProperty(hidden = true)
   private int likes;
 
+  @ApiModelProperty(value="관광지 설명")
+  private String overview;
+
 }

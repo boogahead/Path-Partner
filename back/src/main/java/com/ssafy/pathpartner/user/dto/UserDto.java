@@ -3,6 +3,7 @@ package com.ssafy.pathpartner.user.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -45,7 +47,10 @@ public class UserDto implements UserDetails {
   @ApiModelProperty(value = "이메일")
   private String email;
 
-  public static UserDto fromSignUpDto(SignUpDto signUpDto) {
+  @ApiModelProperty(value = "프로필 사진")
+  private byte[] profileImg;
+
+  public static UserDto fromSignUpDto(SignUpDto signUpDto) throws IOException {
     return UserDto
         .builder()
         .id(signUpDto.getId())
@@ -53,6 +58,7 @@ public class UserDto implements UserDetails {
         .password(signUpDto.getPassword())
         .email(signUpDto.getEmail())
         .userType(1)
+            .profileImg(signUpDto.getProfileImg().getBytes())
         .build();
   }
 
@@ -100,7 +106,7 @@ public class UserDto implements UserDetails {
   }
 
 
-	/*@ApiModelProperty(value="프로필 사진")
+  /*@ApiModelProperty(value="프로필 사진")
 	private byte[] profileImg;
 	public UserDto() {
 		// Load the default picture from the resources folder and set it as the default profileImg

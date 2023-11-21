@@ -17,6 +17,7 @@ public class SignUpDto {
   private String nickname;
   private String password;
   private String email;
-//  private MultipartFile profileImg;
+
+  private MultipartFile profileImg;
 
 }

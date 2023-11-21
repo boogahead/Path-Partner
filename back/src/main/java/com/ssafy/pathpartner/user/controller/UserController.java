@@ -12,6 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -39,6 +41,8 @@ public class UserController {
   public UserController(UserService userService) {
     this.userService = userService;
   }
+
+
 
   @ApiOperation(value = "회원 정보 가져오기", notes = "uuid를 통해 회원 정보를 가져옵니다.")
   @ApiResponses({@ApiResponse(code = 200, message = "회원 조회 완료"),
@@ -110,7 +114,7 @@ public class UserController {
   @PutMapping
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
   public ResponseEntity<Boolean> modifyUser(@ApiIgnore @AuthenticationPrincipal UserDto userDto,
-      @RequestBody UpdateUserDto updateUserDto) {
+                                            @ModelAttribute UpdateUserDto updateUserDto) {
     log.debug("modifyUser call");
 
     updateUserDto.setUuid(userDto.getUuid());
@@ -124,6 +128,8 @@ public class UserController {
     } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 

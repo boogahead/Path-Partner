@@ -37,7 +37,7 @@ public class TravelGroupServiceImpl implements TravelGroupService {
       throws SQLException, UnauthoriedGroupRequestException {
 
     // 그룹 마스터 확인
-    if (!travelGroupDao.isGroupMaster(groupId, uuid)) {
+    if (travelGroupDao.isGroupMaster(groupId, uuid)) {
       return travelGroupDao.deleteTravelGroup(groupId) > 0;
     } else {
       throw new UnauthoriedGroupRequestException("해당 그룹에 삭제 권한이 없습니다.");

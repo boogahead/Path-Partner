@@ -4,8 +4,8 @@
 <mapper namespace="com.ssafy.pathpartner.user.repository.UserDao">
 
   <insert id="insertUser" parameterType="userDto">
-    insert into user (uuid, id, nickname, password, user_type, join_date, email)
-    values (UUID(), #{id}, #{nickname}, #{password}, #{userType}, now(), #{email})
+    insert into user (uuid, id, nickname, password, user_type, join_date, email,profile_img)
+    values (UUID(), #{id}, #{nickname}, #{password}, #{userType}, now(), #{email},#{profileImg})
   </insert>
 
   <update id="updateUser" parameterType="UpdateUserDto">
@@ -16,6 +16,9 @@
       </if>
       <if test="nickname != null">
         nickname=#{nickname}
+      </if>
+      <if test="profileImgSerialized != null">
+            profile_img=#{profileImgSerialized}
       </if>
     </set>
     where uuid = #{uuid}
@@ -28,31 +31,31 @@
   </delete>
 
   <select id="selectUserById" parameterType="String" resultType="UserDto">
-    select uuid, id, nickname, password, join_date, user_type, email
+    select uuid, id, nickname, password, join_date, user_type, email, profile_img
     from user
     where id = #{id}
   </select>
 
   <select id="selectUserByUuid" parameterType="String" resultType="UserDto">
-    select uuid, id, nickname, password, join_date, user_type, email
+    select uuid, id, nickname, password, join_date, user_type, email, profile_img
     from user
     where uuid = #{uuid}
   </select>
 
   <select id="selectUserByIdAndEmail" parameterType="ResetPasswordDto" resultType="UserDto">
-    select uuid, id, nickname, password, join_date, user_type, email
+    select uuid, id, nickname, password, join_date, user_type, email, profile_img
     from user
     where id = #{id} and email = #{email}
   </select>
 
   <select id="selectUserByEmail" parameterType="String" resultType="UserDto">
-    select uuid, id, nickname, password, join_date, user_type, email
+    select uuid, id, nickname, password, join_date, user_type, email, profile_img
     from user
     where email = #{email}
   </select>
 
   <select id="selectAllUserByNickname" parameterType="String" resultType="UserInfoDto">
-    select uuid, id, nickname, join_date, user_type, email
+    select uuid, id, nickname, join_date, user_type, email, profile_img
     from user
     where nickname like '%${nickname}%'
   </select>
