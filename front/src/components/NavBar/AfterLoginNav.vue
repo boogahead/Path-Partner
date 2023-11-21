@@ -21,16 +21,12 @@ const notificationDropdown = ref(false);
 const avatarDropdown = ref(false);
 
 const logoutAttempt = () => {
-  logout((response) => {
-    loginUserInfo.value = "";
-    accessToken.value = "";
-    refreshToken.value = "";
-    isLogin.value = false;
-
-    router.replace({name:'home'})
-  }, () => {
-    alert("로그아웃 실패. 잠시후 다시 시도해 주세요")
-  })
+  loginUserInfo.value = "";
+  accessToken.value = "";
+  refreshToken.value = "";
+  isLogin.value = false;
+  router.replace({name:'home'})
+  logout()
 }
 // getNotification()
 // 알람 수 등록 및 알림 컴포넌트 생성 필요

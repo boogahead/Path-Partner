@@ -1,16 +1,14 @@
 import {localAxios} from "@/utils/API-commons";
+import {localAuthorizedAxios} from "@/utils/Authorized-commons";
 
-const local = localAxios();
-
-const loginUser= sessionStorage.getItem("loginUser")
-const {accessToken} = JSON.parse(loginUser);
+const local = localAuthorizedAxios();
 
 function getSidoCode(success, fail) {
-  local.get(`/area/sido`, {headers: {Authorization: 'Bearer ' + accessToken}}).then(success).catch(fail);
+  local.get(`/area/sido`).then(success).catch(fail);
 }
 
 function getSiGunGuCode(sidoCode, success, fail) {
-  local.get(`/area/gugun/${sidoCode}`, {headers: {Authorization: 'Bearer ' + accessToken}}).then(success).catch(fail);
+  local.get(`/area/gugun/${sidoCode}`).then(success).catch(fail);
 }
 
 export {
