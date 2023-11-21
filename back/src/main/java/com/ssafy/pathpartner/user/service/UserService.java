@@ -6,6 +6,8 @@ import com.ssafy.pathpartner.user.dto.UpdateUserDto;
 import com.ssafy.pathpartner.user.dto.UserDto;
 import com.ssafy.pathpartner.user.dto.UserInfoDto;
 import com.ssafy.pathpartner.user.exception.UserNotFoundException;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -13,11 +15,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService {
 
-  boolean createUser(SignUpDto signUpDto) throws SQLException;
+  boolean createUser(SignUpDto signUpDto) throws SQLException, IOException;
 
   boolean deleteUser(String uuid) throws SQLException;
 
-  boolean updateUser(UpdateUserDto updateUserDto) throws SQLException;
+  boolean updateUser(UpdateUserDto updateUserDto) throws SQLException, IOException;
 
   UserInfoDto searchUserByUuid(String uuid) throws SQLException, UserNotFoundException;
 

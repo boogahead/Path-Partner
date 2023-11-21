@@ -9,6 +9,8 @@ import com.ssafy.pathpartner.user.exception.AlreadyExistsUserException;
 import com.ssafy.pathpartner.user.exception.InvalidInputException;
 import com.ssafy.pathpartner.user.exception.UserNotFoundException;
 import com.ssafy.pathpartner.user.repository.UserDao;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public boolean createUser(SignUpDto signUpDto) throws SQLException {
+  public boolean createUser(SignUpDto signUpDto) throws SQLException, IOException {
     signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
     userDao.selectUserById(signUpDto.getId()).ifPresent((result) -> {
       throw new AlreadyExistsUserException(String.format("[%s]는 이미 존재하는 id입니다", signUpDto.getId()));
@@ -46,16 +48,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   public boolean updateUser(UpdateUserDto updateUserDto)
-      throws SQLException, InvalidInputException {
+          throws SQLException, InvalidInputException, IOException {
     // 내용 검증
-    if ((updateUserDto.getPassword() == null && updateUserDto.getNickname() == null)
-        || ("".equals(updateUserDto.getPassword()) && "".equals(updateUserDto.getNickname()))
+    if ((updateUserDto.getPassword() == null && updateUserDto.getNickname() == null&&updateUserDto.getProfileImg()==null)
+        || ("".equals(updateUserDto.getPassword()) && "".equals(updateUserDto.getNickname())&&"".equals(updateUserDto.getProfileImg()))
     ) {
       throw new InvalidInputException("입력값이 비었습니다.");
     }
 
     if (updateUserDto.getPassword() != null && !updateUserDto.getPassword().isEmpty()) {
       updateUserDto.setPassword(passwordEncoder.encode(updateUserDto.getPassword()));
+    }
+    if(updateUserDto.getProfileImg()!=null){
+      updateUserDto.setProfileImgSerialized(updateUserDto.getProfileImg().getBytes());
     }
 
     return userDao.updateUser(updateUserDto) > 0;

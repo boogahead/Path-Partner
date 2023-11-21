@@ -26,6 +26,7 @@ public class UserInfoDto {
 
   private String joinDate;
 
+  private byte[] profileImg;
   public static UserInfoDto fromUserDto(UserDto userDto) {
     return UserInfoDto
         .builder()
@@ -34,6 +35,7 @@ public class UserInfoDto {
         .nickname(userDto.getNickname())
         .email(userDto.getEmail())
         .joinDate(userDto.getJoinDate())
+        .profileImg(userDto.getProfileImg())
         .build();
   }
 }
