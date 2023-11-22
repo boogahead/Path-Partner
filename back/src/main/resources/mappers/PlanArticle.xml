@@ -58,7 +58,7 @@
     WHERE plan_article_id = #{planArticleId}
   </select>
 
-  <select id="lockPlanArticle" parameterType="string" resultType="void">
+  <select id="lockPlanArticle" parameterType="String">
     SELECT * FROM plan_article WHERE plan_article_id = #{planArticleId} FOR UPDATE
   </select>
 

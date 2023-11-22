@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.pathpartner.travelgroup.repository.ChatDao">
+    <insert id="insertChat" parameterType="ChatDto">
+        INSERT INTO chat (chat_id, content, creation_date, uuid, group_id)
+        VALUES (default, #{content}, now(), #{uuid}, #{groupId})
+    </insert>
+    <select id="selectChatList" parameterType="String" resultType="ChatDto">
+        SELECT * FROM chat WHERE group_id = #{groupId}
+    </select>
+</mapper>
