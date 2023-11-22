@@ -58,7 +58,7 @@ public class UserDto implements UserDetails {
         .password(signUpDto.getPassword())
         .email(signUpDto.getEmail())
         .userType(1)
-            .profileImg(signUpDto.getProfileImg().getBytes())
+        .profileImg(null)
         .build();
   }
 

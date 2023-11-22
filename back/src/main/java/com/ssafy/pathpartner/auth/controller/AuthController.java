@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.security.PermitAll;
@@ -115,7 +116,7 @@ public class AuthController {
   @ApiResponses({@ApiResponse(code = 201, message = "회원 가입 성공"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @PostMapping("/register")
-  public ResponseEntity<Boolean> registerUser(@ModelAttribute SignUpDto signUpDto) {
+  public ResponseEntity<Boolean> registerUser(@RequestBody SignUpDto signUpDto) {
     log.debug("registerUser call");
 
     try {
@@ -130,7 +131,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
       }
     } catch (Exception e) {
-      log.debug(e.toString());
+      log.debug(Arrays.toString(e.getStackTrace()));
       return ResponseEntity.internalServerError().build();
     }
   }

@@ -38,7 +38,7 @@
   </select>
 
   <select id="selectAllFriend" parameterType="String" resultType="FriendInfoDto">
-    select u.uuid, u.id, u.nickname, u.email
+    select u.uuid, u.id, u.nickname, u.email, u.profile_img
     from (select f.friend_to
           from (select friend_from, friend_to, accepted
                 from friend
@@ -54,7 +54,7 @@
   </select>
 
   <select id="selectAllFriendRequest" parameterType="String" resultType="FriendInfoDto">
-    select u.uuid, u.id, u.nickname, u.email
+    select u.uuid, u.id, u.nickname, u.email, u.profile_img
     from (select f.friend_to
           from (select friend_from, friend_to, accepted
                 from friend
@@ -70,7 +70,7 @@
   </select>
 
   <select id="selectAllFriendRequestReceived" parameterType="String" resultType="FriendInfoDto">
-    select u.uuid, u.id, u.nickname, u.email
+    select u.uuid, u.id, u.nickname, u.email, u.profile_img
     from (select f.friend_to
           from (select friend_from, friend_to, accepted
                 from friend

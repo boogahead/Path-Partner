@@ -16,5 +16,5 @@ public class FriendInfoDto {
   private String id;
   private String email;
   private String nickname;
-
+  private byte[] profileImg;
 }

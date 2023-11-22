@@ -39,7 +39,7 @@
       and uuid = #{uuid}
   </select>
 
-  <select id="selectAllMyGroupID" parameterType="String" resultType="String">
+  <select id="selectAllMyGroupId" parameterType="String" resultType="String">
     select group_id
     from travel_group
     where uuid = #{uuid}
