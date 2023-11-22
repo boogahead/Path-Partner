@@ -38,9 +38,6 @@ const logoutAttempt = () => {
 </script>
 
 <template>
-  <MDBNavbarItem :to="{name:'search'}" active>
-    관광지 검색
-  </MDBNavbarItem>
   <MDBNavbarItem :to="{name:'plan'}" active>
     여행 계획
   </MDBNavbarItem>

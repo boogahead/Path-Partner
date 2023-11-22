@@ -9,7 +9,7 @@ import com.ssafy.pathpartner.user.dto.UserDto;
 import com.ssafy.pathpartner.user.dto.UserInfoDto;
 import com.ssafy.pathpartner.user.exception.InvalidInputException;
 import com.ssafy.pathpartner.user.exception.UserNotFoundException;
-import com.ssafy.pathpartner.user.service.FileStorageService;
+//import com.ssafy.pathpartner.user.service.FileStorageService;
 import com.ssafy.pathpartner.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -109,8 +109,8 @@ public class AuthController {
     return ResponseEntity.ok().body(true);
   }
 
-  @Autowired
-  private FileStorageService fileStorageService;
+//  @Autowired
+//  private FileStorageService fileStorageService;
   @ApiOperation(value = "회원가입", notes = "id, email, password, nickname으로 회원가입합니다.")
   @ApiResponses({@ApiResponse(code = 201, message = "회원 가입 성공"),
       @ApiResponse(code = 500, message = "서버 에러")})
@@ -120,9 +120,9 @@ public class AuthController {
 
     try {
       MultipartFile profileImg = signUpDto.getProfileImg();
-        if (profileImg != null && !profileImg.isEmpty()) {
-            String filePath=fileStorageService.storeFile(profileImg);
-        }
+//        if (profileImg != null && !profileImg.isEmpty()) {
+//            String filePath=fileStorageService.storeFile(profileImg);
+//        }
       boolean result = userService.createUser(signUpDto);
       if (result) {
         return ResponseEntity.created(URI.create("/")).build();

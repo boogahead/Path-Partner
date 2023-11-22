@@ -1,13 +1,22 @@
 <script setup>
 import {MDBIcon, MDBRow, MDBBtn, MDBCard, MDBCardBody} from "mdb-vue-ui-kit";
 import PlanListItem from "@/components/Plan/PlanItem/PlanListItem.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import {getPlanArticleList} from "@/api/PlanArticleAPI";
 
 const planList = ref([
   {planArticleId: 'test1'},
   {planArticleId: 'test2'},
   {planArticleId: 'test3'},
 ])
+
+onMounted(() => {
+  getPlanArticleList((response) => {
+    planList.value = response.data;
+    console.log(response.data)
+  })
+})
+
 </script>
 
 <template>

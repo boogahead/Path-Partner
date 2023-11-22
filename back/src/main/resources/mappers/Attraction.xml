@@ -13,7 +13,7 @@
   <select id="selectAllAttraction" resultType="AttractionInfoDto">
     SELECT *
     FROM attraction_info ai
-    join article_description ad on ai.content_id = ad.content_id
+    join attraction_description ad on ai.content_id = ad.content_id
     <where>
       <if test="sidoCode != null and sidoCode != ''">
         AND sido_code = #{sidoCode}

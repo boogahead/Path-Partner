@@ -10,9 +10,9 @@ const router = createRouter({
       component: MainPageView
     },
     {
-      path: '/search',
-      name: 'search',
-      component: () => import('@/views/SearchView.vue')
+      path: '/edit',
+      name: 'planEdit',
+      component: () => import('@/views/PlanEditView.vue')
     },
     {
       path: '/plan',

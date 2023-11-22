@@ -35,7 +35,7 @@ public class TokenGenerator {
     JwtClaimsSet claimsSet = JwtClaimsSet.builder()
         .issuer("pathpartner")
         .issuedAt(now)
-        .expiresAt(now.plus(30, ChronoUnit.MINUTES))
+        .expiresAt(now.plus(1, ChronoUnit.MINUTES))
         .claim("id", user.getId())
         .claim("uuid", user.getUuid())
         .build();

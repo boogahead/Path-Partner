@@ -2,11 +2,11 @@
 import {ref, watch, onMounted} from "vue";
 import {
   MDBBtn,
-  MDBInput,
   MDBModal,
   MDBModalBody, MDBModalFooter,
   MDBModalHeader,
-  MDBModalTitle
+  MDBModalTitle,
+  MDBCarousel
 } from "mdb-vue-ui-kit";
 
 var map;
@@ -15,29 +15,13 @@ const positions = ref([]);
 const markers = ref([]);
 const attractionDetailModal = ref(false);
 
-// modal
-const modalTitle = ref("");
-const modalImgSrc = ref("");
-const modalAltImgSrc = ref("");
-
 const props = defineProps({
   searchResult: Object,
-  selectedAttraction: Object
 });
 
-watch(
-    () => props.selectedAttraction,
-    () => {
-      // 이동할 위도 경도 위치를 생성합니다
-      var moveLatLon = new kakao.maps.LatLng(props.selectedAttraction.latitude,
-          props.selectedAttraction.longitude);
+const selectedAttraction = ref({});
 
-      // 지도 중심을 부드럽게 이동시킵니다
-      // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-      map.panTo(moveLatLon);
-    },
-    {deep: true}
-);
+const emits = defineEmits(['addAttraction'])
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
@@ -108,10 +92,7 @@ const loadMarkers = () => {
     });
 
     kakao.maps.event.addListener(marker, 'click', () => {
-      props.selectedAttraction = position.info;
-      modalTitle.value = position.info.title;
-      modalImgSrc.value = position.info.firstImage
-      modalAltImgSrc.value = position.info.firstImage2
+      selectedAttraction.value = position.info;
       attractionDetailModal.value = true;
     })
     markers.value.push(marker);
@@ -134,6 +115,12 @@ const deleteMarkers = async () => {
     markers.value.forEach((marker) => marker.setMap(null));
   }
 };
+
+const addAttraction = () => {
+  attractionDetailModal.value = false
+  emits('addAttraction', selectedAttraction.value);
+}
+
 </script>
 
 <template>
@@ -145,21 +132,23 @@ const deleteMarkers = async () => {
         v-model="attractionDetailModal"
     >
       <MDBModalHeader>
-        <MDBModalTitle> {{ modalTitle}}</MDBModalTitle>
+        <MDBModalTitle><h2>{{ selectedAttraction.title }}</h2></MDBModalTitle>
       </MDBModalHeader>
       <MDBModalBody>
-        <div class="container">
-          <img :src="modalImgSrc" :alt="modalAltImgSrc" class="img-thumbnail"/>
-        </div>
-        <hr class="hr"/>
         <div>
-          text
+          <h4>{{ selectedAttraction.addr1 + selectedAttraction.addr2 }}</h4>
+        </div>
+                <div class="container mb-4">
+                  <img :src="selectedAttraction.firstImage" alt="..." class="img-thumbnail"
+                       onerror="this.style.display='none'"/>
+                </div>
+        <div>
+          <h3>상세설명</h3>
+          {{ selectedAttraction.overview }}
         </div>
       </MDBModalBody>
       <MDBModalFooter>
-        <MDBBtn outline="primary">LOGIN</MDBBtn>
-        <MDBBtn color="primary">RESET PASSWORD</MDBBtn>
-        <MDBBtn color="danger">CANCEL</MDBBtn>
+        <MDBBtn color="primary" @click="addAttraction">여행 계획 담기</MDBBtn>
       </MDBModalFooter>
     </MDBModal>
   </div>

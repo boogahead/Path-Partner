@@ -8,9 +8,10 @@ function login(loginInfo, success, fail) {
 }
 
 function logout(success, fail) {
-  const loginUser= sessionStorage.getItem("loginUser")
+  const loginUser = sessionStorage.getItem("loginUser")
   const {accessToken} = JSON.parse(loginUser);
-  local.get(`/auth/logout`, {headers: {Authorization: 'Bearer ' + accessToken}}).then(
+  local.get(`/auth/logout`,
+      {headers: {Authorization: 'Bearer ' + accessToken}}).then(
       success).catch(fail);
 }
 
@@ -28,10 +29,17 @@ function resetPasswordByIdAndEmail(resetInfo, success, fail) {
       fail);
 }
 
+function regenerateAccessToken(success, fail) {
+  const loginUser = JSON.parse(sessionStorage.getItem("loginUser"))
+  const {refreshToken} = loginUser;
+  local.post(`/auth/token`, {refreshToken:refreshToken}).then(success).catch(fail);
+}
+
 export {
   login,
   logout,
   register,
   findIdByEmail,
-  resetPasswordByIdAndEmail
+  resetPasswordByIdAndEmail,
+  regenerateAccessToken
 }

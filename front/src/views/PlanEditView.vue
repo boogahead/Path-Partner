@@ -5,6 +5,7 @@ import {computed, onBeforeMount, onMounted, ref, watch} from "vue";
 import {getSidoCode, getSiGunGuCode} from "@/api/AreaAPI";
 import KakaoMap from "@/components/Map/KakaoMap.vue";
 import {search} from "@/api/AttractionAPI";
+import PlanArticleList from "@/components/Plan/PlanArticleList.vue";
 
 const sidoSelected = ref("0");
 const sidoOptions = ref([]);
@@ -12,16 +13,10 @@ const sigunguSelected = ref("0");
 const sigunguOptions = ref([]);
 const contentTypeId = ref([false, false, false, false, false, false, false, false]);
 const searchResult = ref([]);
-const selectedAttraction = ref({});
+const selectedAttractionList = ref([]);
 
 // 시도코드 가져오기
-// onMounted(async () => {
-//   await getSidoCode((response) => {
-//     sidoOptions.value = response.data;
-//   })
-// })
-
-onBeforeMount(async () => {
+onMounted(async () => {
   await getSidoCode((response) => {
     sidoOptions.value = response.data;
   })
@@ -38,7 +33,7 @@ const sigunguOptionsComputed = computed(() => {
   return sigunguOptions.value;
 })
 
-const searchAttempt = () => {
+const searchAttempt = async () => {
   const contentTypeValues = [12, 14, 15, 25, 28, 32, 38, 39]
   const contentSelected = contentTypeValues.filter((value, index) => contentTypeId.value[index])
   const params = {
@@ -47,13 +42,24 @@ const searchAttempt = () => {
     contentType: contentSelected
   }
 
-  search(params, (response) => {
+  await search(params, (response) => {
     searchResult.value = response.data
-    selectedAttraction.value = searchResult.value[0]
   }, ({response}) => {
     alert("지금은 사용할 수 없습니다. 나중에 다시 시도해주세요.")
   })
 }
+
+const addAttractionHandler = (data) => {
+  const temp = selectedAttractionList.value.filter((attraction) => attraction.contentId === data.contentId)
+  console.log(temp)
+  if(temp.length < 1) {
+    selectedAttractionList.value.unshift(data);
+  }
+}
+
+const attractionListComputed = computed(() => {
+  return selectedAttractionList.value;
+})
 
 
 </script>
@@ -104,27 +110,23 @@ const searchAttempt = () => {
         </MDBCard>
       </div>
       <div class="row justify-content-center">
-        <div class="col">
-          <MDBCard>
-            <MDBCardBody>
-              상세 정보
+        <div class="col-4">
+          <MDBCard style="height: 748px" class="bg-secondary bg-opacity-25">
+            <MDBCardBody class="overflow-y-scroll">
+              <div class="text-center" v-if="attractionListComputed.length === 0">
+                <h3>여행 장소를 추가해보세요.</h3>
+              </div>
+              <PlanArticleList :attractions="attractionListComputed" v-else/>
             </MDBCardBody>
           </MDBCard>
         </div>
         <div class="col-8">
           <MDBCard>
             <MDBCardBody>
-              <KakaoMap :searchResult="searchResult" :selectedAttraction:="selectedAttraction"/>
+              <KakaoMap :searchResult="searchResult" @addAttraction="addAttractionHandler"/>
             </MDBCardBody>
           </MDBCard>
         </div>
-        <!--        <div class="col">-->
-        <!--          <MDBCard>-->
-        <!--            <MDBCardBody>-->
-        <!--              검색 결과-->
-        <!--            </MDBCardBody>-->
-        <!--          </MDBCard>-->
-        <!--        </div>-->
       </div>
     </div>
   </div>
