@@ -2,7 +2,7 @@ package com.ssafy.pathpartner.planarticle.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.pathpartner.planarticle.controller.PlanArticleMessage;
+import com.ssafy.pathpartner.planarticle.dto.PlanArticleMessage;
 import com.ssafy.pathpartner.planarticle.exception.PlanArticleNotFoundException;
 import com.ssafy.pathpartner.planarticle.exception.UnauthoriedPlanRequestException;
 import com.ssafy.pathpartner.travelgroup.repository.TravelGroupDao;
@@ -27,6 +27,12 @@ public class PlanArticleServiceImpl implements PlanArticleService {
   private final RedisTemplate<String, String> redisTemplate;
   private final SimpMessagingTemplate messagingTemplate;
 
+  private long sequenceNumber=0;
+
+  private synchronized long getNextSequenceNumber() {
+    return ++sequenceNumber;
+  }
+
   @Autowired
   public PlanArticleServiceImpl(PlanArticleDao planArticleDao, TravelGroupDao travelGroupDao,
                                 RedisTemplate<String, String> redisTemplate, SimpMessagingTemplate messagingTemplate) {
@@ -49,6 +55,7 @@ public class PlanArticleServiceImpl implements PlanArticleService {
       PlanArticleMessage message = new PlanArticleMessage();
       message.setOperation("create");
       message.setPlanArticleDto(planArticleDto);
+      message.setSequenceNumber(getNextSequenceNumber());
       String messageJson = new ObjectMapper().writeValueAsString(message);
 
       // Store the messageJson in Redis
@@ -79,6 +86,7 @@ public class PlanArticleServiceImpl implements PlanArticleService {
         PlanArticleMessage message = new PlanArticleMessage();
         message.setOperation("delete");
         message.setPlanArticleDto(new PlanArticleDto(planArticleId)); // assuming PlanArticleDto has a constructor that takes planArticleId
+        message.setSequenceNumber(getNextSequenceNumber());
         String messageJson = new ObjectMapper().writeValueAsString(message);
 
         // Broadcast the deletion of the planArticle to all connected clients
@@ -106,13 +114,16 @@ public class PlanArticleServiceImpl implements PlanArticleService {
   public boolean updatePlanArticle(PlanArticleDto planArticleDto, String uuid)
           throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException {
     if (travelGroupDao.isGroupMember(planArticleDto.getGroupId(), uuid)) {
+      planArticleDao.lockPlanArticle(planArticleDto.getPlanArticleId());
       boolean isUpdated = planArticleDao.updatePlanArticle(planArticleDto) > 0;
 
       if (isUpdated) {
+
         // Convert the planArticleDto to JSON
         PlanArticleMessage message = new PlanArticleMessage();
         message.setOperation("update");
         message.setPlanArticleDto(planArticleDto);
+        message.setSequenceNumber(getNextSequenceNumber());
         String messageJson = new ObjectMapper().writeValueAsString(message);
 
         // Update the messageJson in Redis
