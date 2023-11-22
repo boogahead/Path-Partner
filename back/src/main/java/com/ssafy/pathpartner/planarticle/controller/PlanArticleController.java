@@ -1,5 +1,6 @@
 package com.ssafy.pathpartner.planarticle.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.pathpartner.planarticle.exception.PlanArticleNotFoundException;
 import com.ssafy.pathpartner.planarticle.exception.UnauthoriedPlanRequestException;
 import com.ssafy.pathpartner.user.dto.UserDto;
@@ -50,6 +51,9 @@ public class PlanArticleController {
     } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
+    } catch (JsonProcessingException e) {
+        log.debug(e.toString());
+        return ResponseEntity.internalServerError().build();
     }
   }
 
@@ -73,6 +77,8 @@ public class PlanArticleController {
     } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
+    } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
     }
   }
 
@@ -128,6 +134,8 @@ public class PlanArticleController {
     } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
+    } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
     }
   }
 }
