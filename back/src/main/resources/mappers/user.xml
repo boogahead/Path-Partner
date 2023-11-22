@@ -56,4 +56,37 @@
     from user
     where nickname like '%${nickname}%'
   </select>
+
+  <update id="disableForeignKeyChecks">
+    SET FOREIGN_KEY_CHECKS = 0;
+  </update>
+
+  <update id="enableForeignKeyChecks">
+    SET FOREIGN_KEY_CHECKS = 1;
+  </update>
+
+  <select id="selectGroupListByUuid" parameterType="String" resultType="String">
+    select group_uuid
+    from travel_group
+    where uuid = #{uuid}
+  </select>
+
+  <select id="selectGroupMemberList" parameterType="String" resultType="String">
+    select uuid
+    from travel_group
+    where group_id = #{groupid}
+  </select>
+
+  <delete id="deleteGroup" parameterType="String">
+    delete
+    from travel_group
+    where group_id = #{groupid}
+  </delete>
+
+  <update id="updateGroupLeader" parameterType="map">
+    update travel_group
+    set group_master=true
+    where group_id = #{groupid} and uuid=#{uuid}
+  </update>
+
 </mapper>

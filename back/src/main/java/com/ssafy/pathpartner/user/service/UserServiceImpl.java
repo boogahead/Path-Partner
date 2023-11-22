@@ -10,7 +10,9 @@ import com.ssafy.pathpartner.user.exception.InvalidInputException;
 import com.ssafy.pathpartner.user.exception.UserNotFoundException;
 import com.ssafy.pathpartner.user.repository.UserDao;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   public boolean deleteUser(String uuid) throws SQLException {
-    return userDao.deleteUser(uuid) > 0;
+    //해당 유저가 그룹장인 그룹들 리스트 모으기
+    List<String> groupList = userDao.selectGroupListByUuid(uuid);
+    //삭제 진행
+    userDao.disableForeignKeyChecks();
+    int result= userDao.deleteUser(uuid);
+    userDao.enableForeignKeyChecks();
+    /*
+    위에서 모았던 그룹들 리스트 모아서
+    for 문 돌면서 각 그룹들 크기를 확인
+      만약 크기가 0이면 그냥 삭제
+      크기가 1 이상이면 사람들 리스트 구해서 가장 위에 있는 사람을 그룹장으로 설정
+     */
+    for(String groupid:groupList){
+      List<String> memberList = userDao.selectGroupMemberList(groupid);
+        if(memberList.size()==0) {
+          userDao.deleteGroup(groupid);
+        }else{
+          Map<String,String> map = new HashMap<>();
+            map.put("groupid",groupid);
+            map.put("uuid",memberList.get(0));
+            userDao.updateGroupLeader(map);
+        }
+    }
+    return result>0;
   }
 
   public boolean updateUser(UpdateUserDto updateUserDto)
