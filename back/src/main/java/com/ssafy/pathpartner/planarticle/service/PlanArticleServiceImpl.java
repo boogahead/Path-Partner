@@ -46,14 +46,16 @@ public class PlanArticleServiceImpl implements PlanArticleService {
     boolean isCreated = planArticleDao.insertPlanArticle(planArticleDto) > 0;
 
     if (isCreated) {
-      // Convert the planArticleDto to JSON
-      String planArticleJson = new ObjectMapper().writeValueAsString(planArticleDto);
+      PlanArticleMessage message = new PlanArticleMessage();
+      message.setOperation("create");
+      message.setPlanArticleDto(planArticleDto);
+      String messageJson = new ObjectMapper().writeValueAsString(message);
 
-      // Store the planArticleJson in Redis
-      redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), planArticleJson);
+      // Store the messageJson in Redis
+      redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
 
-      // Broadcast the planArticleJson to all connected clients
-      messagingTemplate.convertAndSend("/topic/planArticle", planArticleJson);
+      // Broadcast the messageJson to all connected clients
+      messagingTemplate.convertAndSend("/topic/planArticle"+planArticleDto.getGroupId(), messageJson);
     }
 
     return isCreated;
@@ -61,7 +63,7 @@ public class PlanArticleServiceImpl implements PlanArticleService {
 
   @Override
   public boolean deletePlanArticle(String planArticleId, String uuid)
-          throws SQLException, UnauthoriedPlanRequestException {
+          throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException {
     String writer = planArticleDao.selectWriter(planArticleId)
             .orElseThrow(() -> new PlanArticleNotFoundException("여행 계획을 찾을 수 없습니다."));
     String groupId = planArticleDao.selectGroupId(planArticleId)
@@ -72,6 +74,7 @@ public class PlanArticleServiceImpl implements PlanArticleService {
 
       if (isDeleted) {
         // Remove the planArticle from Redis
+
         redisTemplate.delete(planArticleId);
         PlanArticleMessage message = new PlanArticleMessage();
         message.setOperation("delete");
@@ -79,7 +82,7 @@ public class PlanArticleServiceImpl implements PlanArticleService {
         String messageJson = new ObjectMapper().writeValueAsString(message);
 
         // Broadcast the deletion of the planArticle to all connected clients
-        messagingTemplate.convertAndSend("/topic/planArticle", messageJson);
+        messagingTemplate.convertAndSend("/topic/planArticle"+planArticleId, messageJson);
       }
 
       return isDeleted;
@@ -107,13 +110,16 @@ public class PlanArticleServiceImpl implements PlanArticleService {
 
       if (isUpdated) {
         // Convert the planArticleDto to JSON
-        String planArticleJson = new ObjectMapper().writeValueAsString(planArticleDto);
+        PlanArticleMessage message = new PlanArticleMessage();
+        message.setOperation("update");
+        message.setPlanArticleDto(planArticleDto);
+        String messageJson = new ObjectMapper().writeValueAsString(message);
 
-        // Update the planArticleJson in Redis
-        redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), planArticleJson);
+        // Update the messageJson in Redis
+        redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
 
-        // Broadcast the planArticleJson to all connected clients
-        messagingTemplate.convertAndSend("/topic/planArticle", planArticleJson);
+        // Broadcast the messageJson to all connected clients
+        messagingTemplate.convertAndSend("/topic/planArticle"+planArticleDto.getGroupId(), messageJson);
       }
 
       return isUpdated;

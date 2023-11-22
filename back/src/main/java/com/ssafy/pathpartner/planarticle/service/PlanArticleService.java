@@ -13,7 +13,7 @@ public interface PlanArticleService {
       throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException;
 
   boolean deletePlanArticle(String planArticleId, String uuid)
-      throws SQLException, UnauthoriedPlanRequestException, PlanArticleNotFoundException;
+          throws SQLException, UnauthoriedPlanRequestException, PlanArticleNotFoundException, JsonProcessingException;
 
   boolean updatePlanArticle(PlanArticleDto planArticleDto, String uuid)
       throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException;

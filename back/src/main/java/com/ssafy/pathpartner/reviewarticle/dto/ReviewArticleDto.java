@@ -3,6 +3,9 @@ package com.ssafy.pathpartner.reviewarticle.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -23,5 +26,4 @@ public class ReviewArticleDto {
   private String writerUuid;
   @ApiModelProperty(value = "계획글 id")
   private String planArticleId;
-
 }
