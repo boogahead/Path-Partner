@@ -2,20 +2,58 @@
 
 import {
   MDBBadge,
-  MDBBtn,
   MDBCard,
   MDBCardBody,
   MDBTabItem,
-  MDBTable,
   MDBTabNav,
   MDBTabs,
   MDBTabContent,
   MDBTabPane
 } from "mdb-vue-ui-kit";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import FriendList from "@/components/Friend/FriendList.vue";
+import {getFriendRequestReceived, getFriendRequestSent, getMyFriendList} from "@/api/FriendAPI";
 
 const tab = ref("friend");
+const friendList = ref([]);
+const sentFriendRequestList = ref([]);
+const receivedFriendRequestList = ref([]);
+
+onMounted(async () => {
+  await reloadList();
+})
+
+const reloadList = async () => {
+  await getMyFriendListAttempt();
+  await getMyFriendRequestSentAttempt();
+  await getMyFriendRequestReceivedAttempt();
+}
+const getMyFriendListAttempt = () => {
+  getMyFriendList((response) => {
+    friendList.value = response.data;
+  }, (error) => {
+    console.log(error)
+    alert("친구 목록을 불러올 수 없습니다.")
+  })
+}
+
+const getMyFriendRequestSentAttempt = () => {
+  getFriendRequestSent((response) => {
+    sentFriendRequestList.value = response.data;
+  }, (error) => {
+    console.log(error)
+    alert("보낸 요청 목록을 불러올 수 없습니다.")
+  })
+}
+
+const getMyFriendRequestReceivedAttempt = () => {
+  getFriendRequestReceived((response) => {
+    receivedFriendRequestList.value = response.data;
+  }, (error) => {
+    console.log(error)
+    alert("받은 요청 목록을 불러올 수 없습니다.")
+  })
+}
 </script>
 
 <template>
@@ -25,26 +63,33 @@ const tab = ref("friend");
     </div>
     <div class="container">
       <MDBCard>
-
         <MDBCardBody>
           <MDBTabs v-model="tab">
             <MDBTabNav justify tabsClasses="mb-3">
-              <MDBTabItem tabId="friend">친구</MDBTabItem>
-              <MDBTabItem tabId="send">보낸 요청</MDBTabItem>
-              <MDBTabItem tabId="receive">받은 요청</MDBTabItem>
+              <MDBTabItem tabId="friend">
+                <span class="me-3">친구</span>
+                <MDBBadge notification color="secondary" pill>{{friendList.length}}</MDBBadge>
+              </MDBTabItem>
+              <MDBTabItem tabId="sent">
+                <span class="me-3">보낸 요청</span>
+                <MDBBadge notification color="danger" pill v-show="sentFriendRequestList.length > 0">{{sentFriendRequestList.length}}</MDBBadge>
+              </MDBTabItem>
+              <MDBTabItem tabId="received">
+                <span class="me-3">받은 요청</span>
+                <MDBBadge notification color="danger" pill v-show="receivedFriendRequestList.length > 0">{{receivedFriendRequestList.length}}</MDBBadge>
+              </MDBTabItem>
             </MDBTabNav>
             <MDBTabContent>
-              <MDBTabPane tabId="friend">
-                <FriendList/>
+              <MDBTabPane tabId="friend" @friendActionEvent="reloadList">
+                <FriendList :searchResult="friendList" type="friend" @friendActionEvent="reloadList"/>
               </MDBTabPane>
-              <MDBTabPane tabId="send">
-
+              <MDBTabPane tabId="sent">
+                <FriendList :searchResult="sentFriendRequestList" type="sent" @friendActionEvent="reloadList"/>
               </MDBTabPane>
-              <MDBTabPane tabId="receive">
-
+              <MDBTabPane tabId="received">
+                <FriendList :searchResult="receivedFriendRequestList" type="received" @friendActionEvent="reloadList"/>
               </MDBTabPane>
             </MDBTabContent>
-
           </MDBTabs>
         </MDBCardBody>
       </MDBCard>

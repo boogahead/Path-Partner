@@ -1,5 +1,6 @@
 import axios from "axios";
 import qs from "qs";
+import { useLoginUserStore } from "@/stores/loginUser";
 
 axios.defaults.paramsSerializer = params => {
   return qs.stringify(params);
@@ -7,15 +8,18 @@ axios.defaults.paramsSerializer = params => {
 
 const { VITE_VUE_API_URL } = import.meta.env;
 
-// Function to regenerate access token
+let isRefreshing = false;
+let refreshPromise = null;
+
 function regenerateAccessToken() {
   return new Promise((resolve, reject) => {
     const loginUser = JSON.parse(sessionStorage.getItem("loginUser"))
-    const { refreshToken } = loginUser;
-
+    let { refreshToken } = loginUser
     axios.post(`${VITE_VUE_API_URL}/auth/token`, { refreshToken: refreshToken })
     .then(response => {
       const newAccessToken = response.data.accessToken;
+      loginUser.accessToken = newAccessToken;
+      sessionStorage.setItem("loginUser",JSON.stringify(loginUser))
       resolve(newAccessToken);
     })
     .catch(error => {
@@ -24,22 +28,15 @@ function regenerateAccessToken() {
   });
 }
 
-// local vue api axios instance
 function localAuthorizedAxios() {
   const loginUser = JSON.parse(sessionStorage.getItem("loginUser"))
-  const { accessToken } = loginUser;
-
-  let errorCount = 0;
-  const maxErrorCount = 3; // 최대 허용 에러 횟수
-  let isRefreshing = false;
-  let refreshPromise;
-
+  const { accessToken } = loginUser
   const instance = axios.create({
     baseURL: VITE_VUE_API_URL,
     headers: {
       "Content-Type": "application/json;charset=utf-8",
       "Access-Control-Allow-Origin": "*",
-      "Authorization": 'Bearer ' + accessToken,
+      "Authorization": 'Bearer ' + accessToken.value,
     },
   });
 
@@ -51,7 +48,6 @@ function localAuthorizedAxios() {
 
   instance.interceptors.response.use(
       (response) => {
-        errorCount = 0;
         return response;
       },
       async (error) => {
@@ -60,34 +56,33 @@ function localAuthorizedAxios() {
           response: { status },
         } = error;
 
-        // 페이지가 새로고침되어 저장된 accessToken이 없어진 경우.
-        // 토큰 자체가 만료되어 더 이상 진행할 수 없는 경우.
         if (status === 401) {
-          errorCount += 1;
-
           if (!isRefreshing) {
             isRefreshing = true;
 
-            if (errorCount <= maxErrorCount) {
-              console.log("regenerate")
-              const originalRequest = config;
+            refreshPromise = regenerateAccessToken()
+            .then(newAccessToken => {
+              instance.defaults.headers.common["Authorization"] = 'Bearer ' + newAccessToken;
+              config.headers.Authorization = 'Bearer ' + newAccessToken;
+              return instance(config);
+            })
+            .catch(error => {
+              // Handle token regeneration error
+              throw error;
+            })
+            .finally(() => {
+              isRefreshing = false;
+              refreshPromise = null;
+            });
 
-              try {
-                const newAccessToken = await regenerateAccessToken();
-                instance.defaults.headers.common["Authorization"] = 'Bearer ' + newAccessToken;
-                originalRequest.headers.Authorization = 'Bearer ' + newAccessToken;
-
-                isRefreshing = false;
-                return instance(originalRequest);
-              } catch (error) {
-                // Handle the error if something goes wrong during token regeneration
-                isRefreshing = false;
-              }
-            }
+            return refreshPromise;
+          } else {
+            // If refresh is already in progress, wait for it to complete
+            return refreshPromise.then(() => instance(config));
           }
-
-          return Promise.reject(error);
         }
+
+        return Promise.reject(error);
       }
   );
 

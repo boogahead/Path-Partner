@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +31,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @Slf4j
 @RestController
 @RequestMapping("/friend")
+@PreAuthorize("hasRole('USER')")
 public class FriendController {
 
   private final FriendService friendService;
@@ -72,6 +75,8 @@ public class FriendController {
           .body(friendService.createFriendRequest(friendDto));
     } catch (InvalidInputException e) {
       return ResponseEntity.badRequest().build();
+    } catch (DuplicateKeyException e) {
+      return ResponseEntity.ok().build();
     } catch (SQLException e) {
       return ResponseEntity.internalServerError().build();
     }
@@ -81,7 +86,7 @@ public class FriendController {
   @ApiResponses({@ApiResponse(code = 200, message = "수락 성공"),
       @ApiResponse(code = 204, message = "검색 결과 없음"),
       @ApiResponse(code = 500, message = "서버에러")})
-  @PatchMapping("/accept")
+  @PutMapping("/accept")
   @PreAuthorize("hasRole('USER')")
   public ResponseEntity<Boolean> acceptFriendRequest(
       @ApiIgnore @AuthenticationPrincipal UserDto userDto, @RequestBody FriendDto friendDto) {
@@ -176,6 +181,8 @@ public class FriendController {
   public ResponseEntity<List<FriendInfoDto>> getFriendRequestSent(
       @ApiIgnore @AuthenticationPrincipal UserDto userDto) {
 
+    log.debug("getFriendRequestSent call");
+
     try {
       return ResponseEntity.ok()
           .body(friendService.searchAllMyFriendRequest(userDto.getUuid()));
@@ -194,12 +201,16 @@ public class FriendController {
   public ResponseEntity<List<FriendInfoDto>> getFriendRequestReceived(
       @ApiIgnore @AuthenticationPrincipal UserDto userDto) {
 
+    log.debug("getFriendRequestReceived call");
+
     try {
       return ResponseEntity.ok()
           .body(friendService.searchAllMyFriendRequestReceived(userDto.getUuid()));
     } catch (InvalidInputException e) {
+      log.debug(e.toString());
       return ResponseEntity.badRequest().build();
     } catch (SQLException e) {
+      log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
     }
   }

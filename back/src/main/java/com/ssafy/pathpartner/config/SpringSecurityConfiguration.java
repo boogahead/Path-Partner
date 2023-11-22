@@ -36,6 +36,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SpringSecurityConfiguration {
+
   JwtToUserConverter jwtToUserConverter;
   KeyUtils keyUtils;
   PasswordEncoder passwordEncoder;
@@ -52,25 +53,18 @@ public class SpringSecurityConfiguration {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .authorizeHttpRequests((authorize) -> authorize
-            .antMatchers("/auth/**").permitAll()
+    http.authorizeHttpRequests((authorize) -> authorize.antMatchers("/auth/**").permitAll()
 //            .antMatchers("/area/**").permitAll()
-            .antMatchers("/v2/**","/swagger-ui/**", "/swagger-resources/**").permitAll()
-            .anyRequest().authenticated()
-        )
-        .csrf().disable()
-        .cors().and()
-        .httpBasic().disable()
-        .oauth2ResourceServer((oauth2) ->
-            oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter))
-        )
+            .antMatchers("/static/**").permitAll()
+            .antMatchers("/v2/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
+            .anyRequest().authenticated())
+        .csrf().disable().cors().and().httpBasic().disable().oauth2ResourceServer(
+            (oauth2) -> oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
         .sessionManagement(
             (session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .exceptionHandling((exceptions) -> exceptions
-            .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-            .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-        );
+        .exceptionHandling((exceptions) -> exceptions.authenticationEntryPoint(
+                new BearerTokenAuthenticationEntryPoint())
+            .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
     return http.build();
   }
 
@@ -81,6 +75,7 @@ public class SpringSecurityConfiguration {
     configuration.addAllowedOriginPattern("*");
     configuration.addAllowedHeader("*");
     configuration.addAllowedMethod("*");
+    configuration.addAllowedMethod("PATCH");
     configuration.setAllowCredentials(true);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -97,10 +92,8 @@ public class SpringSecurityConfiguration {
   @Bean
   @Primary
   JwtEncoder jwtAccessTokenEncoder() {
-    JWK jwk = new RSAKey
-        .Builder(keyUtils.getAccessTokenPublicKey())
-        .privateKey(keyUtils.getAccessTokenPrivateKey())
-        .build();
+    JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(
+        keyUtils.getAccessTokenPrivateKey()).build();
     JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
     return new NimbusJwtEncoder(jwks);
   }
@@ -114,10 +107,8 @@ public class SpringSecurityConfiguration {
   @Bean
   @Qualifier("jwtRefreshTokenEncoder")
   JwtEncoder jwtRefreshTokenEncoder() {
-    JWK jwk = new RSAKey
-        .Builder(keyUtils.getRefreshTokenPublicKey())
-        .privateKey(keyUtils.getRefreshTokenPrivateKey())
-        .build();
+    JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey()).privateKey(
+        keyUtils.getRefreshTokenPrivateKey()).build();
     JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
     return new NimbusJwtEncoder(jwks);
   }
