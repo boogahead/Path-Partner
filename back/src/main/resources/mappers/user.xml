@@ -89,4 +89,9 @@
     where group_id = #{groupid} and uuid=#{uuid}
   </update>
 
+  <select id="userList" resultType="UserInfoDto">
+    select uuid, id, nickname, join_date, user_type, email
+    from user
+  </select>
+
 </mapper>

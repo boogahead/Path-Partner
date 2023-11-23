@@ -42,5 +42,7 @@ public interface UserDao {
 
     void updateGroupLeader(Map<String,String> map) throws SQLException;
 
+    List<UserInfoDto> userList() throws SQLException;
+
 
 }

@@ -1,26 +1,30 @@
 package com.ssafy.pathpartner.user.service;
 
+import com.ssafy.pathpartner.friend.dto.FriendInfoDto;
+import com.ssafy.pathpartner.friend.repository.FriendDao;
+import com.ssafy.pathpartner.friend.service.FriendServiceImpl;
 import com.ssafy.pathpartner.user.dto.ResetPasswordDto;
 import com.ssafy.pathpartner.user.dto.SignUpDto;
 import com.ssafy.pathpartner.user.dto.UpdateUserDto;
 import com.ssafy.pathpartner.user.dto.UserDto;
 import com.ssafy.pathpartner.user.dto.UserInfoDto;
+import com.ssafy.pathpartner.friend.dto.FriendDto;
 import com.ssafy.pathpartner.user.exception.AlreadyExistsUserException;
 import com.ssafy.pathpartner.user.exception.InvalidInputException;
 import com.ssafy.pathpartner.user.exception.UserNotFoundException;
 import com.ssafy.pathpartner.user.repository.UserDao;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Service
 @Slf4j
@@ -28,11 +32,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
   private final UserDao userDao;
   private final PasswordEncoder passwordEncoder;
+  private final FriendDao friendDao;
 
   @Autowired
-  public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
+  public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder, FriendDao friendDao) {
     this.userDao = userDao;
     this.passwordEncoder = passwordEncoder;
+    this.friendDao = friendDao;
   }
 
   public boolean createUser(SignUpDto signUpDto) throws SQLException {
@@ -113,11 +119,40 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public List<UserInfoDto> searchAllUserByNickname(String nickname) throws SQLException {
+  public List<UserInfoDto> searchAllUserByNickname(String nickname,String uuid) throws SQLException {
     if(nickname == null || nickname.isEmpty()) {
       throw new InvalidInputException("입력값이 없습니다.");
     }
-    return userDao.selectAllUserByNickname(nickname);
+    /*
+    친구이거나 친구신청이 오가고있으면 리스트에서 빼기
+     */
+    List<FriendInfoDto> friendlist=friendDao.selectAllFriend(uuid);
+    List<FriendInfoDto> friendRequestlist=friendDao.selectAllFriendRequest(uuid);
+    List<FriendInfoDto> friendRequestReceivedlist=friendDao.selectAllFriendRequestReceived(uuid);
+    //유저리스트 싹다 불러오기
+    List<UserInfoDto> userList=userDao.selectAllUserByNickname(nickname);
+
+    Set<FriendInfoDto> friendSet=new HashSet<>();
+    Set<UserInfoDto> userSet=new HashSet<>();
+    for(FriendInfoDto i:friendlist){
+      friendSet.add(i);
+    }
+    for(FriendInfoDto i:friendRequestlist){
+      friendSet.add(i);
+    }
+    for(FriendInfoDto i:friendRequestReceivedlist){
+      friendSet.add(i);
+    }
+    for(UserInfoDto i:userList){
+      userSet.add(i);
+    }
+    userSet.removeAll(friendSet);
+    List<UserInfoDto> returner=new ArrayList<>();
+    for(UserInfoDto i:userSet){
+      returner.add(i);
+    }
+
+    return returner;
   }
 
   @Override

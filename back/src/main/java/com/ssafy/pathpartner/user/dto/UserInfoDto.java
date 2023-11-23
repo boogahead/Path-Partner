@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @ToString
@@ -35,5 +37,21 @@ public class UserInfoDto {
         .email(userDto.getEmail())
         .joinDate(userDto.getJoinDate())
         .build();
+  }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    UserInfoDto that = (UserInfoDto) o;
+    return Objects.equals(uuid, that.uuid) &&
+            Objects.equals(id, that.id) &&
+            Objects.equals(email, that.email) &&
+            Objects.equals(nickname, that.nickname) &&
+            Objects.equals(joinDate, that.joinDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(uuid, id, email, nickname, joinDate);
   }
 }

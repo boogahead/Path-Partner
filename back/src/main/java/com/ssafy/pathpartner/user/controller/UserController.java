@@ -134,11 +134,11 @@ public class UserController {
       @ApiResponse(code = 500, message = "서버 에러")})
   @GetMapping("/find/{nickName}")
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
-  public ResponseEntity<List<UserInfoDto>> findAllUserByNickname(@PathVariable String nickName) {
+  public ResponseEntity<List<UserInfoDto>> findAllUserByNickname(@PathVariable String nickName, @ApiIgnore @AuthenticationPrincipal UserDto userDto) {
     log.debug("findAllUserByNickname call");
 
     try {
-      List<UserInfoDto> result = userService.searchAllUserByNickname(nickName);
+      List<UserInfoDto> result = userService.searchAllUserByNickname(nickName,userDto.getUuid());
       return ResponseEntity.ok().body(result);
     } catch (InvalidInputException e) {
       log.debug(e.toString());
