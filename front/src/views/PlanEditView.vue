@@ -1,11 +1,14 @@
 <script setup>
 
-import {MDBCard, MDBCardBody, MDBCheckbox, MDBBtn} from "mdb-vue-ui-kit";
+import {MDBCard, MDBCardBody, MDBCheckbox, MDBBtn, MDBInput} from "mdb-vue-ui-kit";
 import {computed, onBeforeMount, onMounted, ref, watch} from "vue";
 import {getSidoCode, getSiGunGuCode} from "@/api/AreaAPI";
 import KakaoMap from "@/components/Map/KakaoMap.vue";
 import {search} from "@/api/AttractionAPI";
+import qs from "qs";
 import PlanArticleList from "@/components/Plan/PlanArticleList.vue";
+import {useRoute, useRouter} from "vue-router";
+import {getPlanArticle, updatePlan} from "@/api/PlanArticleAPI";
 
 const sidoSelected = ref("0");
 const sidoOptions = ref([]);
@@ -14,11 +17,22 @@ const sigunguOptions = ref([]);
 const contentTypeId = ref([false, false, false, false, false, false, false, false]);
 const searchResult = ref([]);
 const selectedAttractionList = ref([]);
+const planTitle = ref("")
+const imgSrc = ref([])
+const isTitleEdit = ref(false)
 
+const route = useRoute()
+const router = useRouter()
 // 시도코드 가져오기
 onMounted(async () => {
   await getSidoCode((response) => {
     sidoOptions.value = response.data;
+  })
+
+  await getPlanArticle(route.params.planArticleId, (response) => {
+    planTitle.value = response.data.planTitle;
+    selectedAttractionList.value = [...JSON.parse(response.data.plan)];
+    imgSrc.value = [...JSON.parse(response.data.imgSrc)];
   })
 })
 
@@ -50,10 +64,18 @@ const searchAttempt = async () => {
 }
 
 const addAttractionHandler = (data) => {
-  const temp = selectedAttractionList.value.filter((attraction) => attraction.contentId === data.contentId)
-  console.log(temp)
-  if(temp.length < 1) {
+  const temp = selectedAttractionList.value.filter(
+      (attraction) => attraction.contentId === data.contentId)
+
+  if (temp.length < 1) {
     selectedAttractionList.value.unshift(data);
+    if(data.firstImage != null && data.firstImage !== "") {
+      imgSrc.value.unshift({
+        src:data.firstImage,
+        alt:data.title,
+        contentId:data.contentId
+      })
+    }
   }
 }
 
@@ -61,15 +83,41 @@ const attractionListComputed = computed(() => {
   return selectedAttractionList.value;
 })
 
+watch([planTitle, selectedAttractionList, imgSrc], () => {
+  const planArticle = {
+    planArticleId: route.params.planArticleId,
+    plan: JSON.stringify(selectedAttractionList.value),
+    planTitle: planTitle.value,
+    imgSrc: JSON.stringify(imgSrc.value),
+  }
+
+  updatePlan(planArticle, (response) => {
+  }, (error) => {
+  })
+}, {deep: true})
+
+const deleteAttractionEventHandler = (contentId) => {
+  selectedAttractionList.value = selectedAttractionList.value.filter(
+      (attraction) => attraction.contentId != contentId)
+  imgSrc.value = imgSrc.value.filter((img) => img.contentId != contentId)
+}
 
 </script>
 
 <template>
   <div class="mb-3">
     <div class="p-5 text-center bg-gradient bg-info shadow-3 text-light mb-3 bg-opacity-75 ">
-      <h1 class="mb-3">관광지 검색</h1>
+      <div class="d-flex justify-content-center">
+        <div class="me-3" v-if="isTitleEdit" @keyup.enter="isTitleEdit = !isTitleEdit">
+          <MDBInput size="lg" label="Plan Title" v-model="planTitle" white ></MDBInput>
+        </div>
+        <div v-else>
+          <h1 class="mb-3 d-inline me-3">{{ planTitle }}</h1>
+        </div>
+        <i class="fas fa-edit" @click="isTitleEdit = !isTitleEdit"></i>
+      </div>
     </div>
-    <div class="container">
+    <div class="container mb-3">
       <div class="mb-3">
         <MDBCard>
           <MDBCardBody>
@@ -116,7 +164,8 @@ const attractionListComputed = computed(() => {
               <div class="text-center" v-if="attractionListComputed.length === 0">
                 <h3>여행 장소를 추가해보세요.</h3>
               </div>
-              <PlanArticleList :attractions="attractionListComputed" v-else/>
+              <PlanArticleList :attractions="attractionListComputed" v-else
+                               @deleteAttractionEvent="deleteAttractionEventHandler"/>
             </MDBCardBody>
           </MDBCard>
         </div>
@@ -128,6 +177,9 @@ const attractionListComputed = computed(() => {
           </MDBCard>
         </div>
       </div>
+    </div>
+    <div class="container text-end">
+      <MDBBtn color="danger" @click="$router.push({name:'plan'})">나가기</MDBBtn>
     </div>
   </div>
 </template>

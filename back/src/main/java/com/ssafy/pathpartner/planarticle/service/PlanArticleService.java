@@ -9,7 +9,7 @@ import com.ssafy.pathpartner.planarticle.dto.PlanArticleDto;
 
 public interface PlanArticleService {
 
-  boolean createPlanArticle(PlanArticleDto planArticleDto)
+  String createPlanArticle(PlanArticleDto planArticleDto)
       throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException;
 
   boolean deletePlanArticle(String planArticleId, String uuid)

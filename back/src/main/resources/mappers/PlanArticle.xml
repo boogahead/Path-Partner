@@ -3,8 +3,12 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.pathpartner.planarticle.repository.PlanArticleDao">
   <insert id="insertPlanArticle" parameterType="PlanArticleDto">
-    INSERT INTO plan_article (plan_article_id, plan, group_id, creation_date, uuid)
-    VALUES (UUID(), #{plan}, #{groupId}, now(), #{uuid})
+    <selectKey keyProperty="planArticleId" resultType="String" order="BEFORE">
+      SELECT UUID() AS plan_article_id
+    </selectKey>
+
+    INSERT INTO plan_article (plan_article_id, plan, group_id, creation_date, uuid, plan_title)
+    VALUES (#{planArticleId}, #{plan}, #{groupId}, now(), #{uuid}, #{planTitle})
   </insert>
 
   <delete id="deletePlanArticle" parameterType="map">
@@ -18,10 +22,10 @@
     UPDATE plan_article
     <set>
       <if test="plan != null">
-        plan = #{plan}
+        plan = #{plan},
       </if>
-      <if test="title != null">
-        title = #{title}
+      <if test="planTitle != null">
+        plan_title = #{planTitle},
       </if>
       <if test="imgSrc != null">
         img_src = #{imgSrc}
@@ -33,11 +37,7 @@
   <select id="selectPlanArticle" resultType="PlanArticleDto">
     SELECT plan_article_id, plan, group_id, creation_date, uuid, img_src, plan_title
     from plan_article
-    where plan_article_id
-    in
-    <foreach collection="list" item="groupId" separator="," open="(" close=")">
-      #{groupId}
-    </foreach>
+    where plan_article_id = #{planArticleId}
   </select>
 
   <select id="selectAllPlanArticle" parameterType="String" resultType="PlanArticleDto">

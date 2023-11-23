@@ -1,5 +1,5 @@
 import {localAuthorizedAxios} from "@/utils/Authorized-commons";
-
+import qs from "qs";
 const local = localAuthorizedAxios();
 
 function writePlan(planArticle, success, fail) {
@@ -19,7 +19,7 @@ function getPlanArticle(planArticleId, success, fail) {
 }
 
 function updatePlan(planArticle, success, fail) {
-  local.put(`/plan`).then(success).catch(fail);
+  local.put(`/plan`, planArticle).then(success).catch(fail);
 }
 
 export {

@@ -10,7 +10,7 @@ const router = createRouter({
       component: MainPageView
     },
     {
-      path: '/edit',
+      path: '/edit/:planArticleId',
       name: 'planEdit',
       component: () => import('@/views/PlanEditView.vue')
     },
@@ -26,7 +26,7 @@ const router = createRouter({
           component: () => import('@/components/Plan/PlanList.vue')
         },
         {
-          path : 'detail/:plan_article_id',
+          path : 'detail/:planArticleId',
           name : 'plan_detail',
           component: () => import('@/components/Plan/PlanDetail.vue')
         },

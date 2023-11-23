@@ -6,11 +6,16 @@ const props = defineProps({
   attractions: Object
 })
 
+const emits = defineEmits(['deleteAttractionEvent'])
+
+const deleteAttractionEventHandler = (contentId) => {
+  emits('deleteAttractionEvent', contentId)
+}
 </script>
 
 <template>
   <PlanArticleListItem v-for="attraction in attractions" :key="attraction.contentId"
-                       :attraction="attraction"/>
+                       :attraction="attraction" @deleteAttractionEvent="deleteAttractionEventHandler"/>
 </template>
 
 <style scoped>

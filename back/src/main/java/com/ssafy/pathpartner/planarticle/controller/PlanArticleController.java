@@ -40,7 +40,7 @@ public class PlanArticleController {
   @ApiResponses({@ApiResponse(code = 200, message = "계획 작성 시도 성공"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @PostMapping
-  public ResponseEntity<Boolean> writePlan(@RequestBody PlanArticleDto planArticleDto) {
+  public ResponseEntity<String> writePlan(@RequestBody PlanArticleDto planArticleDto) {
     log.debug("writePlan call");
 
     try {
@@ -48,12 +48,9 @@ public class PlanArticleController {
     } catch (UnauthoriedPlanRequestException e) {
       log.debug(e.toString());
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    } catch (SQLException e) {
+    } catch (SQLException | JsonProcessingException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
-    } catch (JsonProcessingException e) {
-        log.debug(e.toString());
-        return ResponseEntity.internalServerError().build();
     }
   }
 
@@ -124,6 +121,7 @@ public class PlanArticleController {
   public ResponseEntity<Boolean> updatePlan(@ApiIgnore @AuthenticationPrincipal UserDto userDto,
       @RequestBody PlanArticleDto planArticleDto) {
     log.debug("updatePlan call");
+    log.debug(planArticleDto.toString());
 
     try {
       return ResponseEntity.ok()
