@@ -78,4 +78,38 @@ public class TravelGroupServiceImpl implements TravelGroupService {
   }
 
 
+  @Override
+  public boolean inviteGroupMember(TravelGroupDto travelGroupDto, String uuid) throws SQLException {
+    if(!travelGroupDao.isGroupMaster(travelGroupDto.getGroupId(),uuid))return false;
+    return travelGroupDao.inviteGroupMember(travelGroupDto);
+  }
+
+
+  @Override
+  public boolean cancelInviteGroupMember(TravelGroupDto travelGroupDto,String uuid) throws SQLException {
+    if(!travelGroupDao.isGroupMaster(travelGroupDto.getGroupId(),uuid))return false;
+    return travelGroupDao.cancelInviteGroupMember(travelGroupDto);
+  }
+
+  @Override
+  public boolean acceptInvite(TravelGroupDto travelGroupDto) throws SQLException {
+    return travelGroupDao.acceptInvite(travelGroupDto);
+  }
+
+  @Override
+  public boolean rejectInvite(TravelGroupDto travelGroupDto) throws SQLException {
+    return travelGroupDao.rejectInvite(travelGroupDto);
+  }
+
+  @Override
+  public List<TravelGroupDto> receivedInviteList(String uuid) throws SQLException {
+    return travelGroupDao.receivedInviteList(uuid);
+  }
+
+  @Override
+  public List<GroupMemberDto> sentInviteList(String groupId) throws SQLException {
+    return travelGroupDao.sentInviteList(groupId);
+  }
+
+
 }
