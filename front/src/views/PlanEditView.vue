@@ -1,7 +1,19 @@
 <script setup>
 
-import {MDBCard, MDBCardBody, MDBCheckbox, MDBBtn, MDBInput} from "mdb-vue-ui-kit";
-import {computed, onBeforeMount, onMounted, ref, watch} from "vue";
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCheckbox,
+  MDBBtn,
+  MDBInput
+} from "mdb-vue-ui-kit";
+import {
+  computed,
+  onBeforeMount,
+  onMounted,
+  ref,
+  watch
+} from "vue";
 import {getSidoCode, getSiGunGuCode} from "@/api/AreaAPI";
 import KakaoMap from "@/components/Map/KakaoMap.vue";
 import {search} from "@/api/AttractionAPI";
@@ -9,6 +21,8 @@ import qs from "qs";
 import PlanArticleList from "@/components/Plan/PlanArticleList.vue";
 import {useRoute, useRouter} from "vue-router";
 import {getPlanArticle, updatePlan} from "@/api/PlanArticleAPI";
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 const sidoSelected = ref("0");
 const sidoOptions = ref([]);
@@ -23,7 +37,8 @@ const isTitleEdit = ref(false)
 
 const route = useRoute()
 const router = useRouter()
-// 시도코드 가져오기
+const stompClient = ref(null);
+
 onMounted(async () => {
   await getSidoCode((response) => {
     sidoOptions.value = response.data;
@@ -34,6 +49,20 @@ onMounted(async () => {
     selectedAttractionList.value = [...JSON.parse(response.data.plan)];
     imgSrc.value = [...JSON.parse(response.data.imgSrc)];
   })
+
+  const socket = new SockJS('/real-time-websocket');
+  stompClient.value = new Client({
+    webSocketFactory: () => socket,
+    debug: (str) => console.log(str),
+    onConnect: () => {
+      stompClient.value.subscribe('/topic/planArticle/' + route.params.planArticleId, (message) => {
+        const updatedPlan = JSON.parse(message.body);
+        selectedAttractionList.value = updatedPlan.plan;
+        imgSrc.value = updatedPlan.imgSrc;
+      });
+    }
+  });
+  stompClient.value.activate();
 })
 
 // 시도코드 선택시 시군구 코드 변경
