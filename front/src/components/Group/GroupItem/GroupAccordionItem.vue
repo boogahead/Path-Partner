@@ -56,6 +56,7 @@ const reloadMembers = async () => {
 const leaveGroupAttempt = () => {
   leaveGroup(props.groupInfo.groupId, (response) => {
     reloadMembers();
+    emits('groupActionEvent')
   }, (error) => {
     if (error.response.status === 400) {
       alert("그룹장은 그룹이 비기 전에 나갈 수 없습니다.")

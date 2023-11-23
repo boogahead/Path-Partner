@@ -3,22 +3,25 @@
 import GroupAccordionItem from "@/components/Group/GroupItem/GroupAccordionItem.vue";
 import {
   MDBAccordion,
-  MDBBtn,
   MDBModal,
-  MDBModalBody, MDBModalFooter,
+  MDBModalBody,
   MDBModalHeader, MDBModalTitle,
   MDBTable
 } from "mdb-vue-ui-kit";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import FriendListItem from "@/components/Friend/FriendItem/FriendListItem.vue";
 import {getMyFriendList} from "@/api/FriendAPI";
+import {useRouter} from "vue-router";
 
 const activeItem = ref("");
+const router = useRouter();
 
 const props = defineProps({
   groupList: Object,
   type: String
 })
+
+const emits = defineEmits(['groupActionEvent'])
 
 onMounted(() => {
   getMyFriendList((response) => {
@@ -34,12 +37,20 @@ const groupInviteHandler = (groupId) => {
   inviteGroupId.value = groupId;
   groupInviteModalOpen.value = true;
 }
+
+watch(groupInviteModalOpen, (after, before) => {
+  if(before && !after) {
+    router.go(0);
+  }
+  console.log(before, after)
+})
+
 </script>
 
 <template>
   <MDBAccordion v-model="activeItem" class="mb-3">
     <GroupAccordionItem v-for="group in groupList" :key="group.groupId" :groupInfo="group"
-                        :collapseId="group.groupId" @groupInviteEvent="groupInviteHandler"/>
+                        :collapseId="group.groupId" @groupInviteEvent="groupInviteHandler" @groupActionEvent="$emit('groupActionEvent')"/>
   </MDBAccordion>
 
   <MDBModal

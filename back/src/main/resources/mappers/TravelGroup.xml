@@ -18,12 +18,12 @@
     where group_id = #{groupId}
   </delete>
 
-  <select id="deleteTravelGroupMember" parameterType="String">
+  <delete id="deleteTravelGroupMember" parameterType="String">
     delete
     from travel_group
     where group_id = #{groupId}
       and uuid = #{uuid}
-  </select>
+  </delete>
 
   <select id="isGroupMember" parameterType="String" resultType="boolean">
     select count(*)

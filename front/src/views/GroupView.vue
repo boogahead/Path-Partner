@@ -88,7 +88,7 @@ const groupTap = ref('group')
             </MDBTabNav>
             <MDBTabContent>
               <MDBTabPane tabId="group">
-                <GroupAccordion :groupList="groupList"/>
+                <GroupAccordion :groupList="groupList" @groupActionEvent="reloadGroup"/>
                 <div class="text-center mt-3">
                   <MDBBtn color="secondary" floating @click="groupRegisterModalOpen=true">
                     <MDBIcon icon="plus" size="2x"/>
