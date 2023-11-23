@@ -12,7 +12,7 @@ import router from './router/index'
 const app = createApp(App)
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate)
-
+window.global=window;
 app.use(pinia)
 app.use(router)
 

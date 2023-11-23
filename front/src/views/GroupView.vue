@@ -18,12 +18,16 @@ import {checkGroupInvite, getGroupList, getPendingInviteList, registerGroup} fro
 import GroupAccordion from "@/components/Group/GroupAccordion.vue";
 import FriendListItem from "@/components/Friend/FriendItem/FriendListItem.vue";
 import GroupInviteReceivedItem from "@/components/Group/GroupItem/GroupInviteReceivedItem.vue";
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 const groupList = ref([])
 const receivedGroupInviteList = ref([]);
-
 const groupName = ref("")
 const groupRegisterModalOpen = ref(false)
+const newMessage = ref('')
+const messages = ref([])
+const stompClient = ref(null)
 
 const groupRegisterModalClose = () => {
   groupName.value = "";
@@ -32,6 +36,17 @@ const groupRegisterModalClose = () => {
 
 onMounted(() => {
   reloadGroup()
+  const socket = new SockJS('ws://localhost:5173/real-time-websocket');
+  stompClient.value = new Client({
+    webSocketFactory: () => socket,
+    debug: (str) => console.log(str),
+    onConnect: () => {
+      stompClient.value.subscribe('/topic/chat', (message) => {
+        messages.value.push(JSON.parse(message.body));
+      });
+    }
+  });
+  stompClient.value.activate();
 })
 
 const reloadGroup = async () => {
@@ -64,6 +79,16 @@ const registerGroupAttempt = () => {
   })
 }
 
+const sendMessage = () => {
+  if (newMessage.value.trim() !== '') {
+    stompClient.value.publish({
+      destination: "/app/chat",
+      body: JSON.stringify({ 'content': newMessage.value, 'groupId': '5e07630d-89d6-11ee-a3df-902e16b98710' })
+    });
+    newMessage.value = '';
+  }
+}
+
 const groupTap = ref('group')
 </script>
 
@@ -85,6 +110,9 @@ const groupTap = ref('group')
                 <span class="me-3">받은 요청</span>
                 <MDBBadge notification color="danger" v-show="receivedGroupInviteList.length > 0" pill>{{ receivedGroupInviteList.length }}</MDBBadge>
               </MDBTabItem>
+              <MDBTabItem tabId="chat">
+                <span class="me-3">채팅</span>
+              </MDBTabItem>
             </MDBTabNav>
             <MDBTabContent>
               <MDBTabPane tabId="group">
@@ -101,6 +129,13 @@ const groupTap = ref('group')
                   <GroupInviteReceivedItem v-for="groupInvite in receivedGroupInviteList" :key="groupInvite.groupId" :groupInvite="groupInvite" @groupInviteActionEvent="reloadGroup"/>
                   </tbody>
                 </MDBTable>
+              </MDBTabPane>
+              <MDBTabPane tabId="chat">
+                <div v-for="(message, index) in messages" :key="index">
+                  {{ message.content }}
+                </div>
+                <input v-model="newMessage" placeholder="Type a message" />
+                <button @click="sendMessage">Send</button>
               </MDBTabPane>
             </MDBTabContent>
           </MDBTabs>
