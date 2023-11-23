@@ -1,5 +1,5 @@
 <script setup>
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {putArticle, registArticle} from "@/api/BoardAPI";
 import {useRoute, useRouter} from "vue-router";
 import {useLoginUserStore} from "@/stores/loginUser";
@@ -17,32 +17,26 @@ import {storeToRefs} from "pinia";
 const route = useRoute();
 const router = useRouter();
 const loginUserStore = useLoginUserStore();
-const {id, name} = storeToRefs(loginUserStore);
+const {loginUserInfo} = storeToRefs(loginUserStore);
 
 const props = defineProps({
   detail: Object,
   isModify: Boolean,
 })
 
-const subject = ref("");
 const content = ref("");
+const title = ref("");
 
-watch(props, () => {
-  if(props.isModify) {
-    subject.value = props.detail.subject;
-    content.value = props.detail.content;
-    console.log(props.detail)
-  }
+onMounted(() => {
+
 })
-
-const writeArticle = () => {
+const writeNoticeArticleAttempt = () => {
   const article = {
-    userId: id.value,
-    userName: name.value,
-    subject: subject.value,
-    content: content.value
+    title: title.value,
+    content: content.value,
+
   }
-  registArticle(article, (response) => {
+  wr(article, (response) => {
     if(response.status === 201) {
       router.back();
     } else {

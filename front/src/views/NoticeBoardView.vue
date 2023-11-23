@@ -6,13 +6,10 @@ import {
   MDBCard, MDBCardBody
 } from 'mdb-vue-ui-kit';
 import {onMounted, ref} from "vue";
+import {getAllNoticeArticle} from "@/api/NoticeAPI";
 
 const tab = ref("notice");
 
-const noticeArticleList = ref([]);
-
-onMounted(() => {
-})
 </script>
 
 <template>

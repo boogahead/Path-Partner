@@ -4,24 +4,21 @@ import {onMounted, ref} from "vue";
 import {getArticleList} from "@/api/BoardAPI";
 import router from "@/router/index";
 import NoticeBoardItem from "@/components/Board/NoticeBoard/NoticeBoardItem/NoticeBoardItem.vue";
+import {getAllNoticeArticle} from "@/api/NoticeAPI";
 
-const articles = ref([]);
+const noticeArticleList = ref([]);
 
-onMounted(async () => {
-  // await getArticleList(null, (response) => {
-  //   articles.value = response.data.articles
-  //   console.log(response.data)
-  // })
-  articles.value = [
-    {
-      noticeArticleId: "id",
-      title: "공지사항1",
-      content: "공지사항 내용1",
-      creationDate: "2023-11-16",
-      uuid: "작성자uuid",
-    }
-  ]
+onMounted(() => {
+  reload();
 })
+
+const reload = () => {
+  getAllNoticeArticle((response) => {
+    noticeArticleList.value = response.data;
+  }, (error) => {
+    alert("공지글을 불러오지 못했습니다. 잠시후 다시 이용해주세요.")
+  })
+}
 
 </script>
 
@@ -38,7 +35,7 @@ onMounted(async () => {
     </tr>
     </thead>
     <tbody>
-    <NoticeBoardItem v-for="article in articles" :key="article.noticeArticleId" :article="article"/>
+    <NoticeBoardItem v-for="article in noticeArticleList" :key="article.noticeArticleId" :article="article"/>
     </tbody>
   </MDBTable>
 </template>
