@@ -20,4 +20,6 @@ public interface TravelGroupService {
   List<GroupMemberDto> searchGroupMember(String groupId) throws SQLException;
 
   List<TravelGroupDto> searchAllGroup(String uuid) throws SQLException;
+
+  void kickmember(String groupId, String uuid) throws SQLException;
 }

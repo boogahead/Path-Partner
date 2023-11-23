@@ -72,4 +72,11 @@
     where group_id = #{groupId}
       and group_master = true
   </select>
+
+  <delete id="kickGroupMember" parameterType="map">
+    delete
+    from travel_group
+    where group_id = #{groupId}
+      and uuid = #{uuid}
+  </delete>
 </mapper>

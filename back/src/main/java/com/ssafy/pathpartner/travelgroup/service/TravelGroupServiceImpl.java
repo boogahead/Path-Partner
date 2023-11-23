@@ -70,4 +70,13 @@ public class TravelGroupServiceImpl implements TravelGroupService {
     return travelGroupDao.selectAllMyGroup(uuid);
   }
 
+  @Override
+  public void kickmember(String groupId, String uuid) throws SQLException {
+    Map<String,String> param = new HashMap<>();
+    param.put("groupId",groupId);
+    param.put("uuid",uuid);
+    travelGroupDao.kickGroupMember(param);
+  }
+
+
 }
