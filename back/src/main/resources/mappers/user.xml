@@ -59,4 +59,59 @@
     from user
     where nickname like '%${nickname}%'
   </select>
+
+  <update id="disableForeignKeyChecks">
+    SET FOREIGN_KEY_CHECKS = 0;
+  </update>
+
+  <update id="enableForeignKeyChecks">
+    SET FOREIGN_KEY_CHECKS = 1;
+  </update>
+
+  <select id="selectGroupListByUuid" parameterType="String" resultType="String">
+    select group_id
+    from travel_group
+    where uuid = #{uuid}
+  </select>
+
+  <select id="selectGroupMemberList" parameterType="String" resultType="String">
+    select uuid
+    from travel_group
+    where group_id = #{groupid}
+  </select>
+
+  <delete id="deleteGroup" parameterType="String">
+    delete
+    from travel_group
+    where group_id = #{groupid}
+  </delete>
+
+  <update id="updateGroupLeader" parameterType="map">
+    update travel_group
+    set group_master=true
+    where group_id = #{groupId} and uuid=#{uuid}
+  </update>
+
+  <select id="userList" resultType="UserInfoDto">
+    select uuid, id, nickname, join_date, user_type, email
+    from user
+  </select>
+
+  <select id="userIdDupCheck" parameterType="String" resultType="int">
+    select count(id)
+    from user
+    where id = #{id}
+  </select>
+
+  <select id="nicknameDupCheck" parameterType="String" resultType="int">
+    select count(nickname)
+    from user
+    where nickname = #{nickname}
+  </select>
+
+    <select id="emailDupCheck" parameterType="String" resultType="int">
+        select count(email)
+        from user
+        where email = #{email}
+    </select>
 </mapper>

@@ -27,9 +27,12 @@ public interface UserService {
 
   String searchUserByEmail(String email) throws SQLException, UserNotFoundException;
 
-  List<UserInfoDto> searchAllUserByNickname(String nickname) throws SQLException;
+  List<UserInfoDto> searchAllUserByNickname(String nickname,String uuid) throws SQLException;
 
   String resetPassword(ResetPasswordDto resetPasswordDto)
       throws SQLException, UserNotFoundException;
 
+  Boolean userIdDupCheck(String userId) throws SQLException;
+  Boolean nicknameDupCheck(String nickname) throws SQLException;
+  Boolean emailDupCheck(String email) throws SQLException;
 }

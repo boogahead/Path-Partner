@@ -25,4 +25,8 @@ public class PlanArticleDto {
   private String uuid;
   private String imgSrc;
   private String planTitle;
+
+  public PlanArticleDto(String planArticleId) {
+    this.planArticleId = planArticleId;
+  }
 }

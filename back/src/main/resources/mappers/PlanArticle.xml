@@ -43,7 +43,10 @@
   <select id="selectAllPlanArticle" parameterType="String" resultType="PlanArticleDto">
     SELECT plan_article_id, plan, group_id, creation_date, uuid, img_src, plan_title
     FROM plan_article
-    WHERE group_id = #{groupId}
+    WHERE group_id in
+    <foreach collection="list" item="groupId" open="(" separator="," close=")">
+      #{groupId}
+    </foreach>
   </select>
 
   <select id="selectWriter" parameterType="String" resultType="String">
@@ -58,5 +61,8 @@
     WHERE plan_article_id = #{planArticleId}
   </select>
 
+  <select id="lockPlanArticle" parameterType="String">
+    SELECT * FROM plan_article WHERE plan_article_id = #{planArticleId} FOR UPDATE
+  </select>
 
 </mapper>

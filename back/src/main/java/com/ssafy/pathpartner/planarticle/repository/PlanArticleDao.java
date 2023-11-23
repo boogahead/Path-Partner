@@ -19,4 +19,6 @@ public interface PlanArticleDao {
     Optional<String> selectWriter(String planArticleId) throws SQLException, PlanArticleNotFoundException;
 
     Optional<String> selectGroupId(String planArticleId) throws SQLException;
+
+    void lockPlanArticle(String planArticleId);
 }

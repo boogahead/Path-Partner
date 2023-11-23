@@ -4,6 +4,7 @@ import com.ssafy.pathpartner.travelgroup.dto.GroupMemberDto;
 import java.sql.SQLException;
 import java.util.List;
 
+import java.util.Map;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import com.ssafy.pathpartner.travelgroup.dto.TravelGroupDto;
@@ -35,4 +36,5 @@ public interface TravelGroupDao {
 
   Optional<TravelGroupDto> selectGroup(String groupId) throws SQLException;
 
+  int kickGroupMember(Map<String,String> param) throws SQLException;
 }

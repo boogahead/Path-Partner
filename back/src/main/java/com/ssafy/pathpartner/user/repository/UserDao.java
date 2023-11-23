@@ -7,6 +7,7 @@ import com.ssafy.pathpartner.user.dto.UserDto;
 import com.ssafy.pathpartner.user.dto.UserInfoDto;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -28,5 +29,26 @@ public interface UserDao {
   List<UserInfoDto> selectAllUserByNickname(String nickname) throws SQLException;
 
   Optional<UserDto> selectUserByIdAndEmail(ResetPasswordDto resetPasswordDto) throws SQLException;
+
+    void disableForeignKeyChecks() throws SQLException;
+
+  void enableForeignKeyChecks() throws SQLException;
+
+    List<String> selectGroupListByUuid(String uuid) throws SQLException;
+
+    List<String> selectGroupMemberList(String groupid) throws SQLException;
+
+    void deleteGroup(String groupid) throws SQLException;
+
+    void updateGroupLeader(Map<String,String> map) throws SQLException;
+
+    List<UserInfoDto> userList() throws SQLException;
+
+    int userIdDupCheck(String userId) throws SQLException;
+
+    int nicknameDupCheck(String nickname) throws SQLException;
+
+    int emailDupCheck(String email) throws SQLException;
+
 
 }

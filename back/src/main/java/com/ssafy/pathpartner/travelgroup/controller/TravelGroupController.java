@@ -129,4 +129,18 @@ public class TravelGroupController {
       return ResponseEntity.internalServerError().build();
     }
   }
+  @ApiOperation(value = "그룹원 추방", notes = "그룹원을 쫓아냅니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "그룹원 추방 시도 성공"),
+          @ApiResponse(code = 500, message = "서버 에러")})
+  @DeleteMapping("/{groupId}/{uuid}")
+  public ResponseEntity<Boolean> kickmember(@PathVariable String groupId, @PathVariable String uuid
+  ,@ApiIgnore @AuthenticationPrincipal UserDto userDto){
+    log.debug("kickmember call");
+    try {
+      return ResponseEntity.ok().body(travelGroupService.kickmember(groupId, uuid, userDto.getUuid()));
+    } catch (SQLException e) {
+      log.debug(e.toString());
+      return ResponseEntity.internalServerError().build();
+    }
+  }
 }

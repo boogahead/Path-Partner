@@ -1,5 +1,7 @@
 package com.ssafy.pathpartner.user.service;
 
+import com.ssafy.pathpartner.friend.dto.FriendInfoDto;
+import com.ssafy.pathpartner.friend.repository.FriendDao;
 import com.ssafy.pathpartner.user.dto.ResetPasswordDto;
 import com.ssafy.pathpartner.user.dto.SignUpDto;
 import com.ssafy.pathpartner.user.dto.UpdateUserDto;
@@ -12,15 +14,17 @@ import com.ssafy.pathpartner.user.repository.UserDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Service
 @Slf4j
@@ -28,11 +32,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
   private final UserDao userDao;
   private final PasswordEncoder passwordEncoder;
+  private final FriendDao friendDao;
 
   @Autowired
-  public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
+  public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder, FriendDao friendDao) {
     this.userDao = userDao;
     this.passwordEncoder = passwordEncoder;
+    this.friendDao = friendDao;
   }
 
   public boolean createUser(SignUpDto signUpDto) throws SQLException, IOException {
@@ -44,14 +50,39 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   public boolean deleteUser(String uuid) throws SQLException {
-    return userDao.deleteUser(uuid) > 0;
+    //해당 유저가 그룹장인 그룹들 리스트 모으기
+    List<String> groupList = userDao.selectGroupListByUuid(uuid);
+    //삭제 진행
+    userDao.disableForeignKeyChecks();
+    int result = userDao.deleteUser(uuid);
+    userDao.enableForeignKeyChecks();
+    /*
+    위에서 모았던 그룹들 리스트 모아서
+    for 문 돌면서 각 그룹들 크기를 확인
+      만약 크기가 0이면 그냥 삭제
+      크기가 1 이상이면 사람들 리스트 구해서 가장 위에 있는 사람을 그룹장으로 설정
+     */
+    for (String groupId : groupList) {
+      List<String> memberList = userDao.selectGroupMemberList(groupId);
+      if (memberList.isEmpty()) {
+        userDao.deleteGroup(groupId);
+      } else {
+        Map<String, String> map = new HashMap<>();
+        map.put("groupId", groupId);
+        map.put("uuid", memberList.get(0));
+        userDao.updateGroupLeader(map);
+      }
+    }
+    return result > 0;
   }
 
   public boolean updateUser(UpdateUserDto updateUserDto)
-          throws SQLException, InvalidInputException, IOException {
+      throws SQLException, InvalidInputException, IOException {
     // 내용 검증
-    if ((updateUserDto.getPassword() == null && updateUserDto.getNickname() == null&&updateUserDto.getProfileImg()==null)
-        || ("".equals(updateUserDto.getPassword()) && "".equals(updateUserDto.getNickname())&&"".equals(updateUserDto.getProfileImg()))
+    if ((updateUserDto.getPassword() == null && updateUserDto.getNickname() == null
+        && updateUserDto.getProfileImg() == null)
+        || ("".equals(updateUserDto.getPassword()) && "".equals(updateUserDto.getNickname())
+        && "".equals(updateUserDto.getProfileImg()))
     ) {
       throw new InvalidInputException("입력값이 비었습니다.");
     }
@@ -59,7 +90,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     if (updateUserDto.getPassword() != null && !updateUserDto.getPassword().isEmpty()) {
       updateUserDto.setPassword(passwordEncoder.encode(updateUserDto.getPassword()));
     }
-    if(updateUserDto.getProfileImg()!=null){
+    if (updateUserDto.getProfileImg() != null) {
       updateUserDto.setProfileImgSerialized(updateUserDto.getProfileImg().getBytes());
     }
 
@@ -93,11 +124,35 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public List<UserInfoDto> searchAllUserByNickname(String nickname) throws SQLException {
-    if(nickname == null || nickname.isEmpty()) {
+  public List<UserInfoDto> searchAllUserByNickname(String nickname, String uuid)
+      throws SQLException {
+    if (nickname == null || nickname.isEmpty()) {
       throw new InvalidInputException("입력값이 없습니다.");
     }
-    return userDao.selectAllUserByNickname(nickname);
+    /*
+    친구이거나 친구신청이 오가고있으면 리스트에서 빼기
+     */
+    List<FriendInfoDto> friendlist = friendDao.selectAllFriend(uuid);
+    List<FriendInfoDto> friendRequestlist = friendDao.selectAllFriendRequest(uuid);
+    List<FriendInfoDto> friendRequestReceivedlist = friendDao.selectAllFriendRequestReceived(uuid);
+    //유저리스트 싹다 불러오기
+    List<UserInfoDto> userList = userDao.selectAllUserByNickname(nickname);
+
+    Set<UserInfoDto> friendSet = new HashSet<>();
+    for (FriendInfoDto i : friendlist) {
+      friendSet.add(UserInfoDto.fromFriendInfoDto(i));
+    }
+    for (FriendInfoDto i : friendRequestlist) {
+      friendSet.add(UserInfoDto.fromFriendInfoDto(i));
+    }
+    for (FriendInfoDto i : friendRequestReceivedlist) {
+      friendSet.add(UserInfoDto.fromFriendInfoDto(i));
+    }
+
+    Set<UserInfoDto> userSet = new HashSet<>(userList);
+    userSet.removeAll(friendSet);
+
+    return new ArrayList<>(userSet);
   }
 
   @Override
@@ -132,5 +187,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     userDao.updateUser(updateUserDto);
 
     return tempPassword;
+  }
+
+  @Override
+  public Boolean userIdDupCheck(String userId) throws SQLException {
+    return userDao.userIdDupCheck(userId) > 0;
+  }
+
+  @Override
+  public Boolean nicknameDupCheck(String nickname) throws SQLException {
+    return userDao.nicknameDupCheck(nickname) > 0;
+  }
+
+  @Override
+  public Boolean emailDupCheck(String email) throws SQLException {
+    return userDao.emailDupCheck(email) > 0;
   }
 }
