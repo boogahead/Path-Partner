@@ -31,7 +31,7 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public void insertChat(ChatDto chatDto) throws SQLException, JsonProcessingException {
+    public boolean insertChat(ChatDto chatDto) throws SQLException, JsonProcessingException {
         chatDao.insertChat(chatDto);
 
         try {
@@ -45,5 +45,6 @@ public class ChatServiceImpl implements ChatService{
             log.error("Error processing chat message: ", e);
             throw new RuntimeException("Error processing chat message", e);
         }
+        return false;
     }
 }

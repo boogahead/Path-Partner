@@ -20,5 +20,5 @@ public interface PlanArticleDao {
 
     Optional<String> selectGroupId(String planArticleId) throws SQLException;
 
-    void lockPlanArticle(String planArticleId);
+    PlanArticleDto lockPlanArticle(String planArticleId);
 }

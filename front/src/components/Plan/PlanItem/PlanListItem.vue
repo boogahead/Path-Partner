@@ -37,7 +37,9 @@ const loginUser = useLoginUserStore();
 const {loginUserInfo} = storeToRefs(loginUser);
 
 onMounted(() => {
-  items.value = JSON.parse(props.plan.imgSrc);
+  if (props.plan && props.plan.imgSrc) {
+    items.value = JSON.parse(props.plan.imgSrc);
+  }
   creationDate.value = props.plan.creationDate;
   planTitle.value = props.plan.planTitle;
   articleId.value = props.plan.planArticleId;

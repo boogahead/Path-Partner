@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.ssafy.pathpartner.planarticle.dto.PlanArticleDto;
 import com.ssafy.pathpartner.planarticle.repository.PlanArticleDao;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -112,31 +113,32 @@ public class PlanArticleServiceImpl implements PlanArticleService {
   }
 
   @Override
+  @Transactional
   public boolean updatePlanArticle(PlanArticleDto planArticleDto, String uuid)
       throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException {
     String groupId = planArticleDao.selectGroupId(planArticleDto.getPlanArticleId())
         .orElseThrow(() -> new PlanArticleNotFoundException("해당하는 여행계획을 찾을 수 없습니다."));
 
     if (travelGroupDao.isGroupMember(groupId, uuid)) {
-//      planArticleDao.lockPlanArticle(planArticleDto.getPlanArticleId());
+      planArticleDao.lockPlanArticle(planArticleDto.getPlanArticleId());
       boolean isUpdated = planArticleDao.updatePlanArticle(planArticleDto) > 0;
 
-//      if (isUpdated) {
-//
-//        // Convert the planArticleDto to JSON
-//        PlanArticleMessage message = new PlanArticleMessage();
-//        message.setOperation("update");
-//        message.setPlanArticleDto(planArticleDto);
-//        message.setSequenceNumber(getNextSequenceNumber());
-//        String messageJson = new ObjectMapper().writeValueAsString(message);
-//
-//        // Update the messageJson in Redis
-//        redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
-//
-//        // Broadcast the messageJson to all connected clients
-//        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleDto.getGroupId(),
-//            messageJson);
-//      }
+      if (isUpdated) {
+
+        // Convert the planArticleDto to JSON
+        PlanArticleMessage message = new PlanArticleMessage();
+        message.setOperation("update");
+        message.setPlanArticleDto(planArticleDto);
+        message.setSequenceNumber(getNextSequenceNumber());
+        String messageJson = new ObjectMapper().writeValueAsString(message);
+
+        // Update the messageJson in Redis
+        redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
+
+        // Broadcast the messageJson to all connected clients
+        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleDto.getGroupId(),
+            messageJson);
+      }
 
       return isUpdated;
     } else {
