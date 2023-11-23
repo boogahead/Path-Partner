@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TravelGroupService {
 
-  boolean createTravelGroup(TravelGroupDto travelGroupDto) throws SQLException;
+  boolean createTravelGroup(TravelGroupDto travelGoupDto) throws SQLException;
 
   boolean deleteTravelGroup(String groupId, String uuid)
       throws SQLException, UnauthoriedGroupRequestException;
@@ -22,4 +22,19 @@ public interface TravelGroupService {
   List<TravelGroupDto> searchAllGroup(String uuid) throws SQLException;
 
   boolean kickmember(String groupId, String uuid, String curUserUuid) throws SQLException;
+
+  boolean inviteGroupMember(TravelGroupDto travelGroupDto, String uuid) throws SQLException;
+
+
+  boolean cancelInviteGroupMember(TravelGroupDto travelGroupDto, String uuid) throws SQLException;
+
+  boolean acceptInvite(TravelGroupDto travelGroupDto) throws SQLException;
+
+    boolean rejectInvite(TravelGroupDto travelGroupDto) throws SQLException;
+
+List<TravelGroupDto> receivedInviteList(String uuid) throws SQLException;
+
+List<GroupMemberDto> sentInviteList(String groupId) throws SQLException;
+
+
 }

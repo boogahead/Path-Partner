@@ -37,4 +37,18 @@ public interface TravelGroupDao {
   Optional<TravelGroupDto> selectGroup(String groupId) throws SQLException;
 
   int kickGroupMember(Map<String,String> param) throws SQLException;
+
+  Boolean inviteGroupMember(TravelGroupDto travelGroupDto) throws SQLException;
+
+  Boolean cancelInviteGroupMember(TravelGroupDto travelGroupDto) throws SQLException;
+
+  Boolean acceptInvite(TravelGroupDto travelGroupDto) throws SQLException;
+
+  Boolean rejectInvite(TravelGroupDto travelGroupDto) throws SQLException;
+
+  List<TravelGroupDto> receivedInviteList(String uuid) throws SQLException;
+
+  List<GroupMemberDto> sentInviteList(String groupId) throws SQLException;
+
+
 }

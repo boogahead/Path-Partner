@@ -22,4 +22,6 @@ public class TravelGroupDto {
     private String uuid;
     @ApiModelProperty(value="그룹장 여부 - true = 그룹장 , false = 그룹원")
     private Boolean groupMaster;
+    @ApiModelProperty(hidden = true)
+    private Boolean accepted;
 }
