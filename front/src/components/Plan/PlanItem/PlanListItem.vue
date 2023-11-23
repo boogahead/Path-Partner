@@ -16,11 +16,13 @@ import {useRouter} from "vue-router";
 import {getGroupMember} from "@/api/GroupAPI";
 import PlanGroupMemberitem from "@/components/Plan/PlanItem/PlanGroupMemberitem.vue";
 import {useLoginUserStore} from "@/stores/loginUser";
-import {storeToRefs} from "pinia";
+import {deletePlan} from "@/api/PlanArticleAPI";
 
 const props = defineProps({
   plan: Object
 })
+
+const emits = defineEmits(['deletePlanEvent'])
 
 const router = useRouter();
 const popover = ref(false);
@@ -33,10 +35,13 @@ const groupMember = ref([]);
 const groupName = ref("")
 const planArticleUuid = ref("")
 
-const loginUser = useLoginUserStore();
-const {loginUserInfo} = storeToRefs(loginUser);
+// const loginUser = useLoginUserStore();
+// const {loginUserInfo} = storeToRefs(loginUser);
 
-onMounted(() => {
+const userUuid = ref({})
+onMounted(async () => {
+  const loginUser = await useLoginUserStore();
+  userUuid.value = loginUser.loginUserInfo.uuid
   items.value = JSON.parse(props.plan.imgSrc);
   creationDate.value = props.plan.creationDate;
   planTitle.value = props.plan.planTitle;
@@ -46,11 +51,16 @@ onMounted(() => {
     groupMember.value = response.data;
     groupName.value = groupMember.value[0].groupName;
   })
-
 })
 
-const isWriter = () => {
-  return loginUserInfo.value.uuid === planArticleUuid.value
+const deletePlanAttempt = () => {
+  deletePlan(articleId.value, (response) => {
+    console.log(response)
+    emits('deletePlanEvent')
+  }, (error) => {
+    console.log(error)
+    alert("지금은 삭제할 수 없습니다. 잠시후 다시 시도하세요")
+  })
 }
 </script>
 
@@ -88,10 +98,10 @@ const isWriter = () => {
           <div class="d-flex justify-content-between mt-3">
             <span class="mb-0">{{ creationDate }}</span>
             <div class="d-flex">
-              <div class="text-secondary me-3" @click="router.push({name:'planEdit', params:{planArticleId:articleId}})">
+              <div class="text-secondary" @click="router.push({name:'planEdit', params:{planArticleId:articleId}})">
                 <i class="fas fa-edit"></i>
               </div>
-              <div class="text-danger" v-if="isWriter">
+              <div class="text-danger ms-3" v-if="userUuid === planArticleUuid" @click="deletePlanAttempt">
                 <i class="fas fa-trash-alt"></i>
               </div>
             </div>

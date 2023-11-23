@@ -71,6 +71,7 @@ public class PlanArticleServiceImpl implements PlanArticleService {
   @Override
   public boolean deletePlanArticle(String planArticleId, String uuid)
       throws SQLException, UnauthoriedPlanRequestException, JsonProcessingException {
+
     String writer = planArticleDao.selectWriter(planArticleId)
         .orElseThrow(() -> new PlanArticleNotFoundException("여행 계획을 찾을 수 없습니다."));
     String groupId = planArticleDao.selectGroupId(planArticleId)
@@ -79,20 +80,20 @@ public class PlanArticleServiceImpl implements PlanArticleService {
     if (writer.equals(uuid) || travelGroupDao.isGroupMaster(groupId, uuid)) {
       boolean isDeleted = planArticleDao.deletePlanArticle(planArticleId) > 0;
 
-      if (isDeleted) {
-        // Remove the planArticle from Redis
-
-        redisTemplate.delete(planArticleId);
-        PlanArticleMessage message = new PlanArticleMessage();
-        message.setOperation("delete");
-        message.setPlanArticleDto(new PlanArticleDto(
-            planArticleId)); // assuming PlanArticleDto has a constructor that takes planArticleId
-        message.setSequenceNumber(getNextSequenceNumber());
-        String messageJson = new ObjectMapper().writeValueAsString(message);
-
-        // Broadcast the deletion of the planArticle to all connected clients
-        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleId, messageJson);
-      }
+//      if (isDeleted) {
+//        // Remove the planArticle from Redis
+//
+//        redisTemplate.delete(planArticleId);
+//        PlanArticleMessage message = new PlanArticleMessage();
+//        message.setOperation("delete");
+//        message.setPlanArticleDto(new PlanArticleDto(
+//            planArticleId)); // assuming PlanArticleDto has a constructor that takes planArticleId
+//        message.setSequenceNumber(getNextSequenceNumber());
+//        String messageJson = new ObjectMapper().writeValueAsString(message);
+//
+//        // Broadcast the deletion of the planArticle to all connected clients
+//        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleId, messageJson);
+//      }
 
       return isDeleted;
     } else {

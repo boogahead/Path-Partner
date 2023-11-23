@@ -33,6 +33,9 @@ onMounted(async () => {
     planTitle.value = response.data.planTitle;
     selectedAttractionList.value = [...JSON.parse(response.data.plan)];
     imgSrc.value = [...JSON.parse(response.data.imgSrc)];
+    if(imgSrc.value == null) {
+      imgSrc.value = []
+    }
   })
 })
 

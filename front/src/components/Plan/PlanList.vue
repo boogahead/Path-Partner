@@ -22,6 +22,10 @@ const loginUser = useLoginUserStore();
 const {loginUserInfo} = storeToRefs(loginUser);
 
 onMounted(() => {
+  reload();
+})
+
+const reload = () => {
   getPlanArticleList((response) => {
     planList.value = response.data;
 
@@ -29,7 +33,7 @@ onMounted(() => {
   getGroupList((response) => [
     myGroupList.value = response.data
   ])
-})
+}
 
 const planTitle = ref("")
 const writePlanModalOpen = ref(false)
@@ -62,7 +66,7 @@ const writePlanAttempt = () => {
       <MDBCard>
         <MDBCardBody>
           <MDBRow :cols="['1','md-3']" class="g-4 mb-3">
-            <PlanListItem v-for="plan in planList" :key="plan.planArticleId" :plan="plan"/>
+            <PlanListItem v-for="plan in planList" :key="plan.planArticleId" :plan="plan" @deletePlanEvent="reload"/>
           </MDBRow>
           <div class="text-center mt-3">
             <MDBBtn color="primary" floating @click="writePlanModalOpen = true">

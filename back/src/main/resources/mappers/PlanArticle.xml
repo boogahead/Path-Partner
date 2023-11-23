@@ -11,11 +11,10 @@
     VALUES (#{planArticleId}, #{plan}, #{groupId}, now(), #{uuid}, #{planTitle})
   </insert>
 
-  <delete id="deletePlanArticle" parameterType="map">
+  <delete id="deletePlanArticle" parameterType="String">
     DELETE
     FROM plan_article
     WHERE plan_article_id = #{planArticleId}
-      AND group_id = #{groupId}
   </delete>
 
   <update id="updatePlanArticle" parameterType="PlanArticleDto">
