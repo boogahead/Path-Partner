@@ -2,13 +2,11 @@ package com.ssafy.pathpartner.user.service;
 
 import com.ssafy.pathpartner.friend.dto.FriendInfoDto;
 import com.ssafy.pathpartner.friend.repository.FriendDao;
-import com.ssafy.pathpartner.friend.service.FriendServiceImpl;
 import com.ssafy.pathpartner.user.dto.ResetPasswordDto;
 import com.ssafy.pathpartner.user.dto.SignUpDto;
 import com.ssafy.pathpartner.user.dto.UpdateUserDto;
 import com.ssafy.pathpartner.user.dto.UserDto;
 import com.ssafy.pathpartner.user.dto.UserInfoDto;
-import com.ssafy.pathpartner.friend.dto.FriendDto;
 import com.ssafy.pathpartner.user.exception.AlreadyExistsUserException;
 import com.ssafy.pathpartner.user.exception.InvalidInputException;
 import com.ssafy.pathpartner.user.exception.UserNotFoundException;
@@ -18,13 +16,11 @@ import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import springfox.documentation.annotations.ApiIgnore;
 
 @Service
 @Slf4j
@@ -33,12 +29,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   private final UserDao userDao;
   private final PasswordEncoder passwordEncoder;
   private final FriendDao friendDao;
+  private final UserInfoDto userInfoDto;
 
   @Autowired
-  public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder, FriendDao friendDao) {
+  public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder, FriendDao friendDao, UserInfoDto userInfoDto) {
     this.userDao = userDao;
     this.passwordEncoder = passwordEncoder;
     this.friendDao = friendDao;
+    this.userInfoDto = userInfoDto;
   }
 
   public boolean createUser(SignUpDto signUpDto) throws SQLException {
@@ -132,16 +130,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     //유저리스트 싹다 불러오기
     List<UserInfoDto> userList=userDao.selectAllUserByNickname(nickname);
 
-    Set<FriendInfoDto> friendSet=new HashSet<>();
+    Set<UserInfoDto> friendSet=new HashSet<>();
     Set<UserInfoDto> userSet=new HashSet<>();
     for(FriendInfoDto i:friendlist){
-      friendSet.add(i);
+      friendSet.add(userInfoDto.fromFriendInfoDto(i));
     }
     for(FriendInfoDto i:friendRequestlist){
-      friendSet.add(i);
+      friendSet.add(userInfoDto.fromFriendInfoDto(i));
     }
     for(FriendInfoDto i:friendRequestReceivedlist){
-      friendSet.add(i);
+      friendSet.add(userInfoDto.fromFriendInfoDto(i));
     }
     for(UserInfoDto i:userList){
       userSet.add(i);
