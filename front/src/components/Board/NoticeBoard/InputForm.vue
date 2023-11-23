@@ -13,6 +13,7 @@ import {
   MDBTextarea
 } from "mdb-vue-ui-kit";
 import {storeToRefs} from "pinia";
+import {modifyNoticeArticle, writeNoticeArticle} from "@/api/NoticeAPI";
 
 const route = useRoute();
 const router = useRouter();
@@ -24,37 +25,38 @@ const props = defineProps({
   isModify: Boolean,
 })
 
-const content = ref("");
-const title = ref("");
+const content = ref(props.detail.content);
+const title = ref(props.detail.title);
 
 onMounted(() => {
-
+  if (props.isModify) {
+    title.value = props.detail.title;
+    content.value = props.detail.content;
+  }
 })
 const writeNoticeArticleAttempt = () => {
   const article = {
     title: title.value,
     content: content.value,
-
   }
-  wr(article, (response) => {
-    if(response.status === 201) {
-      router.back();
-    } else {
-      alert("등록에 실패했습니다. 나중에 다시 시도해 주세요.")
+  writeNoticeArticle(article, (response) => {
+    router.back();
+  }, ({response}) => {
+    if (response.status === 403) {
+      alert("공지글은 관리자만 작성할 수 있습니다.")
     }
   })
 }
 
-const modifyArticle = () => {
+const modifyNoticeArticleAttempt = () => {
   const article = {
-    articleNo: props.detail.articleNo,
-    userId: id.value,
-    userName: name.value,
-    subject: subject.value,
-    content: content.value
+    title: title.value,
+    content: content.value,
+    noticeArticleId: props.detail.noticeArticeId
   }
-  putArticle(article, (response) => {
-    if(response.status === 200) {
+
+  modifyNoticeArticle(article, (response) => {
+    if (response.status === 200) {
       router.back();
     } else {
       alert("수정에 실패했습니다. 나중에 다시 시도해 주세요.")
@@ -69,7 +71,7 @@ const modifyArticle = () => {
     <MDBCardBody>
       <MDBCardTitle>
         <div class="d-flex mb-2 justify-content-center p-3">
-          <MDBInput class="m-auto" label="제목" size="lg" v-model="subject"/>
+          <MDBInput class="m-auto" label="제목" size="lg" v-model="title"/>
         </div>
       </MDBCardTitle>
       <hr class="hr">
@@ -78,10 +80,10 @@ const modifyArticle = () => {
       </MDBCardText>
       <hr class="hr">
       <div class="d-flex justify-content-center">
-        <MDBBtn color="success" v-if="isModify" @click="modifyArticle">
+        <MDBBtn color="success" v-if="isModify" @click="modifyNoticeArticleAttempt">
           수정
         </MDBBtn>
-        <MDBBtn color="success" v-if="!isModify" @click="writeArticle">
+        <MDBBtn color="success" v-if="!isModify" @click="writeNoticeArticleAttempt">
           등록
         </MDBBtn>
         <MDBBtn color="danger" @click="router.back()">

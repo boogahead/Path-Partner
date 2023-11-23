@@ -2,6 +2,7 @@ package com.ssafy.pathpartner.noticearticle.controller;
 
 import com.ssafy.pathpartner.noticearticle.dto.NoticeArticleDto;
 import com.ssafy.pathpartner.noticearticle.exception.NoticeArticleNotFound;
+import com.ssafy.pathpartner.user.dto.UserDto;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import com.ssafy.pathpartner.noticearticle.service.NoticeArticleService;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Slf4j
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
@@ -77,12 +80,14 @@ public class NoticeArticleController {
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Boolean> writeNoticeArticle(
-      @RequestBody NoticeArticleDto noticeArticleDto) {
+      @RequestBody NoticeArticleDto noticeArticleDto, @ApiIgnore @AuthenticationPrincipal UserDto userDto) {
     log.debug("writeNoticeArticle call");
 
     if (noticeArticleDto.getTitle() == null || noticeArticleDto.getContent() == null) {
       return ResponseEntity.badRequest().build();
     }
+
+    noticeArticleDto.setUuid(userDto.getUuid());
 
     try {
       return ResponseEntity.ok().body(noticeArticleService.createNoticeArticle(noticeArticleDto));
