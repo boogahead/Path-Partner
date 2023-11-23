@@ -186,4 +186,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     return tempPassword;
   }
+
+  @Override
+  public Boolean userIdDupCheck(String userId) throws SQLException {
+    return userDao.userIdDupCheck(userId)>0;
+  }
+
+  @Override
+  public Boolean nicknameDupCheck(String nickname) throws SQLException {
+    return userDao.nicknameDupCheck(nickname)>0;
+  }
+
+  @Override
+  public Boolean emailDupCheck(String email) throws SQLException {
+    return userDao.emailDupCheck(email)>0;
+  }
 }

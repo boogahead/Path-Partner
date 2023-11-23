@@ -44,5 +44,11 @@ public interface UserDao {
 
     List<UserInfoDto> userList() throws SQLException;
 
+    int userIdDupCheck(String userId) throws SQLException;
+
+    int nicknameDupCheck(String nickname) throws SQLException;
+
+    int emailDupCheck(String email) throws SQLException;
+
 
 }

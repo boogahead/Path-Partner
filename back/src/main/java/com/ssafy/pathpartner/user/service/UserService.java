@@ -30,4 +30,7 @@ public interface UserService {
   String resetPassword(ResetPasswordDto resetPasswordDto)
       throws SQLException, UserNotFoundException;
 
+  Boolean userIdDupCheck(String userId) throws SQLException;
+  Boolean nicknameDupCheck(String nickname) throws SQLException;
+  Boolean emailDupCheck(String email) throws SQLException;
 }

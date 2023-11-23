@@ -171,4 +171,50 @@ public class AuthController {
       return ResponseEntity.internalServerError().build();
     }
   }
+
+  @ApiOperation(value = "아이디 중복 찾기", notes = "아이디 중복을 찾습니다.")
+  @ApiResponses({@ApiResponse(code = 200, message = "검색 완료"),
+          @ApiResponse(code = 500, message = "서버 에러")})
+  @GetMapping("/dup/id/{userId}")
+  public ResponseEntity<Boolean> userIdDupCheck(@PathVariable String userId) {
+    log.debug("userIdDupCheck call");
+
+    try {
+      return ResponseEntity.ok().body(userService.userIdDupCheck(userId));
+    } catch (SQLException e) {
+      log.debug(e.toString());
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+    @ApiOperation(value = "닉네임 중복 찾기", notes = "닉네임중복을 찾습니다.")
+    @ApiResponses({@ApiResponse(code = 200, message = "검색 완료"),
+        @ApiResponse(code = 500, message = "서버 에러")})
+    @GetMapping("/dup/nickname/{nickname}")
+    public ResponseEntity<Boolean> nicknameDupCheck(@PathVariable String nickname) {
+    log.debug("nicknameDupCheck call");
+
+        try {
+            return ResponseEntity.ok().body(userService.nicknameDupCheck(nickname));
+        } catch (SQLException e) {
+            log.debug(e.toString());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @ApiOperation(value = "이메일 중복 찾기", notes = "이메일 중복을 찾습니다.")
+    @ApiResponses({@ApiResponse(code = 200, message = "검색 완료"),
+        @ApiResponse(code = 500, message = "서버 에러")})
+    @GetMapping("/dup/email/{email}")
+    public ResponseEntity<Boolean> emailDupCheck(@PathVariable String email) {
+        log.debug("emailDupCheck call");
+
+        try {
+            return ResponseEntity.ok().body(userService.emailDupCheck(email));
+        } catch (SQLException e) {
+            log.debug(e.toString());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }

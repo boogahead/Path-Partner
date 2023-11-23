@@ -36,5 +36,5 @@ public interface TravelGroupDao {
 
   Optional<TravelGroupDto> selectGroup(String groupId) throws SQLException;
 
-  void kickGroupMember(Map<String,String> param) throws SQLException;
+  int kickGroupMember(Map<String,String> param) throws SQLException;
 }

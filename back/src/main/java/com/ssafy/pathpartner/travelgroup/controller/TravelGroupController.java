@@ -133,12 +133,14 @@ public class TravelGroupController {
   @ApiResponses({@ApiResponse(code = 200, message = "그룹원 추방 시도 성공"),
           @ApiResponse(code = 500, message = "서버 에러")})
   @DeleteMapping("/{groupId}/{uuid}")
-  public void kickmember(@PathVariable String groupId, @PathVariable String uuid){
+  public ResponseEntity<Boolean> kickmember(@PathVariable String groupId, @PathVariable String uuid
+  ,@ApiIgnore @AuthenticationPrincipal UserDto userDto){
     log.debug("kickmember call");
     try {
-      travelGroupService.kickmember(groupId, uuid);
+      return ResponseEntity.ok().body(travelGroupService.kickmember(groupId, uuid, userDto.getUuid()));
     } catch (SQLException e) {
       log.debug(e.toString());
+      return ResponseEntity.internalServerError().build();
     }
   }
 }

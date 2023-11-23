@@ -21,5 +21,5 @@ public interface TravelGroupService {
 
   List<TravelGroupDto> searchAllGroup(String uuid) throws SQLException;
 
-  void kickmember(String groupId, String uuid) throws SQLException;
+  boolean kickmember(String groupId, String uuid, String curUserUuid) throws SQLException;
 }

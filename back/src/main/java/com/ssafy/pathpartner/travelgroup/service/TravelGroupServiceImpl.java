@@ -10,8 +10,6 @@ import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.ssafy.pathpartner.travelgroup.dto.TravelGroupDto;
 import com.ssafy.pathpartner.travelgroup.repository.TravelGroupDao;
@@ -71,11 +69,12 @@ public class TravelGroupServiceImpl implements TravelGroupService {
   }
 
   @Override
-  public void kickmember(String groupId, String uuid) throws SQLException {
+  public boolean kickmember(String groupId, String uuid, String curUserUuid) throws SQLException {
+    if(!travelGroupDao.isGroupMaster(groupId,curUserUuid))return false;
     Map<String,String> param = new HashMap<>();
     param.put("groupId",groupId);
     param.put("uuid",uuid);
-    travelGroupDao.kickGroupMember(param);
+    return travelGroupDao.kickGroupMember(param)>0;
   }
 
 

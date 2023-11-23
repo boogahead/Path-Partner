@@ -94,4 +94,21 @@
     from user
   </select>
 
+  <select id="userIdDupCheck" parameterType="String" resultType="int">
+    select count(id)
+    from user
+    where id = #{id}
+  </select>
+
+  <select id="nicknameDupCheck" parameterType="String" resultType="int">
+    select count(nickname)
+    from user
+    where nickname = #{nickname}
+  </select>
+
+    <select id="emailDupCheck" parameterType="String" resultType="int">
+        select count(email)
+        from user
+        where email = #{email}
+    </select>
 </mapper>
