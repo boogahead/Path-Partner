@@ -10,9 +10,11 @@ import {
   deleteFriend, rejectFriendRequest,
   sendFriendRequest
 } from "@/api/FriendAPI";
+import {registerGroupInvite} from "@/api/GroupAPI";
 
 const props = defineProps({
   info: Object,
+  groupId: String,
   type: String
 })
 // uuid, id, email, nickname, prifileImg
@@ -66,6 +68,16 @@ const rejectFriendRequestAttempt = () => {
     alert("지금은 할 수 없습니다. 나중에 다시 시도해주세요.")
   })
 }
+
+const registerGroupInviteAttempt = () => {
+  registerGroupInvite(props.groupId, props.info.uuid, (response) => {
+    if(response.data === "") {
+      alert("이미 초대를 보냈습니다.")
+    }
+  }, (error) => {
+    alert("지금은 할 수 없습니다. 나중에 다시 시도해주세요.")
+  })
+}
 </script>
 
 <template>
@@ -104,6 +116,11 @@ const rejectFriendRequestAttempt = () => {
       <MDBBtn v-if="type === 'received'" color="danger" size="sm" rounded
               @click="rejectFriendRequestAttempt">
         <i class="fas fa-trash-alt"/>
+      </MDBBtn>
+
+      <MDBBtn v-if="type === 'group'" color="success" size="sm" rounded
+              @click="registerGroupInviteAttempt">
+        <i class="fas fa-users"></i>
       </MDBBtn>
     </td>
   </tr>

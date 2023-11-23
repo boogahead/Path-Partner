@@ -18,6 +18,7 @@ public class GroupMemberDto {
   private String uuid;
   private String nickname;
   private String email;
+  private byte[] profileImg;
   private boolean groupMaster;
 
 }

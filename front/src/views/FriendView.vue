@@ -83,10 +83,10 @@ const getMyFriendRequestReceivedAttempt = () => {
               <MDBTabPane tabId="friend" @friendActionEvent="reloadList">
                 <FriendList :searchResult="friendList" type="friend" @friendActionEvent="reloadList"/>
               </MDBTabPane>
-              <MDBTabPane tabId="sent">
+              <MDBTabPane tabId="sent" @friendActionEvent="reloadList">
                 <FriendList :searchResult="sentFriendRequestList" type="sent" @friendActionEvent="reloadList"/>
               </MDBTabPane>
-              <MDBTabPane tabId="received">
+              <MDBTabPane tabId="received" @friendActionEvent="reloadList">
                 <FriendList :searchResult="receivedFriendRequestList" type="received" @friendActionEvent="reloadList"/>
               </MDBTabPane>
             </MDBTabContent>

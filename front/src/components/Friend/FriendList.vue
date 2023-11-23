@@ -11,7 +11,7 @@ import {
 } from "mdb-vue-ui-kit";
 import FriendListItem from "@/components/Friend/FriendItem/FriendListItem.vue";
 import {computed, onMounted, ref, watch} from "vue";
-import {findAllUserByuNickname} from "@/api/UserAPI";
+import {findAllUserByNickname} from "@/api/UserAPI";
 
 // uuid, id, email, nickname, profileImg
 const props = defineProps({
@@ -33,7 +33,7 @@ watch(nicknameInput, () => {
   }
 
   friendSearchDropdown.value = true;
-  findAllUserByuNickname(nicknameInput.value, (response) => {
+  findAllUserByNickname(nicknameInput.value, (response) => {
     foundUser.value = response.data
   })
 })
@@ -68,6 +68,9 @@ const eventHandler = (event) => {
             <MDBInput type="text" placeholder="닉네임 입력" @focus="friendSearchDropdown = true"
                       v-model="nicknameInput"></MDBInput>
             <MDBDropdownMenu @mouseleave="onLeaveHandler">
+              <MDBDropdownItem text disabled v-show="foundUser.length === 0">
+                  검색 결과가 없습니다.
+              </MDBDropdownItem>
               <MDBDropdownItem disabled v-for="user in foundUserComputed">
                 <MDBTable>
                   <thead class="bg-light">

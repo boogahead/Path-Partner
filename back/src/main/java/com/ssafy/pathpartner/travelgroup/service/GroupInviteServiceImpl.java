@@ -1,5 +1,6 @@
 package com.ssafy.pathpartner.travelgroup.service;
 
+import com.ssafy.pathpartner.travelgroup.dto.GroupMemberDto;
 import com.ssafy.pathpartner.travelgroup.exception.TravelGroupNotFoundException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -56,7 +57,7 @@ public class GroupInviteServiceImpl implements GroupInviteService {
   }
 
   @Override
-  public List<GroupInviteDto> searchAllPendingInvite(String groupId) throws SQLException {
+  public List<GroupMemberDto> searchAllPendingInvite(String groupId) throws SQLException {
     return groupInviteDao.selectAllPendingInvite(groupId);
   }
 

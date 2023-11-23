@@ -16,4 +16,6 @@ public class GroupInviteDto {
     private String groupId;
     @ApiModelProperty(value="초대를 받게 될 유저의 uuid")
     private String inviteTo;
+
+    private String groupName;
 }

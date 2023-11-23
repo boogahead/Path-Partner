@@ -16,14 +16,18 @@
   </delete>
 
   <select id="selectGroupInvite" parameterType="String" resultType="GroupInviteDto">
-    select group_id
-    from group_invite
+    select gi.group_id, g.group_name
+    from group_invite as gi
+    join travel_group as g
+    on gi.group_id = g.group_id
     where invite_to = #{uuid}
   </select>
 
-  <select id="selectAllPendingInvite" parameterType="String" resultType="GroupInviteDto">
-    select invite_to
-    from group_invite
+  <select id="selectAllPendingInvite" parameterType="String" resultType="GroupMemberDto">
+    select group_id, u.uuid, u.email, u.nickname, u.profile_img
+    from group_invite as gi
+    join user as u
+    on gi.invite_to = u.uuid
     where group_id = #{groupId}
   </select>
 </mapper>

@@ -53,7 +53,7 @@
 
 
   <select id="selectAllGroupMember" parameterType="String" resultType="GroupMemberDto">
-    select g.group_id, g.group_name, g.uuid, g.group_master, u.email, u.nickname
+    select g.group_id, g.group_name, g.uuid, g.group_master, u.email, u.nickname, u.profile_img
     from travel_group as g
            join user as u
                 on g.uuid = u.uuid

@@ -1,5 +1,6 @@
 package com.ssafy.pathpartner.travelgroup.controller;
 
+import com.ssafy.pathpartner.travelgroup.dto.GroupMemberDto;
 import com.ssafy.pathpartner.travelgroup.exception.TravelGroupNotFoundException;
 import com.ssafy.pathpartner.user.dto.UserDto;
 import io.swagger.annotations.Api;
@@ -7,10 +8,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,6 +53,9 @@ public class GroupInviteController {
 
     try {
       return ResponseEntity.ok().body(groupInviteService.createGroupInvite(groupInviteDto));
+    } catch (DuplicateKeyException e) {
+      log.debug(e.toString());
+      return ResponseEntity.ok().build();
     } catch (SQLException e) {
       log.debug(e.toString());
       return ResponseEntity.internalServerError().build();
@@ -120,7 +126,7 @@ public class GroupInviteController {
   @ApiResponses({@ApiResponse(code = 200, message = "그룹 초대 리스트 확인 시도 성공"),
       @ApiResponse(code = 500, message = "서버 에러")})
   @GetMapping("/pending/{groupId}")
-  public ResponseEntity<List<GroupInviteDto>> getPendingInviteList(@PathVariable String groupId) {
+  public ResponseEntity<List<GroupMemberDto>> getPendingInviteList(@PathVariable String groupId) {
     log.debug("getPendingInviteList call");
 
     try {

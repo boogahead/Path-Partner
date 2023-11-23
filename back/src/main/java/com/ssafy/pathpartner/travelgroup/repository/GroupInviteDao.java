@@ -1,5 +1,6 @@
 package com.ssafy.pathpartner.travelgroup.repository;
 
+import com.ssafy.pathpartner.travelgroup.dto.GroupMemberDto;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -16,5 +17,5 @@ public interface GroupInviteDao {
 
   List<GroupInviteDto> selectGroupInvite(String uuid) throws SQLException;
 
-  List<GroupInviteDto> selectAllPendingInvite(String groupId) throws SQLException;
+  List<GroupMemberDto> selectAllPendingInvite(String groupId) throws SQLException;
 }

@@ -18,7 +18,7 @@ function modifyUser(user, success, fail) {
   local.put(`/user`, user).then(success).catch(fail);
 }
 
-function findAllUserByuNickname(nickname, success, fail) {
+function findAllUserByNickname(nickname, success, fail) {
   local.get(`/user/find/${nickname}`).then(success).catch(fail);
 }
 
@@ -27,5 +27,5 @@ export {
   deleteUser,
   withdrawal,
   modifyUser,
-  findAllUserByuNickname
+  findAllUserByNickname
 }
