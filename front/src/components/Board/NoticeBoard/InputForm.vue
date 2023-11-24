@@ -1,6 +1,5 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
-import {putArticle, registArticle} from "@/api/BoardAPI";
+import {onBeforeMount, onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useLoginUserStore} from "@/stores/loginUser";
 import {
@@ -20,19 +19,24 @@ const router = useRouter();
 const loginUserStore = useLoginUserStore();
 const {loginUserInfo} = storeToRefs(loginUserStore);
 
+const content = ref("");
+const title = ref("");
+
 const props = defineProps({
   detail: Object,
   isModify: Boolean,
 })
-
-const content = ref(props.detail.content);
-const title = ref(props.detail.title);
 
 onMounted(() => {
   if (props.isModify) {
     title.value = props.detail.title;
     content.value = props.detail.content;
   }
+})
+
+watch(props, () => {
+  title.value = props.detail.title;
+  content.value = props.detail.content;
 })
 const writeNoticeArticleAttempt = () => {
   const article = {
@@ -52,12 +56,12 @@ const modifyNoticeArticleAttempt = () => {
   const article = {
     title: title.value,
     content: content.value,
-    noticeArticleId: props.detail.noticeArticeId
+    noticeArticleId: props.detail.noticeArticleId
   }
 
   modifyNoticeArticle(article, (response) => {
     if (response.status === 200) {
-      router.back();
+      router.back()
     } else {
       alert("수정에 실패했습니다. 나중에 다시 시도해 주세요.")
     }

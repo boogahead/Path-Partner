@@ -3,7 +3,6 @@
 import InputForm from "@/components/Board/NoticeBoard/InputForm.vue";
 import {useRoute} from "vue-router";
 import {onMounted, ref} from "vue";
-import {getArticle} from "@/api/BoardAPI";
 import {getNoticeArticle} from "@/api/NoticeAPI";
 
 const route = useRoute();
