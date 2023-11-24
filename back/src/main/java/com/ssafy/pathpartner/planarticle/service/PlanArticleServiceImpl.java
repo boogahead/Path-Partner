@@ -51,19 +51,19 @@ public class PlanArticleServiceImpl implements PlanArticleService {
 
     boolean result = planArticleDao.insertPlanArticle(planArticleDto) > 0;
 
-//    if (result) {
-//      PlanArticleMessage message = new PlanArticleMessage();
-//      message.setOperation("create");
-//      message.setPlanArticleDto(planArticleDto);
-//      message.setSequenceNumber(getNextSequenceNumber());
-//      String messageJson = new ObjectMapper().writeValueAsString(message);
-//
-//      // Store the messageJson in Redis
-//      redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
-//
-//      // Broadcast the messageJson to all connected clients
-//      messagingTemplate.convertAndSend("/topic/planArticle"+planArticleDto.getGroupId(), messageJson);
-//    }
+    if (result) {
+      PlanArticleMessage message = new PlanArticleMessage();
+      message.setOperation("create");
+      message.setPlanArticleDto(planArticleDto);
+      message.setSequenceNumber(getNextSequenceNumber());
+      String messageJson = new ObjectMapper().writeValueAsString(message);
+
+      // Store the messageJson in Redis
+      redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
+
+      // Broadcast the messageJson to all connected clients
+      messagingTemplate.convertAndSend("/topic/planArticle"+planArticleDto.getGroupId(), messageJson);
+    }
 
     return planArticleDto.getPlanArticleId();
   }
@@ -80,20 +80,20 @@ public class PlanArticleServiceImpl implements PlanArticleService {
     if (writer.equals(uuid) || travelGroupDao.isGroupMaster(groupId, uuid)) {
       boolean isDeleted = planArticleDao.deletePlanArticle(planArticleId) > 0;
 
-//      if (isDeleted) {
-//        // Remove the planArticle from Redis
-//
-//        redisTemplate.delete(planArticleId);
-//        PlanArticleMessage message = new PlanArticleMessage();
-//        message.setOperation("delete");
-//        message.setPlanArticleDto(new PlanArticleDto(
-//            planArticleId)); // assuming PlanArticleDto has a constructor that takes planArticleId
-//        message.setSequenceNumber(getNextSequenceNumber());
-//        String messageJson = new ObjectMapper().writeValueAsString(message);
-//
-//        // Broadcast the deletion of the planArticle to all connected clients
-//        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleId, messageJson);
-//      }
+      if (isDeleted) {
+        // Remove the planArticle from Redis
+
+        redisTemplate.delete(planArticleId);
+        PlanArticleMessage message = new PlanArticleMessage();
+        message.setOperation("delete");
+        message.setPlanArticleDto(new PlanArticleDto(
+            planArticleId)); // assuming PlanArticleDto has a constructor that takes planArticleId
+        message.setSequenceNumber(getNextSequenceNumber());
+        String messageJson = new ObjectMapper().writeValueAsString(message);
+
+        // Broadcast the deletion of the planArticle to all connected clients
+        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleId, messageJson);
+      }
 
       return isDeleted;
     } else {
@@ -119,25 +119,25 @@ public class PlanArticleServiceImpl implements PlanArticleService {
         .orElseThrow(() -> new PlanArticleNotFoundException("해당하는 여행계획을 찾을 수 없습니다."));
 
     if (travelGroupDao.isGroupMember(groupId, uuid)) {
-//      planArticleDao.lockPlanArticle(planArticleDto.getPlanArticleId());
+      planArticleDao.lockPlanArticle(planArticleDto.getPlanArticleId());
       boolean isUpdated = planArticleDao.updatePlanArticle(planArticleDto) > 0;
 
-//      if (isUpdated) {
-//
-//        // Convert the planArticleDto to JSON
-//        PlanArticleMessage message = new PlanArticleMessage();
-//        message.setOperation("update");
-//        message.setPlanArticleDto(planArticleDto);
-//        message.setSequenceNumber(getNextSequenceNumber());
-//        String messageJson = new ObjectMapper().writeValueAsString(message);
-//
-//        // Update the messageJson in Redis
-//        redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
-//
-//        // Broadcast the messageJson to all connected clients
-//        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleDto.getGroupId(),
-//            messageJson);
-//      }
+      if (isUpdated) {
+
+        // Convert the planArticleDto to JSON
+        PlanArticleMessage message = new PlanArticleMessage();
+        message.setOperation("update");
+        message.setPlanArticleDto(planArticleDto);
+        message.setSequenceNumber(getNextSequenceNumber());
+        String messageJson = new ObjectMapper().writeValueAsString(message);
+
+        // Update the messageJson in Redis
+        redisTemplate.opsForValue().set(planArticleDto.getPlanArticleId(), messageJson);
+
+        // Broadcast the messageJson to all connected clients
+        messagingTemplate.convertAndSend("/topic/planArticle" + planArticleDto.getGroupId(),
+            messageJson);
+      }
 
       return isUpdated;
     } else {
