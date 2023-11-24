@@ -15,6 +15,7 @@ import {registerGroupInvite} from "@/api/GroupAPI";
 const props = defineProps({
   info: Object,
   groupId: String,
+  groupName: String,
   type: String
 })
 // uuid, id, email, nickname, prifileImg
@@ -70,7 +71,12 @@ const rejectFriendRequestAttempt = () => {
 }
 
 const registerGroupInviteAttempt = () => {
-  registerGroupInvite(props.groupId, props.info.uuid, (response) => {
+  let groupInvite = {
+    groupId:props.groupId,
+    uuid:props.info.uuid,
+    groupName:props.groupName
+  }
+  registerGroupInvite(groupInvite, (response) => {
     if(response.data === "") {
       alert("이미 초대를 보냈습니다.")
     }

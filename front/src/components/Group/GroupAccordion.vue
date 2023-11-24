@@ -31,10 +31,12 @@ onMounted(() => {
 
 const groupInviteModalOpen = ref(false)
 const inviteGroupId = ref("")
+const inviteGroupName = ref("")
 const friends = ref([])
 
-const groupInviteHandler = (groupId) => {
+const groupInviteHandler = (groupId, groupName) => {
   inviteGroupId.value = groupId;
+  inviteGroupName.value = groupName;
   groupInviteModalOpen.value = true;
 }
 
@@ -42,7 +44,6 @@ watch(groupInviteModalOpen, (after, before) => {
   if(before && !after) {
     router.go(0);
   }
-  console.log(before, after)
 })
 
 </script>
@@ -54,7 +55,7 @@ watch(groupInviteModalOpen, (after, before) => {
   </MDBAccordion>
 
   <MDBModal
-      id="loginModal"
+      id="groupInviteModalOpen"
       v-model="groupInviteModalOpen"
   >
     <MDBModalHeader>
@@ -69,7 +70,7 @@ watch(groupInviteModalOpen, (after, before) => {
           <MDBTable>
             <tbody>
             <FriendListItem v-for="friend in friends" type="group" :groupId="inviteGroupId"
-                            :info="friend"/>
+                            :info="friend" :groupName="inviteGroupName"/>
             </tbody>
           </MDBTable>
         </div>

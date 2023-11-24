@@ -70,24 +70,31 @@ public class TravelGroupServiceImpl implements TravelGroupService {
 
   @Override
   public boolean kickmember(String groupId, String uuid, String curUserUuid) throws SQLException {
-    if(!travelGroupDao.isGroupMaster(groupId,curUserUuid))return false;
-    Map<String,String> param = new HashMap<>();
-    param.put("groupId",groupId);
-    param.put("uuid",uuid);
-    return travelGroupDao.kickGroupMember(param)>0;
+    if (!travelGroupDao.isGroupMaster(groupId, curUserUuid)) {
+      return false;
+    }
+    Map<String, String> param = new HashMap<>();
+    param.put("groupId", groupId);
+    param.put("uuid", uuid);
+    return travelGroupDao.kickGroupMember(param) > 0;
   }
 
 
   @Override
   public boolean inviteGroupMember(TravelGroupDto travelGroupDto, String uuid) throws SQLException {
-    if(!travelGroupDao.isGroupMaster(travelGroupDto.getGroupId(),uuid))return false;
+    if (!travelGroupDao.isGroupMaster(travelGroupDto.getGroupId(), uuid)) {
+      return false;
+    }
     return travelGroupDao.inviteGroupMember(travelGroupDto);
   }
 
 
   @Override
-  public boolean cancelInviteGroupMember(TravelGroupDto travelGroupDto,String uuid) throws SQLException {
-    if(!travelGroupDao.isGroupMaster(travelGroupDto.getGroupId(),uuid))return false;
+  public boolean cancelInviteGroupMember(TravelGroupDto travelGroupDto, String uuid)
+      throws SQLException {
+    if (!travelGroupDao.isGroupMaster(travelGroupDto.getGroupId(), uuid)) {
+      return false;
+    }
     return travelGroupDao.cancelInviteGroupMember(travelGroupDto);
   }
 

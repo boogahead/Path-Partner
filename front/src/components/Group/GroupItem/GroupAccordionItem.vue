@@ -24,6 +24,7 @@ const props = defineProps({
 const emits = defineEmits(['groupActionEvent', 'groupInviteEvent'])
 
 const groupMembers = ref([]);
+const groupInviteSentMembers = ref([]);
 
 onMounted(async () => {
   await reloadMembers();
@@ -31,9 +32,7 @@ onMounted(async () => {
 const reloadMembers = async () => {
   await getGroupMember(props.groupInfo.groupId, async (response) => {
         groupMembers.value = response.data;
-        console.log(props.groupInfo.groupName, "getGroupMember", groupMembers.value)
         for (let member of groupMembers.value) {
-          console.log(member)
           if (member.groupMaster === true) {
             groupMaster.value = member.uuid;
             break;
@@ -41,8 +40,7 @@ const reloadMembers = async () => {
         }
 
         await getPendingInviteList(props.groupInfo.groupId, (response) => {
-          groupMembers.value.push(...response.data)
-          console.log(props.groupInfo.groupName, "getPendingInviteList", groupMembers.value)
+          groupInviteSentMembers.value = response.data
         }, (error) => {
           alert("가입대기중인 그룹원을 불러올 수 없습니다.")
         })
@@ -72,11 +70,13 @@ const leaveGroupAttempt = () => {
     <MDBTable align="middle" class="mb-3 bg-white" hover>
       <tbody>
       <GroupMemberItem v-for="member in groupMembers" :key="member.uuid" :info="member"
-                       :groupMaster="groupMaster" @groupMemberActionEvent="reloadMembers"/>
+                       :groupMaster="groupMaster" @groupMemberActionEvent="reloadMembers" type="member"/>
+      <GroupMemberItem v-for="member in groupInviteSentMembers" :key="member.uuid" :info="member"
+                       :groupMaster="groupMaster" @groupMemberActionEvent="reloadMembers" type="sent"/>
       </tbody>
     </MDBTable>
     <div class="d-flex justify-content-between">
-      <MDBBtn color="warning" @click="$emit('groupInviteEvent',groupInfo.groupId)">
+      <MDBBtn color="warning" @click="$emit('groupInviteEvent',groupInfo.groupId, groupInfo.groupName)">
         친구 초대하기
       </MDBBtn>
       <MDBBtn color="danger" @click="leaveGroupAttempt">

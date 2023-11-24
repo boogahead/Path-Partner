@@ -8,7 +8,8 @@ import {onMounted, ref} from "vue";
 
 const props = defineProps({
   info: Object,
-  groupMaster:String
+  groupMaster:String,
+  type:String
 })
 // groupMemberDto
 // groupId, groupName, uuid, id, email, nickname, prifileImg, groupMaster
@@ -58,17 +59,17 @@ const cancelGroupInviteAttempt = () => {
     </td>
     <td>
       <div class="text-center">
-        <MDBBadge v-if="info.groupName != null" badge="success" pill class="d-inline">회원</MDBBadge>
+        <MDBBadge v-if="type ==='member'" badge="success" pill class="d-inline">회원</MDBBadge>
         <MDBBadge v-else badge="warning" pill class="d-inline">가입수락대기</MDBBadge>
       </div>
     </td>
     <td class="text-end">
-      <MDBBtn v-if="groupMaster === loginUserInfo.uuid && !(info.uuid === loginUserInfo.uuid) && info.groupName != null" color="danger" size="sm" rounded
+      <MDBBtn v-if="groupMaster === loginUserInfo.uuid && !(info.uuid === loginUserInfo.uuid) && type === 'member'" color="danger" size="sm" rounded
               @click="kickGroupMemberAttempt">
         <i class="fas fa-trash-alt"/>
       </MDBBtn>
 
-      <MDBBtn v-if="groupMaster === loginUserInfo.uuid && info.groupName == null" color="danger" size="sm" rounded
+      <MDBBtn v-if="groupMaster === loginUserInfo.uuid && type === 'sent' " color="danger" size="sm" rounded
               @click="cancelGroupInviteAttempt">
         <i class="fas fa-trash-alt"/>
       </MDBBtn>

@@ -31,12 +31,12 @@
           and uuid = #{uuid}
     </update>
 
-    <update id="rejectInvite" parameterType="TravelGroupDto">
+    <delete id="rejectInvite" parameterType="TravelGroupDto">
         delete
         from travel_group
         where group_id = #{groupId}
           and uuid = #{uuid}
-    </update>
+    </delete>
 
     <select id="receivedInviteList" parameterType="String" resultType="TravelGroupDto">
         select group_id, group_name, creation_date, uuid, group_master
@@ -46,14 +46,12 @@
     </select>
 
     <select id="sentInviteList" parameterType="String" resultType="GroupMemberDto">
-        select group_id, u.uuid, u.email, u.nickname, u.profile_img
-        from (select group_id, group_name, creation_date, uuid, group_master, accepted
-              from travel_group
-              where group_id = #{groupId}
-                and accepted = false) as t
-                 join user as u
-                      on t.uuid = u.uuid
-        where t.accepted = false
+      select t.group_id, t.group_name, u.uuid, u.email, u.nickname, u.profile_img, t.group_master
+      from travel_group as t
+             join user as u
+                  on t.uuid = u.uuid
+      where group_id = #{groupId}
+        and accepted = false
     </select>
 
 
@@ -75,6 +73,7 @@
         from travel_group
         where group_id = #{groupId}
           and uuid = #{uuid}
+        and accepted = true
     </select>
 
     <select id="isGroupMaster" parameterType="String" resultType="boolean">
@@ -88,12 +87,14 @@
         select group_id
         from travel_group
         where uuid = #{uuid}
+        and accepted = true
     </select>
 
     <select id="selectAllMyGroup" parameterType="String" resultType="TravelGroupDto">
         select group_id, group_name, creation_date, uuid, group_master
         from travel_group
         where uuid = #{uuid}
+        and accepted = true
     </select>
 
 
@@ -103,6 +104,7 @@
                  join user as u
                       on g.uuid = u.uuid
         where group_id = #{groupId}
+        and accepted = true
     </select>
 
     <select id="countGroupMember" parameterType="String" resultType="int">

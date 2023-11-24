@@ -136,9 +136,9 @@ public class TravelGroupController {
     @ApiResponses({@ApiResponse(code = 200, message = "그룹원 추방 시도 성공"),
             @ApiResponse(code = 500, message = "서버 에러")})
     @DeleteMapping("/{groupId}/{uuid}")
-    public ResponseEntity<Boolean> kickmember(@PathVariable String groupId, @PathVariable String uuid
+    public ResponseEntity<Boolean> kickGroupMember(@PathVariable String groupId, @PathVariable String uuid
             , @ApiIgnore @AuthenticationPrincipal UserDto userDto) {
-        log.debug("kickmember call");
+        log.debug("kickMember call");
         try {
             return ResponseEntity.ok().body(travelGroupService.kickmember(groupId, uuid, userDto.getUuid()));
         } catch (SQLException e) {
@@ -150,14 +150,10 @@ public class TravelGroupController {
     @ApiOperation(value = "그룹원 초대", notes = "그룹원을 초대합니다.")
     @ApiResponses({@ApiResponse(code = 200, message = "그룹원 초대 시도 성공"),
             @ApiResponse(code = 500, message = "서버 에러")})
-    @PostMapping("/invite/{groupId}/{uuid}")
-    public ResponseEntity<Boolean> inviteGroupMember(@PathVariable String groupId, @PathVariable String uuid
-            , @ApiIgnore @AuthenticationPrincipal UserDto userDto) {
+    @PostMapping("/invite")
+    public ResponseEntity<Boolean> inviteGroupMember(@RequestBody TravelGroupDto travelGroupDto, @ApiIgnore @AuthenticationPrincipal UserDto userDto) {
         log.debug("inviteGroupMember call");
-        TravelGroupDto travelGroupDto = TravelGroupDto.builder()
-                .groupId(groupId)
-                .uuid(uuid)
-                .build();
+
         try {
             return ResponseEntity.ok().body(travelGroupService.inviteGroupMember(travelGroupDto, userDto.getUuid()));
         } catch (SQLException e) {
